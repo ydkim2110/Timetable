@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Timetable</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="january">1월</string>
+    <string name="february">2월</string>
+    <string name="march">3월</string>
+    <string name="april">4월</string>
+    <string name="may">5월</string>
+    <string name="june">6월</string>
+    <string name="july">7월</string>
+    <string name="august">8월</string>
+    <string name="september">9월</string>
+    <string name="october">10월</string>
+    <string name="november">11월</string>
+    <string name="december">12월</string>
+
+    <string name="monday_short">월요일</string>
+    <string name="tuesday_short">화요일</string>
+    <string name="wednesday_short">수요일</string>
+    <string name="thursday_short">목요일</string>
+    <string name="friday_short">금요일</string>
+    <string name="saturday_short">토요일</string>
+    <string name="sunday_short">일요일</string>
+
+    <string name="monday_letter">월</string>
+    <string name="tuesday_letter">화</string>
+    <string name="wednesday_letter">수</string>
+    <string name="thursday_letter">목</string>
+    <string name="friday_letter">금</string>
+    <string name="saturday_letter">토</string>
+    <string name="sunday_letter">일</string>
+</resources>
