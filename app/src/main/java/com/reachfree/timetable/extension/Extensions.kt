@@ -1,6 +1,8 @@
 package com.reachfree.timetable.weekview
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -21,3 +23,7 @@ internal fun LocalTime.toLocalString(): String {
 
 private val localTimeFormat: DateTimeFormatter =
     DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+
+fun runDelayed(millis: Long, function: () -> Unit) {
+    Handler(Looper.getMainLooper()).postDelayed(function, millis)
+}

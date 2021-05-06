@@ -7,10 +7,9 @@ import android.graphics.Rect
 import android.graphics.drawable.PaintDrawable
 import android.os.Build
 import android.os.Debug
-import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
-import com.reachfree.timetable.weekview.TextHelper
+import com.reachfree.timetable.util.TextHelper
 import com.reachfree.timetable.weekview.data.Event
 import com.reachfree.timetable.weekview.data.EventConfig
 import com.reachfree.timetable.weekview.dipToPixelF

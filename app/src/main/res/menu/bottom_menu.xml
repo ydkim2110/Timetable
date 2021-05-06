@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottom_week"
+        android:title="Timetable"
+        android:icon="@drawable/ic_calendar" />
+
+    <item
+        android:id="@+id/bottom_task"
+        android:title="Test/Task"
+        android:icon="@drawable/ic_task" />
+
+    <item
+        android:id="@+id/bottom_profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile" />
+</menu>
