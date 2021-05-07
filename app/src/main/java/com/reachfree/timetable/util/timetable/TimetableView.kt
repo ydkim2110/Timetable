@@ -1,4 +1,4 @@
-package com.reachfree.timetable.weekview.view
+package com.reachfree.timetable.util.timetable
 
 import android.content.Context
 import android.graphics.Color
@@ -12,48 +12,46 @@ import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import com.reachfree.timetable.R
 import com.reachfree.timetable.weekview.DayOfWeekUtil
-import com.reachfree.timetable.weekview.data.Event
-import com.reachfree.timetable.weekview.data.EventConfig
-import com.reachfree.timetable.weekview.data.WeekData
-import com.reachfree.timetable.weekview.data.WeekViewConfig
 import com.reachfree.timetable.weekview.dipToPixelF
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
+import timber.log.Timber
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet) {
+class TimetableView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet) {
 
-    private val backgroundView: WeekBackgroundView
-    private val overlapsWith = ArrayList<EventView>()
+    private val backgroundView: TimetableBackgroundView
+    private val overlapsWith = ArrayList<TimetableEventView>()
 
     private var isInScreenshotMode = false
     private var layoutCount = 0
 
-    private var clickListener: ((view: EventView) -> Unit)? = null
+    private var clickListener: ((view: TimetableEventView) -> Unit)? = null
     private var contextMenuListener: OnCreateContextMenuListener? = null
     private var eventTransitionName: String? = null
 
     private val accentColor: Int
 
     private val scaleGestureDetector: ScaleGestureDetector
-    private val weekViewConfig: WeekViewConfig
+    private val weekViewConfig: TimetableConfig
 
-    var eventConfig = EventConfig()
+    var eventConfig = TimetableEventConfig()
+    var timetableConfig = TimetableEventConfig()
 
     init {
-        val arr = context.obtainStyledAttributes(attributeSet, R.styleable.WeekView)
-        accentColor = arr.getColor(R.styleable.WeekView_accent_color, Color.BLUE)
-        arr.recycle() // Do this when done.
+        val arr = context.obtainStyledAttributes(attributeSet, R.styleable.TimetableView)
+        accentColor = arr.getColor(R.styleable.TimetableView_accent_color, Color.BLUE)
+        arr.recycle()
 
         val prefs = context.getSharedPreferences("ts_week_view", Context.MODE_PRIVATE)
-        weekViewConfig = WeekViewConfig(prefs)
+        weekViewConfig = TimetableConfig(prefs)
 
-        backgroundView = WeekBackgroundView(context)
+        backgroundView = TimetableBackgroundView(context)
         backgroundView.setAccentColor(accentColor)
         backgroundView.scalingFactor = weekViewConfig.scalingFactor
 
@@ -66,10 +64,10 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             val factor = weekViewConfig.scalingFactor * detector.scaleFactor
             // Don't let the object get too small or too large.
-            val scaleFactor = max(0.75f, min(factor, 3.0f))
+            Timber.d("DEBUG : factor : $factor")
+            val scaleFactor = max(1.0f, min(factor, 4.0f))
             weekViewConfig.scalingFactor = scaleFactor
             backgroundView.scalingFactor = scaleFactor
-            Log.d(TAG, "Scale factor is $scaleFactor")
             invalidate()
             requestLayout()
             return true
@@ -93,17 +91,17 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
         }
         for (childId in 0 until childCount) {
             val child: View = getChildAt(childId)
-            if (child is EventView) {
+            if (child is TimetableEventView) {
                 child.setTransitionName(transitionName)
             }
         }
     }
 
-    fun setLessonClickListener(clickListener: (view: EventView) -> Unit) {
+    fun setLessonClickListener(clickListener: (view: TimetableEventView) -> Unit) {
         this.clickListener = clickListener
         for (childIndex in 0 until childCount) {
             val view: View = getChildAt(childIndex)
-            if (view is EventView) {
+            if (view is TimetableEventView) {
                 view.setOnClickListener {
                     clickListener.invoke(view)
                 }
@@ -115,41 +113,31 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
         this.contextMenuListener = contextMenuListener
         for (childIndex in 0 until childCount) {
             val view: View = getChildAt(childIndex)
-            if (view is EventView) {
+            if (view is TimetableEventView) {
                 view.setOnCreateContextMenuListener(contextMenuListener)
             }
         }
     }
 
-    fun addEvents(weekData: WeekData) {
-        Log.d(TAG, "Adding ${weekData.getSingleEvents().size} weekData to week view")
-
+    fun addEvents(weekData: TimetableData) {
         backgroundView.updateTimes(weekData.earliestStart, weekData.latestEnd)
 
         for (event in weekData.getSingleEvents()) {
             addEvent(event)
         }
-
-        // TODO: support multi day weekData
-        Log.d(TAG, " - Done adding weekData to timetable")
     }
 
-    fun addEvent(event: Event.Single) {
-        // enable weekend if not enabled yet
-        Log.d("DEBUG", "event.date.dayOfWeek ${event.date.dayOfWeek}")
+    fun addEvent(event: TimetableEvent.Single) {
         when (event.date.dayOfWeek) {
             DayOfWeek.SATURDAY -> {
-                Log.i(TAG, "Enabling Saturday")
                 if (!backgroundView.days.contains(DayOfWeek.SATURDAY)) {
                     backgroundView.days.add(DayOfWeek.SATURDAY)
                 }
             }
             DayOfWeek.SUNDAY -> {
-                Log.i(TAG, "Enabling Saturday")
                 if (!backgroundView.days.contains(DayOfWeek.SATURDAY)) {
                     backgroundView.days.add(DayOfWeek.SATURDAY)
                 }
-                Log.i(TAG, "Enabling Sunday")
                 if (!backgroundView.days.contains(DayOfWeek.SUNDAY)) {
                     backgroundView.days.add(DayOfWeek.SUNDAY)
                 }
@@ -159,9 +147,7 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
             }
         }
 
-        val lv = EventView(context, event, eventConfig, weekViewConfig.scalingFactor)
-        Log.d("DEBUG", "startTime ${event.startTime}")
-        Log.d("DEBUG", "endTime ${event.endTime}")
+        val lv = TimetableEventView(context, event, eventConfig, weekViewConfig.scalingFactor)
         backgroundView.updateTimes(event.startTime, event.endTime)
 
         // mark active event
@@ -198,9 +184,9 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
 
         for (childIndex in 0 until childCount) {
             Log.i(TAG, "child $childIndex of $childCount")
-            val eventView: EventView
+            val eventView: TimetableEventView
             val childView = getChildAt(childIndex)
-            if (childView is EventView) {
+            if (childView is TimetableEventView) {
                 eventView = childView
             } else {
                 continue
@@ -223,7 +209,7 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
             for (j in 0 until childIndex) {
                 val v2 = getChildAt(j)
                 // get next LessonView
-                if (v2 is EventView) {
+                if (v2 is TimetableEventView) {
                     // check for overlap
                     if (v2.event.date != eventView.event.date) {
                         continue // days differ, overlap not possible
@@ -259,7 +245,7 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
         isInScreenshotMode = enabled
     }
 
-    private fun overlaps(left: EventView, right: EventView): Boolean {
+    private fun overlaps(left: TimetableEventView, right: TimetableEventView): Boolean {
         val rightStartsAfterLeftStarts = right.event.startTime >= left.event.startTime
         val rightStartsBeforeLeftEnds = right.event.startTime < left.event.endTime
         val lessonStartsWithing = rightStartsAfterLeftStarts && rightStartsBeforeLeftEnds
@@ -276,6 +262,6 @@ class WeekView(context: Context, attributeSet: AttributeSet) : RelativeLayout(co
     }
 
     companion object {
-        private const val TAG = "WeekView"
+        private const val TAG = "TimetableView"
     }
 }

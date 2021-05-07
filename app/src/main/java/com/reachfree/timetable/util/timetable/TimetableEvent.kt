@@ -1,4 +1,4 @@
-package com.reachfree.timetable.weekview.data
+package com.reachfree.timetable.util.timetable
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -6,7 +6,7 @@ import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 
-sealed class Event {
+sealed class TimetableEvent {
 
     abstract val id: Long
     abstract val date: LocalDate
@@ -26,7 +26,7 @@ sealed class Event {
         val lowerText: String? = null,
         val textColor: Int,
         val backgroundColor: Int
-    ) : Event() {
+    ) : TimetableEvent() {
         @RequiresApi(Build.VERSION_CODES.O)
         val duration: Duration = Duration.between(startTime, endTime)
     }
@@ -36,7 +36,7 @@ sealed class Event {
         override val date: LocalDate,
         override val title: String,
         override val shortTitle: String
-    ) : Event()
+    ) : TimetableEvent()
 
     data class MultiDay(
         override val id: Long,
@@ -44,5 +44,5 @@ sealed class Event {
         override val title: String,
         override val shortTitle: String,
         val lastDate: LocalDate
-    ) : Event()
+    ) : TimetableEvent()
 }

@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
     foreignKeys = [ForeignKey(
         entity = Semester::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("semester"),
+        childColumns = arrayOf("semester_id"),
         onDelete = ForeignKey.CASCADE
     )]
 )
@@ -19,17 +19,21 @@ data class Subject(
     @ColumnInfo(name = "title") var title: String = "",
     @ColumnInfo(name = "days") var days: List<Days>,
     @ColumnInfo(name = "classroom") var classroom: String = "",
+    @ColumnInfo(name = "description") var description: String = "",
     @ColumnInfo(name = "building_name") var buildingName: String = "",
     @ColumnInfo(name = "professor_name") var professorName: String = "",
     @ColumnInfo(name = "book_name") var book_name: String = "",
-    @ColumnInfo(name = "credit") var credit: String = "",
-    @ColumnInfo(name = "semester") var semester: String
+    @ColumnInfo(name = "credit") var credit: Int = 0,
+    @ColumnInfo(name = "type") var type: Int = 0,
+    @ColumnInfo(name = "semester_id") var semesterId: Long
 ) {
 
     data class Days(
         var day: Int,
-        var startDate: Long,
-        var endDate: Long
+        var startTime: Int,
+        var startMinute: Int,
+        var endTime: Int,
+        var endMinute: Int
     )
 
 }

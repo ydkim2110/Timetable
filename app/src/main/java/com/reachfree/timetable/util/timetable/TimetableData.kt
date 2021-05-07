@@ -1,23 +1,21 @@
-package com.reachfree.timetable.weekview.data
+package com.reachfree.timetable.util.timetable
 
-import android.os.Build
 import org.threeten.bp.LocalTime
 
-class WeekData {
+class TimetableData {
 
-    private val singleEvents: MutableList<Event.Single> = mutableListOf()
+    private val singleEvents: MutableList<TimetableEvent.Single> = mutableListOf()
 
-    private val allDays: MutableList<Event.AllDay> = mutableListOf()
+    private val allDays: MutableList<TimetableEvent.AllDay> = mutableListOf()
 
     var earliestStart: LocalTime = LocalTime.MAX
-
     var latestEnd: LocalTime = LocalTime.MIN
 
-    fun add(item: Event.AllDay) {
+    fun add(item: TimetableEvent.AllDay) {
         allDays.add(item)
     }
 
-    fun add(item: Event.Single) {
+    fun add(item: TimetableEvent.Single) {
         singleEvents.add(item)
 
         if (item.startTime.isBefore(earliestStart)) {
@@ -29,9 +27,9 @@ class WeekData {
         }
     }
 
-    fun getSingleEvents(): List<Event.Single> = singleEvents.toList()
+    fun getSingleEvents(): List<TimetableEvent.Single> = singleEvents.toList()
 
-    fun getAllDayEvents(): List<Event.AllDay> = allDays.toList()
+    fun getAllDayEvents(): List<TimetableEvent.AllDay> = allDays.toList()
 
     fun isEmpty() = singleEvents.isEmpty() && allDays.isEmpty()
 

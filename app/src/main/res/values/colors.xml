@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_alpha">#10FFFFFF</color>
 
     <color name="divider_gray">#88808080</color>
     <color name="default_background_color">@color/purple_200</color>
@@ -17,6 +18,20 @@
 
     <color name="md_red_400_dark">#EC2E2A</color>
     <color name="red_text">@color/md_red_400_dark</color>
+
+    <color name="color_background_bottom_sheet">#FFFFFF</color>
+
+    <color name="color_text_primary">#212121</color>
+    <color name="color_text_secondary">#757575</color>
+
+    <color name="divider_color">#1F000000</color>
+
+    <color name="color_background_edit_text">#F5F5F5</color>
+    <color name="color_feed_divider">#CCe0e0e0</color>
+
+    <color name="color_chip_gray">#DEDEDE</color>
+    <color name="color_chip_selected">#4D66d3ff</color>
+    <color name="color_chip_stroke">#1F000000</color>
 
     <string-array name="default_sticker_color">
         <item>#f08676</item>

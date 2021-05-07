@@ -3,7 +3,8 @@ package com.reachfree.timetable.data
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.reachfree.timetable.data.dao.TimetableDao
+import com.reachfree.timetable.data.dao.SemesterDao
+import com.reachfree.timetable.data.dao.SubjectDao
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.model.Task
@@ -17,6 +18,7 @@ import com.reachfree.timetable.data.model.Test
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
 
-    abstract fun timetableDao(): TimetableDao
+    abstract fun semesterDao(): SemesterDao
+    abstract fun subjectDao(): SubjectDao
 
 }

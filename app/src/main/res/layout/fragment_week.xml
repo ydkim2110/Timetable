@@ -5,18 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.week.WeekFragment">
+    tools:context=".ui.week.TimetableFragment">
 
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.reachfree.timetable.weekview.view.WeekView
+        <com.reachfree.timetable.util.timetable.TimetableView
             android:id="@+id/week_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

@@ -5,9 +5,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.reachfree.timetable.data.LocalDatabase
-import com.reachfree.timetable.data.dao.TimetableDao
-import com.reachfree.timetable.data.repository.TimetableRepository
-import com.reachfree.timetable.data.repository.TimetableRepositoryImpl
+import com.reachfree.timetable.data.dao.SemesterDao
+import com.reachfree.timetable.data.dao.SubjectDao
+import com.reachfree.timetable.data.repository.SemesterRepository
+import com.reachfree.timetable.data.repository.SemesterRepositoryImpl
+import com.reachfree.timetable.data.repository.SubjectRepository
+import com.reachfree.timetable.data.repository.SubjectRepositoryImpl
 import com.reachfree.timetable.util.DispatcherProvider
 import com.reachfree.timetable.util.LOCAL_DATABASE_NAME
 import dagger.Module
@@ -17,8 +20,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Singleton
 
 @Module
@@ -45,12 +46,21 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideTimetableDao(database: LocalDatabase) = database.timetableDao()
+    fun provideSemesterDao(database: LocalDatabase) = database.semesterDao()
 
     @Singleton
     @Provides
-    fun provideTimetableRepository(timetableDao: TimetableDao): TimetableRepository =
-        TimetableRepositoryImpl(timetableDao)
+    fun provideSubjectDao(database: LocalDatabase) = database.subjectDao()
+
+    @Singleton
+    @Provides
+    fun provideSemesterRepository(semesterDao: SemesterDao): SemesterRepository =
+        SemesterRepositoryImpl(semesterDao)
+
+    @Singleton
+    @Provides
+    fun provideSubjectRepository(subjectDao: SubjectDao): SubjectRepository =
+        SubjectRepositoryImpl(subjectDao)
 
     @Singleton
     @Provides

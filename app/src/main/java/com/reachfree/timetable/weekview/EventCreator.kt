@@ -1,10 +1,8 @@
 package com.reachfree.timetable.weekview
 
 import android.graphics.Color
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.reachfree.timetable.weekview.data.Event
-import com.reachfree.timetable.weekview.data.WeekData
+import com.reachfree.timetable.util.timetable.TimetableEvent
+import com.reachfree.timetable.util.timetable.TimetableData
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
@@ -23,8 +21,8 @@ object EventCreator {
     private const val minEventLength = 30
     private const val maxEventLength = 90
 
-    val weekData: WeekData by lazy {
-        WeekData().apply {
+    val weekData: TimetableData by lazy {
+        TimetableData().apply {
             var startTime: LocalTime
             weekDays
                     .map { dayOfWeek ->
@@ -38,17 +36,17 @@ object EventCreator {
         }
     }
 
-    fun createRandomEvent(): Event.Single {
+    fun createRandomEvent(): TimetableEvent.Single {
         val startTime = LocalTime.of(8 + random.nextInt(8), random.nextInt(60))
         val endTime = startTime.plusMinutes((30 + random.nextInt(60)).toLong())
         val day = weekDays.shuffled().first()
         return createSampleEntry(day, startTime, endTime)
     }
 
-    private fun createSampleEntry(day: DayOfWeek, startTime: LocalTime, endTime: LocalTime): Event.Single {
+    private fun createSampleEntry(day: DayOfWeek, startTime: LocalTime, endTime: LocalTime): TimetableEvent.Single {
         val name = titles[random.nextInt(titles.size)]
         val subTitle = subTitles[random.nextInt(subTitles.size)]
-        return Event.Single(
+        return TimetableEvent.Single(
                 id = random.nextLong(),
                 date = LocalDate.now().with(day),
                 title = name,

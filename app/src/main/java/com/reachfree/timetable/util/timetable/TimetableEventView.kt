@@ -1,4 +1,4 @@
-package com.reachfree.timetable.weekview.view
+package com.reachfree.timetable.util.timetable
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,33 +6,32 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.PaintDrawable
 import android.os.Build
-import android.os.Debug
 import android.view.View
 import androidx.annotation.RequiresApi
 import com.reachfree.timetable.util.TextHelper
-import com.reachfree.timetable.weekview.data.Event
-import com.reachfree.timetable.weekview.data.EventConfig
 import com.reachfree.timetable.weekview.dipToPixelF
 import com.reachfree.timetable.weekview.dipToPixelI
 import com.reachfree.timetable.weekview.toLocalString
+import timber.log.Timber
 import kotlin.math.roundToInt
 
-class EventView(
+class TimetableEventView(
         context: Context,
-        val event: Event.Single,
-        val config: EventConfig,
+        val event: TimetableEvent.Single,
+        val config: TimetableEventConfig,
         var scalingFactor: Float = 1f
 ) : View(context) {
 
     private val CORNER_RADIUS_PX = context.dipToPixelF(2f)
 
-    private val textPaint: Paint by lazy { Paint().apply { isAntiAlias = true } }
-    private val textPaint2: Paint by lazy { Paint().apply { isAntiAlias = true } }
+    private val titlePaint: Paint by lazy { Paint().apply { isAntiAlias = true } }
+    private val classroomPaint: Paint by lazy { Paint().apply { isAntiAlias = true } }
 
     private val subjectName: String by lazy { if (config.useShortNames) event.shortTitle else event.title }
     private val location: String by lazy { event.location ?: "" }
 
-    private val textBounds: Rect = Rect()
+    private val titleBounds: Rect = Rect()
+    private val classroomBounds: Rect = Rect()
 
     private val weightSum: Int
     private val weightStartTime: Int
@@ -60,94 +59,82 @@ class EventView(
 
         weightSum = weightStartTime + weightUpperText + weightSubTitle + weightLowerText + weightEndTime + weightTitle
 
-        textPaint.color = event.textColor
-        textPaint2.color = event.textColor
+        titlePaint.color = event.textColor
+        classroomPaint.color = event.textColor
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        if (Debug.isDebuggerConnected()) {
-            for (i in 0..weightSum) {
-                val content = height - (paddingTop + paddingBottom)
-                val y = content * i / weightSum + paddingTop
-                canvas.drawLine(0f, y.toFloat(), width.toFloat(), y.toFloat(), textPaint)
-            }
-        }
-
         // 과목
         val maxTextSize = TextHelper.fitText(
-            subjectName,
-            textPaint.textSize * 3,
-            width - (paddingLeft + paddingRight),
-            height / 4
+                subjectName,
+                titlePaint.textSize * 3,
+                width - (paddingLeft + paddingRight),
+                height / 4
         )
-        textPaint.textSize = maxTextSize
-        textPaint.getTextBounds(subjectName, 0, subjectName.length, textBounds)
+        titlePaint.textSize = maxTextSize
+        titlePaint.getTextBounds(subjectName, 0, subjectName.length, titleBounds)
         var weight = weightStartTime + weightUpperText
         if (weight == 0) {
             weight++
         }
-        val subjectY = getY(weight, weightTitle, textBounds)
+        val subjectY = getY(weight, weightTitle, titleBounds)
         canvas.drawText(
-            subjectName,
-            (width / 2 - textBounds.centerX()).toFloat(),
-            subjectY.toFloat(),
-            textPaint
+                subjectName,
+                (width / 2 - titleBounds.centerX()).toFloat(),
+                subjectY.toFloat(),
+                titlePaint
         )
 
-        textPaint.textSize = TextHelper.fitText("123456", maxTextSize, width / 2,
-                getY(position = 1, bounds = textBounds) - getY(position = 0, bounds = textBounds))
+        Timber.d("DEBUG : subjectY $subjectY")
+        Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
+
+        titlePaint.textSize = TextHelper.fitText("123456", maxTextSize, width / 2,
+                getY(position = 1, bounds = titleBounds) - getY(position = 0, bounds = titleBounds))
 
         // 위치
-        val maxTextSize2 = TextHelper.fitText(
+        val classroomMaxTextSize = TextHelper.fitText(
                 location,
-                textPaint2.textSize * 3,
-                width - (paddingLeft + paddingRight),
-                height / 4
+                classroomPaint.textSize * 2,
+                width - (paddingLeft + paddingRight + 24),
+                height / 6
         )
-        textPaint2.textSize = maxTextSize2
-        textPaint2.getTextBounds(location, 0, location.length, textBounds)
-        var weight2 = weightStartTime + weightUpperText
-        if (weight2 == 0) {
-            weight2++
-        }
-        val subjectY2 = getY(weight2, weightTitle, textBounds)
+        classroomPaint.textSize = classroomMaxTextSize
+        classroomPaint.getTextBounds(location, 0, location.length, titleBounds)
         canvas.drawText(
-            location,
-            (width / 2 - textBounds.centerX()).toFloat(),
-            subjectY + 30f,
-            textPaint2
+                location,
+                (width / 2 - titleBounds.centerX()).toFloat(),
+                subjectY + titleBounds.height().toFloat() + 12f,
+                classroomPaint
         )
+        Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
 
         // 시작시간
         if (config.showTimeStart) {
             val startText = event.startTime.toLocalString()
-            textPaint.getTextBounds(startText, 0, startText.length, textBounds)
+            titlePaint.getTextBounds(startText, 0, startText.length, titleBounds)
+            Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
             canvas.drawText(
-                startText,
-                (textBounds.left + paddingLeft).toFloat(),
-                (textBounds.height() + paddingTop).toFloat(),
-                    textPaint
+                    startText,
+                    (titleBounds.left + paddingLeft).toFloat(),
+                    (titleBounds.height() + paddingTop).toFloat(),
+                    titlePaint
             )
         }
 
         // 종료시간
         if (config.showTimeEnd) {
             val endText = event.endTime.toLocalString()
-            textPaint.getTextBounds(endText, 0, endText.length, textBounds)
+            titlePaint.getTextBounds(endText, 0, endText.length, titleBounds)
+            Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
             canvas.drawText(
-                endText,
-                (width - (textBounds.right + paddingRight)).toFloat(),
-                (height - paddingBottom).toFloat(),
-                textPaint
+                    endText,
+                    (width - (titleBounds.right + paddingRight)).toFloat(),
+                    (height - paddingBottom).toFloat(),
+                    titlePaint
             )
         }
-
-
-
-
     }
 
     private fun getY(position: Int, weight: Int = 1, bounds: Rect): Int {

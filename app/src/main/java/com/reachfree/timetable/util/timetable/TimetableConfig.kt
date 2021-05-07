@@ -1,8 +1,8 @@
-package com.reachfree.timetable.weekview.data
+package com.reachfree.timetable.util.timetable
 
 import android.content.SharedPreferences
 
-class WeekViewConfig(
+class TimetableConfig(
     val prefs: SharedPreferences
 ) {
 

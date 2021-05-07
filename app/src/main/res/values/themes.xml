@@ -13,4 +13,64 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!-- Toolbar -->
+    <style name="Theme.Timetable.Toolbar">
+        <item name="android:textColorSecondary">@color/color_text_primary</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Theme.LemonTree.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.LemonTree.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- SplashActivity -->
+    <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!-- BottomSheet -->
+    <style name="SelectTypeBottomSheet" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_sheet</item>
+    </style>
+
+    <!-- DialogFragment -->
+    <style name="FullScreenDialog" parent="Theme.Timetable">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="DialogAnimationUpAndDown">
+        <item name="android:windowEnterAnimation">@anim/fade_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/fade_slide_down</item>
+    </style>
+
+    <!-- Chip -->
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="checkedIconTint">@color/white</item>
+        <item name="rippleColor">@color/white_alpha</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+    </style>
+
+    <style name="ChipTextBold" parent="TextAppearance.MaterialComponents.Chip">
+        <item name="fontFamily"></item>
+    </style>
+
+    <style name="ChipTextRegular" parent="TextAppearance.MaterialComponents.Chip">
+        <item name="fontFamily"></item>
+    </style>
 </resources>
