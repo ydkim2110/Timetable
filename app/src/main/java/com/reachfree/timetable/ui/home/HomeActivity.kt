@@ -17,8 +17,10 @@ import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
 import com.reachfree.timetable.ui.profile.ProfileFragment
 import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.week.TimetableFragment
+import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.weekview.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inflate(it)}),
@@ -44,7 +46,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.toolbar).apply {
+            title = DateUtils.defaultDateFormat.format(Date())
+        }
     }
 
     private fun setupBottomNavigationView() {
@@ -76,7 +80,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             override fun onSelected(type: SelectType) {
                 when (type) {
                     SelectType.SEMESTER -> {
-                        Toast.makeText(this@HomeActivity, "SEMESTER click!!", Toast.LENGTH_SHORT).show()
+
                     }
                     SelectType.SUBJECT -> {
                         AddSubjectFragment.newInstance().apply { show(supportFragmentManager, null) }

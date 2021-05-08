@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import com.reachfree.timetable.data.model.Semester
@@ -44,8 +45,17 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
 //        setupData()
 //        timetableViewModel.deleteSemesters()
 //        timetableViewModel.deleteSubjects()
-//        createSemester()
+        createSemester()
+        setupViewHandler()
         subscribeToObserver()
+
+    }
+
+    private fun setupViewHandler() {
+        binding.weekView.setLessonClickListener {
+            Toast.makeText(requireActivity(), it.event.title, Toast.LENGTH_SHORT).show()
+            Timber.d("DEBUG: clicked item is ${it.event.title}")
+        }
 
         binding.weekView.setOnTouchListener { v, event ->
             when (event.pointerCount) {
@@ -59,7 +69,6 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
             false
         }
     }
-
 
     private fun createSemester() {
         val startDate = DateUtils.calculateStartOfDay(LocalDate.of(2020, 9, 1)).toMillis()

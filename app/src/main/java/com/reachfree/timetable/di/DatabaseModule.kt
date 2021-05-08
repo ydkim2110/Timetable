@@ -13,6 +13,7 @@ import com.reachfree.timetable.data.repository.SubjectRepository
 import com.reachfree.timetable.data.repository.SubjectRepositoryImpl
 import com.reachfree.timetable.util.DispatcherProvider
 import com.reachfree.timetable.util.LOCAL_DATABASE_NAME
+import com.reachfree.timetable.util.SessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +26,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class DatabaseModule {
+
+    @Singleton
+    @Provides
+    fun provideSessionManager(
+        @ApplicationContext context: Context
+    ) = SessionManager(context)
 
     @Singleton
     @Provides

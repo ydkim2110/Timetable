@@ -159,6 +159,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         )
 
         timetableViewModel.insertSubject(subject)
+
+        dismiss()
     }
 
     private fun createLayout(chipName: String) {
