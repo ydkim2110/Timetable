@@ -30,9 +30,9 @@ data class Subject(
 
     data class Days(
         var day: Int,
-        var startTime: Int,
+        var startHour: Int,
         var startMinute: Int,
-        var endTime: Int,
+        var endHour: Int,
         var endMinute: Int
     )
 

@@ -31,7 +31,6 @@ class TimetableEventView(
     private val location: String by lazy { event.location ?: "" }
 
     private val titleBounds: Rect = Rect()
-    private val classroomBounds: Rect = Rect()
 
     private val weightSum: Int
     private val weightStartTime: Int
@@ -87,9 +86,6 @@ class TimetableEventView(
                 titlePaint
         )
 
-        Timber.d("DEBUG : subjectY $subjectY")
-        Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
-
         titlePaint.textSize = TextHelper.fitText("123456", maxTextSize, width / 2,
                 getY(position = 1, bounds = titleBounds) - getY(position = 0, bounds = titleBounds))
 
@@ -108,13 +104,12 @@ class TimetableEventView(
                 subjectY + titleBounds.height().toFloat() + 12f,
                 classroomPaint
         )
-        Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
+
 
         // 시작시간
         if (config.showTimeStart) {
             val startText = event.startTime.toLocalString()
             titlePaint.getTextBounds(startText, 0, startText.length, titleBounds)
-            Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
             canvas.drawText(
                     startText,
                     (titleBounds.left + paddingLeft).toFloat(),
@@ -127,7 +122,6 @@ class TimetableEventView(
         if (config.showTimeEnd) {
             val endText = event.endTime.toLocalString()
             titlePaint.getTextBounds(endText, 0, endText.length, titleBounds)
-            Timber.d("DEBUG : titleBounds ${titleBounds.height()}")
             canvas.drawText(
                     endText,
                     (width - (titleBounds.right + paddingRight)).toFloat(),

@@ -18,6 +18,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.TextStyle
 import org.threeten.bp.temporal.ChronoUnit
+import timber.log.Timber
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -198,6 +199,18 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
             throw IllegalArgumentException("Start time $startTime must be before end time $endTime")
         }
         var timesHaveChanged = false
+
+        Timber.d("DEBUG: startTime $startTime")
+
+//        2021-05-08 12:53:03.779 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:20
+//        2021-05-08 12:53:03.781 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:30
+//        2021-05-08 12:53:03.782 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:40
+//        2021-05-08 12:53:03.783 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:20
+//        2021-05-08 12:53:03.784 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:30
+//        2021-05-08 12:53:03.784 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 09:30
+//        2021-05-08 12:53:03.785 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 09:30
+//        2021-05-08 12:53:03.785 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 10:10
+//        2021-05-08 12:53:03.786 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 14:30
 
         if (startTime.isBefore(this.startTime)) {
             this.startTime = startTime.truncatedTo(ChronoUnit.HOURS)

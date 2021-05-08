@@ -123,7 +123,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
                 book_name = "(만점)미시경제학",
                 credit = 3,
                 type = 0,
-                semesterId = 1
+                semesterId = 2
         )
 
         val subject2 = Subject(
@@ -137,7 +137,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
                 book_name = "맨큐의 경제학",
                 credit = 2,
                 type = 1,
-                semesterId = 1
+                semesterId = 2
         )
 
         val subject3 = Subject(
@@ -151,25 +151,37 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
                 book_name = "맨큐의 경제학",
                 credit = 3,
                 type = 0,
-                semesterId = 2
+                semesterId = 3
         )
 
         timetableViewModel.insertSubject(subject)
         timetableViewModel.insertSubject(subject2)
         timetableViewModel.insertSubject(subject3)
-
     }
 
     private fun subscribeToObserver() {
         timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
             semester?.id?.let {
+                Timber.d("DEBUG: semesterId ${semester.id}")
 //                createSubject(it)
                 timetableViewModel.getAllSubjectBySemester(it).observe(viewLifecycleOwner) { subjects ->
-                    subjects?.let { it -> showThisSemesterSubjects(it) }
+                    if (!subjects.isNullOrEmpty()) {
+                        removeAllEvents()
+                        showThisSemesterSubjects(subjects)
+//                        for (i in 0 until subjects.size) {
+//                            for (j in 0 until subjects[i].days.size) {
+//                                Timber.d("DEBUG: startHour ${subjects[i].days[j].startHour}")
+//                                Timber.d("DEBUG: startMin ${subjects[i].days[j].startMinute}")
+//                            }
+//                        }
+                    }
                 }
             }
-
         }
+    }
+
+    private fun removeAllEvents() {
+        binding.weekView.removeViews(1, binding.weekView.childCount - 1)
     }
 
     private fun showThisSemesterSubjects(subjects: List<Subject>) {
@@ -185,15 +197,16 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
                             title = value.title,
                             shortTitle = value.title,
                             location = value.classroom,
-                            startTime = LocalTime.of(value.days[i].startTime, value.days[i].endMinute),
-                            endTime = LocalTime.of(value.days[i].endTime, value.days[i].endMinute),
-                            backgroundColor = Color.RED,
+                            startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
+                            endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
+                            backgroundColor = randomColor(),
                             textColor = Color.WHITE
                     )
                     this.add(event)
                 }
             }
         }
+
         binding.weekView.addEvents(timetableData)
     }
 

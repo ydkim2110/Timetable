@@ -39,6 +39,14 @@
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
+    <style name="SelectSemesterBottomSheet" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+        <item name="behavior_draggable">false</item>
+    </style>
+
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bg_bottom_sheet</item>
     </style>
