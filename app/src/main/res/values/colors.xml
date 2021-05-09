@@ -36,6 +36,9 @@
     <color name="color_background_ripple_btn">#FFFFFF</color>
     <color name="color_ripple">#808080</color>
 
+    <color name="color_background_calendar">#FFFFFF</color>
+    <color name="color_background_top_calendar">#EEEEEE</color>
+
     <string-array name="default_sticker_color">
         <item>#f08676</item>
         <item>#ecc369</item>

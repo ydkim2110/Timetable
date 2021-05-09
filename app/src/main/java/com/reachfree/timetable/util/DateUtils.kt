@@ -13,6 +13,7 @@ object DateUtils {
 
     val testDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val defaultDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val semesterDateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
 
     fun calculateStartOfDay(localDate: LocalDate): LocalDateTime {
         return LocalDateTime.of(localDate, LocalTime.MIDNIGHT)

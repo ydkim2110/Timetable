@@ -1,5 +1,6 @@
 package com.reachfree.timetable.ui.home
 
+import android.app.ProgressDialog.show
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.reachfree.timetable.R
 import com.reachfree.timetable.databinding.ActivityHomeBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
+import com.reachfree.timetable.ui.add.AddSemesterFragment
 import com.reachfree.timetable.ui.add.AddSubjectFragment
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.ui.bottomsheet.SelectType
@@ -80,7 +82,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             override fun onSelected(type: SelectType) {
                 when (type) {
                     SelectType.SEMESTER -> {
-
+                        AddSemesterFragment.newInstance().apply { show(supportFragmentManager, null) }
                     }
                     SelectType.SUBJECT -> {
                         AddSubjectFragment.newInstance().apply { show(supportFragmentManager, null) }

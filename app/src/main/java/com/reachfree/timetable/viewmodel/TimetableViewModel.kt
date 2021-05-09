@@ -28,8 +28,6 @@ class TimetableViewModel @Inject constructor(
                 semesterRepository.insertSemester(semester)
             }
 
-
-
     fun deleteSemesters() =
             viewModelScope.launch(dispatchers.io) {
                 semesterRepository.deleteAllSemesters()

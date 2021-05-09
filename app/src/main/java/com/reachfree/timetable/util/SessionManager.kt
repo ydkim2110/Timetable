@@ -16,8 +16,8 @@ class SessionManager(
         return prefs[REGISTER_SEMESTER, false]
     }
 
-    fun setRegisterSemester() {
-        prefs.edit { putBoolean(REGISTER_SEMESTER, true) }
+    fun setRegisterSemester(value: Boolean) {
+        prefs.edit { putBoolean(REGISTER_SEMESTER, value) }
     }
 
 }

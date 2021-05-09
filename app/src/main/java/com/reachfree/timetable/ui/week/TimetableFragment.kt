@@ -45,7 +45,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
 //        setupData()
 //        timetableViewModel.deleteSemesters()
 //        timetableViewModel.deleteSubjects()
-        createSemester()
+//        createSemester()
         setupViewHandler()
         subscribeToObserver()
 
@@ -53,7 +53,6 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
 
     private fun setupViewHandler() {
         binding.weekView.setLessonClickListener {
-            Toast.makeText(requireActivity(), it.event.title, Toast.LENGTH_SHORT).show()
             Timber.d("DEBUG: clicked item is ${it.event.title}")
         }
 

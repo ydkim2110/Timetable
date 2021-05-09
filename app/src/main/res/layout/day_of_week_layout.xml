@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/day_of_week_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_background_top_calendar"
+    android:orientation="horizontal">
+
+    <TextView
+        android:theme="@style/CalendarTopTextSun"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/sunday_letter"
+        />
+
+    <TextView
+        android:theme="@style/CalendarTopText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/monday_letter"
+        />
+
+    <TextView
+        android:theme="@style/CalendarTopText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/tuesday_letter"
+        />
+
+    <TextView
+        android:theme="@style/CalendarTopText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/wednesday_letter"
+        />
+
+    <TextView
+        android:theme="@style/CalendarTopText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/thursday_letter"
+        />
+
+    <TextView
+        android:theme="@style/CalendarTopText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/friday_letter"
+        />
+
+    <TextView
+        android:theme="@style/CalendarTopTextSat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/saturday_letter"
+        />
+
+</LinearLayout>
