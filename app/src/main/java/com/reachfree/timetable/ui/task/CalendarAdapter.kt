@@ -2,6 +2,7 @@ package com.reachfree.timetable.ui.task
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reachfree.timetable.databinding.ItemCalendarBinding
@@ -33,14 +34,26 @@ class CalendarAdapter(
             val todayMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
             val todayDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
-            binding.txtCalendarDay.text = dayNo.toString()
+            with(binding) {
+                if (adapterPosition % 7 == 0) {
+                    txtCalendarDay.setTextColor(ContextCompat.getColor(root.context, android.R.color.holo_red_dark))
+                } else if (adapterPosition % 7 == 6) {
+                    txtCalendarDay.setTextColor(ContextCompat.getColor(root.context, android.R.color.holo_blue_dark))
+                }
+
+                if (!(displayMonth == currentMonth && displayYear == currentYear)) {
+                    txtCalendarDay.setTextColor(ContextCompat.getColor(root.context, android.R.color.darker_gray))
+                }
+
+                txtCalendarDay.text = dayNo.toString()
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = ItemCalendarBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val params:GridLayoutManager.LayoutParams = binding.root.layoutParams as GridLayoutManager.LayoutParams
-        params.height = itemHeight / 5
+        params.height = itemHeight / 6
         binding.root.layoutParams = params
         return  MyViewHolder(binding)
     }

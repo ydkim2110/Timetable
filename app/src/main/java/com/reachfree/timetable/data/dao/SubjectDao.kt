@@ -21,4 +21,7 @@ interface SubjectDao {
     @Query("SELECT * FROM subjects WHERE semester_id LIKE :semesterId")
     fun getAllSubjectsBySemester(semesterId: Long): LiveData<List<Subject>>
 
+    @Query("SELECT SUM(credit) FROM subjects WHERE semester_id LIKE :semesterId")
+    fun getTotalCreditBySemester(semesterId: Long): LiveData<Int>
+
 }

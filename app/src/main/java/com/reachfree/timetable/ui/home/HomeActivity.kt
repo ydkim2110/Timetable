@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.response.SemesterTotalCreditResponse
 import com.reachfree.timetable.databinding.ActivityHomeBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.add.AddSemesterFragment
@@ -17,16 +18,19 @@ import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
 import com.reachfree.timetable.ui.profile.ProfileFragment
+import com.reachfree.timetable.ui.profile.ProfileHandlerListener
+import com.reachfree.timetable.ui.profile.SubjectListFragment
 import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.week.TimetableFragment
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.weekview.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inflate(it)}),
-    BottomNavigationView.OnNavigationItemSelectedListener {
+    BottomNavigationView.OnNavigationItemSelectedListener, ProfileHandlerListener {
 
     private val selectTypeBottomSheet by lazy { SelectTypeBottomSheet() }
 
@@ -58,10 +62,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             .add(binding.container.id, profileFragment, TAG_PROFILE)
             .hide(profileFragment)
             .commit()
+
         fm.beginTransaction()
             .add(binding.container.id, taskFragment, TAG_TASK)
             .hide(taskFragment)
             .commit()
+
         fm.beginTransaction()
             .add(binding.container.id, timetableFragment, TAG_TIMETABLE)
             .commit()
@@ -102,18 +108,27 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         when (item.itemId) {
             R.id.bottom_week -> {
                 fm.beginTransaction().hide(active).show(timetableFragment).commit()
+                active = timetableFragment
                 return true
             }
             R.id.bottom_task -> {
                 fm.beginTransaction().hide(active).show(taskFragment).commit()
+                active = taskFragment
                 return true
             }
             R.id.bottom_profile -> {
                 fm.beginTransaction().hide(active).show(profileFragment).commit()
+                active = profileFragment
                 return true
             }
         }
         return false
+    }
+
+    override fun onDetailSubjectClicked(semester: SemesterTotalCreditResponse) {
+        semester.id?.let {
+            SubjectListFragment.newInstance(it).apply { show(supportFragmentManager, SubjectListFragment.TAG) }
+        }
     }
 
     override fun onBackPressed() {
@@ -130,9 +145,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     companion object {
-        private const val TAG_TIMETABLE = "TAG_TIMETABLE_FRAGMENT"
-        private const val TAG_TASK = "TAG_TASK_FRAGMENT"
-        private const val TAG_PROFILE = "TAG_PROFILE_FRAGMENT"
+        private const val TAG_TIMETABLE = "1"
+        private const val TAG_TASK = "2"
+        private const val TAG_PROFILE = "3"
         private const val TIME_DELAY_EXIT = 1500L
 
         fun start(context: Context) {

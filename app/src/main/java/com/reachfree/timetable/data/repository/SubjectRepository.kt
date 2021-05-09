@@ -12,4 +12,6 @@ interface SubjectRepository {
     suspend fun deleteAllSubjects()
 
     fun getAllSubjectBySemester(semesterId: Long): LiveData<List<Subject>>
+
+    fun getTotalCreditBySemester(semesterId: Long): LiveData<Int>
 }

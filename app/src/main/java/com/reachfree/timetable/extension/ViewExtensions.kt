@@ -9,3 +9,15 @@ fun View.setOnSingleClickListener(action: (View) -> Unit) {
     }
     setOnClickListener(onClick)
 }
+
+fun View.beVisible() {
+    visibility = View.VISIBLE
+}
+
+fun View.beInvisible() {
+    visibility = View.INVISIBLE
+}
+
+fun View.beGone() {
+    visibility = View.GONE
+}

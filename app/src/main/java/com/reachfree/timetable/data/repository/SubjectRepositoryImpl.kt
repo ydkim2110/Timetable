@@ -25,4 +25,8 @@ class SubjectRepositoryImpl @Inject constructor(
         return subjectDao.getAllSubjectsBySemester(semesterId)
     }
 
+    override fun getTotalCreditBySemester(semesterId: Long): LiveData<Int> {
+        return subjectDao.getTotalCreditBySemester(semesterId)
+    }
+
 }

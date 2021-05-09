@@ -36,6 +36,9 @@ class TimetableViewModel @Inject constructor(
     fun getAllSemesters() =
         semesterRepository.getAllSemesters()
 
+    fun getAllSemestersWithTotalCount() =
+        semesterRepository.getAllSemestersWithTotalCount()
+
     /**
      *  Subject
      */
@@ -52,4 +55,6 @@ class TimetableViewModel @Inject constructor(
     fun getAllSubjectBySemester(semesterId: Long) =
             subjectRepository.getAllSubjectBySemester(semesterId)
 
+    fun getTotalCreditBySemester(semesterId: Long) =
+        subjectRepository.getTotalCreditBySemester(semesterId)
 }
