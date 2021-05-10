@@ -45,18 +45,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <TextView
-                android:id="@+id/txt_start_time"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_start_time"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
                 android:layout_marginStart="16dp"
                 android:text="09:00"
-                android:padding="8dp"
+                android:textSize="14sp"
                 android:textAlignment="textEnd"
+                android:textColor="@color/color_text_primary"
+                android:textAllCaps="false"
+                android:drawableEnd="@drawable/ic_arrow_drop_down"
+                android:drawableTint="@color/color_text_primary"
                 app:layout_constraintStart_toEndOf="@+id/txt_start_time_title"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -73,18 +79,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <TextView
-                android:id="@+id/txt_end_time"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_end_time"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
                 android:layout_marginStart="16dp"
                 android:text="10:30"
-                android:padding="8dp"
+                android:textSize="14sp"
                 android:textAlignment="textEnd"
+                android:textColor="@color/color_text_primary"
+                android:textAllCaps="false"
+                android:drawableEnd="@drawable/ic_arrow_drop_down"
+                android:drawableTint="@color/color_text_primary"
                 app:layout_constraintStart_toEndOf="@+id/txt_end_time_title"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

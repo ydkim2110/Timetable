@@ -6,10 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.Semester
+import com.reachfree.timetable.data.response.CalendarResponse
 import com.reachfree.timetable.databinding.DatePickerBinding
 import com.reachfree.timetable.databinding.FragmentTaskBinding
 import com.reachfree.timetable.extension.beGone
@@ -17,6 +21,7 @@ import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.DividerItemDecoration
+import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
@@ -24,14 +29,20 @@ import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
-class TaskFragment : BaseFragment<FragmentTaskBinding>() {
+class TaskFragment : BaseFragment<FragmentTaskBinding>(),
+    CalendarAdapter.OnItemClickListener {
+
+    private val timetableViewModel: TimetableViewModel by viewModels()
 
     private lateinit var calendarAdapter: CalendarAdapter
+    private lateinit var calendarDayDialog: CalendarDayDialog
 
+    private lateinit var calendarResponse: CalendarResponse
     private val dateList = ArrayList<Date>()
     private var calendar = Calendar.getInstance()
 
     private var itemHeight = 0
+    private var semester: Semester? = null
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -122,22 +133,57 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>() {
     }
 
     private fun updateRecyclerViewAdapter() {
-        calendarAdapter = CalendarAdapter(dateList, calendar, itemHeight)
+        calendarAdapter = CalendarAdapter(calendarResponse, dateList, calendar, itemHeight)
         binding.recyclerCalendar.adapter = calendarAdapter
+
+        calendarAdapter.setOnItemClickListener(this)
     }
 
     private fun subscribeToObserver() {
         binding.recyclerCalendar.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 itemHeight = binding.recyclerCalendar.height
-                calendarAdapter = CalendarAdapter(dateList, calendar, itemHeight)
-                binding.recyclerCalendar.adapter = calendarAdapter
+
+                timetableViewModel.calendarTaskList.observe(viewLifecycleOwner) {
+                    calendarResponse = CalendarResponse(
+                        dateList = dateList,
+                        taskList = it
+                    )
+                    updateRecyclerViewAdapter()
+                }
 
                 if (binding.recyclerCalendar.height != 0) {
                     binding.recyclerCalendar.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
             }
         })
+
+        timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
+            if (semester != null) {
+                this.semester = semester
+                timetableViewModel.getAllSubjectBySemester(semester.id!!).observe(viewLifecycleOwner) { subjects ->
+                    if (!subjects.isNullOrEmpty()) {
+                        try {
+                            val subjectIdArray = LongArray(subjects.size)
+                            for (i in subjects.indices) {
+                                subjectIdArray[i] = subjects[i].id!!
+                            }
+                            timetableViewModel.getAllTaskMediator(subjectIdArray)
+                        } catch (e: IndexOutOfBoundsException) {
+                            Timber.d("ERROR: IndexOutOfBoundsException")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onItemClick(date: Date) {
+        semester?.let {
+            calendarDayDialog = CalendarDayDialog(date, it)
+            calendarDayDialog.isCancelable = true
+            calendarDayDialog.show(childFragmentManager, CalendarDayDialog.TAG)
+        }
     }
 
     companion object {

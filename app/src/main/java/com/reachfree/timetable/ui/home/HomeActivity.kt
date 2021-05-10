@@ -1,6 +1,5 @@
 package com.reachfree.timetable.ui.home
 
-import android.app.ProgressDialog.show
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -14,6 +13,7 @@ import com.reachfree.timetable.databinding.ActivityHomeBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.add.AddSemesterFragment
 import com.reachfree.timetable.ui.add.AddSubjectFragment
+import com.reachfree.timetable.ui.add.AddTaskFragment
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
@@ -21,18 +21,17 @@ import com.reachfree.timetable.ui.profile.ProfileFragment
 import com.reachfree.timetable.ui.profile.ProfileHandlerListener
 import com.reachfree.timetable.ui.profile.SubjectListFragment
 import com.reachfree.timetable.ui.task.TaskFragment
-import com.reachfree.timetable.ui.week.TimetableFragment
+import com.reachfree.timetable.ui.timetable.TimetableFragment
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.weekview.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inflate(it)}),
     BottomNavigationView.OnNavigationItemSelectedListener, ProfileHandlerListener {
 
-    private val selectTypeBottomSheet by lazy { SelectTypeBottomSheet() }
+    private lateinit var selectTypeBottomSheet: SelectTypeBottomSheet
 
     private val timetableFragment = TimetableFragment.newInstance()
     private val taskFragment = TaskFragment.newInstance()
@@ -48,7 +47,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         setupToolbar()
         setupBottomNavigationView()
         setupViewHandler()
-        setupSelectTypeListener()
     }
 
     private fun setupToolbar() {
@@ -77,9 +75,23 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
 
     private fun setupViewHandler() {
         binding.fab.setOnSingleClickListener {
-            selectTypeBottomSheet.isCancelable = true
-            selectTypeBottomSheet.show(supportFragmentManager, SelectTypeBottomSheet.TAG)
+            when (active) {
+                is TimetableFragment -> {
+                    showSelectTypeBottomSheet("timetable")
+                }
+                is TaskFragment -> {
+                    showSelectTypeBottomSheet("task")
+                }
+            }
+
         }
+    }
+
+    private fun showSelectTypeBottomSheet(fragmentName: String) {
+        selectTypeBottomSheet = SelectTypeBottomSheet(fragmentName)
+        selectTypeBottomSheet.isCancelable = true
+        selectTypeBottomSheet.show(supportFragmentManager, SelectTypeBottomSheet.TAG)
+        setupSelectTypeListener()
     }
 
     private fun setupSelectTypeListener() {
@@ -88,16 +100,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             override fun onSelected(type: SelectType) {
                 when (type) {
                     SelectType.SEMESTER -> {
-                        AddSemesterFragment.newInstance().apply { show(supportFragmentManager, null) }
+                        AddSemesterFragment.newInstance()
+                            .apply { show(supportFragmentManager, null) }
                     }
                     SelectType.SUBJECT -> {
-                        AddSubjectFragment.newInstance().apply { show(supportFragmentManager, null) }
+                        AddSubjectFragment.newInstance()
+                            .apply { show(supportFragmentManager, null) }
                     }
                     SelectType.TEST -> {
 
                     }
                     SelectType.TASK -> {
-
+                        AddTaskFragment.newInstance()
+                            .apply { show(supportFragmentManager, null) }
                     }
                 }
             }

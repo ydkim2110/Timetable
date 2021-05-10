@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import com.reachfree.timetable.data.model.Semester
+import com.reachfree.timetable.data.model.Subject
 import timber.log.Timber
 
 class CustomPickerView : ScrollView {
@@ -24,7 +25,7 @@ class CustomPickerView : ScrollView {
 
     private lateinit var views: LinearLayout
 
-    private var items: MutableList<Semester>? = null
+    private var items: MutableList<Any>? = null
 
     var offset = OFF_SET_DEFAULT
     var linesColor: Int = Color.GRAY
@@ -51,7 +52,7 @@ class CustomPickerView : ScrollView {
     internal var paint: Paint? = null
     internal var viewWidth: Int = 0
 
-    val getSelectedItem: Semester
+    val getSelectedItem: Any
         get() = items!![selectedIndex]
 
     val getSelectedIndex: Int
@@ -62,7 +63,7 @@ class CustomPickerView : ScrollView {
     lateinit var onCustomPickerViewListener: OnCustomPickerViewListener
 
     open class OnCustomPickerViewListener {
-        open fun onSelected(selectedIndex: Int, item: Semester) {}
+        open fun onSelected(selectedIndex: Int, item: Any) {}
     }
 
     constructor(context: Context) : super(context) {
@@ -81,11 +82,11 @@ class CustomPickerView : ScrollView {
         init(context)
     }
 
-    private fun getItems(): List<Semester>? {
+    private fun getItems(): List<Any>? {
         return items
     }
 
-    fun setItems(list: List<Semester>) {
+    fun setItems(list: List<Any>) {
         if (null == items) {
             items = ArrayList()
         }
@@ -152,7 +153,14 @@ class CustomPickerView : ScrollView {
         displayItemCount = offset * 2 + 1
 
         for (item in items!!) {
-            views.addView(createView(item.title))
+            when (item) {
+                is Semester -> {
+                    views.addView(createView(item.title))
+                }
+                is Subject -> {
+                    views.addView(createView(item.title))
+                }
+            }
         }
 
         refreshItemView(0)

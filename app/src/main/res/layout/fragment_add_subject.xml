@@ -25,6 +25,16 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="학기"
+                android:textColor="@color/color_text_secondary"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_semester"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -43,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="과목"
+                android:text="과목명"
                 android:textColor="@color/color_text_secondary"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
@@ -53,51 +63,147 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:hint="과목을 입력하세요."
+                android:hint="예)경제학원론"
                 android:textSize="16sp"
                 android:background="@drawable/edit_text_rounded_light_gray"
                 android:importantForAutofill="no"
                 android:inputType="text" />
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="강의실"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                />
-            <EditText
-                android:id="@+id/edt_subject_classroom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:hint="강의실을 입력하세요. (303호)"
-                android:textSize="16sp"
-                android:background="@drawable/edit_text_rounded_light_gray"
-                android:importantForAutofill="no"
-                android:inputType="text" />
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
 
-            <TextView
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="강의실"
+                        android:textColor="@color/color_text_secondary"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        />
+                    <EditText
+                        android:id="@+id/edt_subject_classroom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:hint="예) 303호"
+                        android:textSize="16sp"
+                        android:background="@drawable/edit_text_rounded_light_gray"
+                        android:importantForAutofill="no"
+                        android:inputType="text" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="건물"
+                        android:textColor="@color/color_text_secondary"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        />
+                    <EditText
+                        android:id="@+id/edt_subject_building_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:hint="예) 연희관"
+                        android:textSize="16sp"
+                        android:background="@drawable/edit_text_rounded_light_gray"
+                        android:importantForAutofill="no"
+                        android:inputType="text" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="건물"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                />
-            <EditText
-                android:id="@+id/edt_subject_building_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:hint="건물을 입력하세요. (연희관)"
-                android:textSize="16sp"
-                android:background="@drawable/edit_text_rounded_light_gray"
-                android:importantForAutofill="no"
-                android:inputType="text" />
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="학점"
+                        android:textColor="@color/color_text_secondary"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <it.sephiroth.android.library.numberpicker.NumberPicker
+                        android:id="@+id/number_picker_credit"
+                        style="@style/NumberPicker.Filled"
+                        android:layout_width="100dp"
+                        android:layout_height="35dp"
+                        android:progress="3"
+                        app:picker_max="3"
+                        app:picker_min="1"
+                        app:picker_orientation="vertical"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="색상"
+                        android:textColor="@color/color_text_secondary"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/background_color"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"

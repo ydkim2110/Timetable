@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
     foreignKeys = [ForeignKey(
         entity = Subject::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("subject"),
+        childColumns = arrayOf("subject_id"),
         onDelete = ForeignKey.CASCADE
     )]
 )
@@ -19,5 +19,5 @@ data class Test(
     @ColumnInfo(name = "title") var title: String = "",
     @ColumnInfo(name = "description") var description: String = "",
     @ColumnInfo(name = "date") var date: Long? = 0L,
-    @ColumnInfo(name = "subject") var subject: String = ""
+    @ColumnInfo(name = "subject_id") var subject: Long
 )

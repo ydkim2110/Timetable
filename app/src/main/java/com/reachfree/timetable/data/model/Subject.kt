@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.reachfree.timetable.util.ColorTag
 
 @Entity(
     tableName = "subjects",
@@ -25,6 +26,7 @@ data class Subject(
     @ColumnInfo(name = "book_name") var book_name: String = "",
     @ColumnInfo(name = "credit") var credit: Int = 0,
     @ColumnInfo(name = "type") var type: Int = 0,
+    @ColumnInfo(name = "background_color") var backgroundColor: Int = ColorTag.COLOR_1.resId,
     @ColumnInfo(name = "semester_id") var semesterId: Long
 ) {
 

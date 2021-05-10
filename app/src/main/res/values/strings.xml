@@ -31,5 +31,6 @@
     <string name="friday_letter">금</string>
     <string name="saturday_letter">토</string>
     <string name="sunday_letter">일</string>
-    <string name="toast_exit_message">종료하시려면 뒤로가기 버튼을 한번 더 눌러주세요.</string>
+    <string name="toast_exit_message">종료하시려면 뒤로가기를 한번 더 눌러주세요.</string>
+    <string name="toast_semester_register_complete">저장이 완료되었습니다.&#128512;\n이제 과목을 등록해 보세요.</string>
 </resources>

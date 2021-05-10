@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
@@ -20,9 +21,11 @@ import com.reachfree.timetable.databinding.LayoutStartEndTimeBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.ui.bottomsheet.SelectSemesterBottomSheet
+import com.reachfree.timetable.ui.bottomsheet.SelectType
+import com.reachfree.timetable.util.ColorTag
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
+import org.threeten.bp.LocalTime
 
 @AndroidEntryPoint
 class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
@@ -31,9 +34,10 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
     private lateinit var selectedSemester: Semester
 
-    private val selectSemesterBottomSheet: SelectSemesterBottomSheet by lazy {
-        SelectSemesterBottomSheet()
-    }
+    private lateinit var selectSemesterBottomSheet: SelectSemesterBottomSheet
+
+    private val colorTagDialog: ColorTagDialog by lazy { ColorTagDialog() }
+    private var color: ColorTag = ColorTag.COLOR_1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +57,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
         setupToolbar()
         setupChip()
+        setupColor()
         setupViewHandler()
         subscribeToObserver()
     }
@@ -91,10 +96,25 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         }
     }
 
+    private fun setupColor() {
+        binding.backgroundColor.setBackgroundResource(color.resBg)
+    }
+
     private fun setupViewHandler() {
         binding.btnSemester.setOnSingleClickListener {
+            selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SEMESTER)
             selectSemesterBottomSheet.isCancelable = true
             selectSemesterBottomSheet.show(childFragmentManager, SelectSemesterBottomSheet.TAG)
+
+            selectSemesterBottomSheet.setOnSelectSemesterListener(object : SelectSemesterBottomSheet.SelectSemesterListener {
+                override fun onSemesterSelected(semester: Semester) {
+                    selectedSemester = semester
+                }
+
+                override fun onSubjectSelected(subject: Subject) {
+
+                }
+            })
         }
         binding.deleteSaveBtnLayout.btnSave.setOnSingleClickListener {
             saveSubject()
@@ -105,14 +125,20 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
     }
 
     private fun subscribeToObserver() {
-        selectSemesterBottomSheet.setOnSelectSemesterListener(object : SelectSemesterBottomSheet.SelectSemesterListener {
-            override fun onSelected(semester: Semester) {
-                selectedSemester = semester
+        binding.backgroundColor.setOnSingleClickListener {
+            colorTagDialog.show(requireActivity().supportFragmentManager, ColorTagDialog.TAG)
+        }
+
+        colorTagDialog.setColorTagSelected(object : ColorTagDialog.OnColorTagSelected {
+            override fun onSelectedItem(colorTag: ColorTag) {
+                color = colorTag
+                binding.backgroundColor.setBackgroundResource(color.resBg)
             }
         })
 
         timetableViewModel.getAllSemesters().observe(this) { semesters ->
             if (!semesters.isNullOrEmpty()) {
+                //TODO: 날짜 비교하여 해당 학기로 세팅
                 selectedSemester = semesters[0]
                 binding.btnSemester.text = selectedSemester.title
             }
@@ -123,6 +149,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         val subjectTitle = binding.edtSubjectTitle.text.toString().trim()
         val subjectClassroom = binding.edtSubjectClassroom.text.toString().trim()
         val subjectBuildingName = binding.edtSubjectBuildingName.text.toString().trim()
+        val subjectCredit = binding.numberPickerCredit.progress
 
         if (subjectClassroom.isEmpty()) {
             return
@@ -133,12 +160,28 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         }
 
         val selectedDays = mutableListOf<Subject.Days>()
+
         //TODO: 시작시간 종료시간 차이 체크
         for (i in 0 until binding.layoutTime.childCount) {
             val child = binding.layoutTime.getChildAt(i)
             val day = child.findViewById<TextView>(R.id.txt_selected_day)
-            val startTime = child.findViewById<TextView>(R.id.txt_start_time)
-            val endTime = child.findViewById<TextView>(R.id.txt_end_time)
+            val startTime = child.findViewById<TextView>(R.id.btn_start_time)
+            val endTime = child.findViewById<TextView>(R.id.btn_end_time)
+
+            val startHour = startTime.text.split(":")[0].toInt()
+            val startMinute = startTime.text.split(":")[1].toInt()
+            val endHour = endTime.text.split(":")[0].toInt()
+            val endMinute = endTime.text.split(":")[1].toInt()
+
+            val start = LocalTime.of(startHour, startMinute)
+            val end = LocalTime.of(endHour, endMinute)
+
+            if (start.isAfter(end)) {
+                Toast.makeText(requireActivity(), "시작 또는 종료시간을 확인해주세요.",
+                    Toast.LENGTH_SHORT).show()
+                return
+            }
+
             val days = Subject.Days(
                 day = convertDayNameToInt(day.text.toString()),
                 startHour = startTime.text.split(":")[0].toInt(),
@@ -155,6 +198,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             days = selectedDays,
             classroom = subjectClassroom,
             buildingName = subjectBuildingName,
+            credit = subjectCredit,
+            backgroundColor = color.resId,
             semesterId = selectedSemester.id!!
         )
 
@@ -166,14 +211,14 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
     private fun createLayout(chipName: String) {
         val layoutBinding = LayoutStartEndTimeBinding.inflate(LayoutInflater.from(requireContext()), null, false)
         layoutBinding.txtSelectedDay.text = chipName
-        layoutBinding.txtStartTime.setOnSingleClickListener {
+        layoutBinding.btnStartTime.setOnSingleClickListener {
             openTimePicker { h, min ->
-                layoutBinding.txtStartTime.text = updateHourAndMinute(h, min)
+                layoutBinding.btnStartTime.text = updateHourAndMinute(h, min)
             }
         }
-        layoutBinding.txtEndTime.setOnSingleClickListener {
+        layoutBinding.btnEndTime.setOnSingleClickListener {
             openTimePicker { h, min ->
-                layoutBinding.txtEndTime.text = updateHourAndMinute(h, min)
+                layoutBinding.btnEndTime.text = updateHourAndMinute(h, min)
             }
         }
         binding.layoutTime.addView(layoutBinding.root)

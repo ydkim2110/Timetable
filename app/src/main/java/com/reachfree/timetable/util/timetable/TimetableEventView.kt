@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.drawable.PaintDrawable
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -28,7 +27,7 @@ class TimetableEventView(
     private val classroomPaint: Paint by lazy { Paint().apply { isAntiAlias = true } }
 
     private val subjectName: String by lazy { if (config.useShortNames) event.shortTitle else event.title }
-    private val location: String by lazy { event.location ?: "" }
+    private val location: String by lazy { event.classroom ?: "" }
 
     private val titleBounds: Rect = Rect()
 
@@ -44,10 +43,12 @@ class TimetableEventView(
         val padding = this.context.dipToPixelI(2f)
         setPadding(padding, padding, padding, padding)
 
-        background = PaintDrawable().apply {
-            paint.color = event.backgroundColor
-            setCornerRadius(CORNER_RADIUS_PX)
-        }
+        setBackgroundResource(event.backgroundColor)
+
+//        background = PaintDrawable().apply {
+//            paint.color = event.backgroundColor
+//            setCornerRadius(CORNER_RADIUS_PX)
+//        }
 
         /** Calculate weights above & below. */
         weightStartTime = if (config.showTimeStart) 1 else 0
@@ -65,6 +66,8 @@ class TimetableEventView(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        Timber.d("DEBUG: width $width")
+
         // 과목
         val maxTextSize = TextHelper.fitText(
                 subjectName,

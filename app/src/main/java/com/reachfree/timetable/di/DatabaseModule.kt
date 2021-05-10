@@ -7,10 +7,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.reachfree.timetable.data.LocalDatabase
 import com.reachfree.timetable.data.dao.SemesterDao
 import com.reachfree.timetable.data.dao.SubjectDao
-import com.reachfree.timetable.data.repository.SemesterRepository
-import com.reachfree.timetable.data.repository.SemesterRepositoryImpl
-import com.reachfree.timetable.data.repository.SubjectRepository
-import com.reachfree.timetable.data.repository.SubjectRepositoryImpl
+import com.reachfree.timetable.data.dao.TaskDao
+import com.reachfree.timetable.data.dao.TestDao
+import com.reachfree.timetable.data.repository.*
 import com.reachfree.timetable.util.DispatcherProvider
 import com.reachfree.timetable.util.LOCAL_DATABASE_NAME
 import com.reachfree.timetable.util.SessionManager
@@ -61,6 +60,14 @@ class DatabaseModule {
 
     @Singleton
     @Provides
+    fun provideTestDao(database: LocalDatabase) = database.testDao()
+
+    @Singleton
+    @Provides
+    fun provideTaskDao(database: LocalDatabase) = database.taskDao()
+
+    @Singleton
+    @Provides
     fun provideSemesterRepository(semesterDao: SemesterDao): SemesterRepository =
         SemesterRepositoryImpl(semesterDao)
 
@@ -68,6 +75,16 @@ class DatabaseModule {
     @Provides
     fun provideSubjectRepository(subjectDao: SubjectDao): SubjectRepository =
         SubjectRepositoryImpl(subjectDao)
+
+    @Singleton
+    @Provides
+    fun provideTestRepository(testDao: TestDao): TestRepository =
+        TestRepositoryImpl(testDao)
+
+    @Singleton
+    @Provides
+    fun provideTaskRepository(taskDao: TaskDao): TaskRepository =
+        TaskRepositoryImpl(taskDao)
 
     @Singleton
     @Provides

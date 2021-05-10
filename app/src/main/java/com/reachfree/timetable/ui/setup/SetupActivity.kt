@@ -73,7 +73,8 @@ class SetupActivity : BaseActivity<ActivitySetupBinding>({ ActivitySetupBinding.
 
         timetableViewModel.insertSemester(semester)
 
-        Toast.makeText(this, "저장이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, resources.getString(R.string.toast_semester_register_complete),
+            Toast.LENGTH_SHORT).show()
 
         runDelayed(TIME_DELAY) {
             sessionManager.setRegisterSemester(true)

@@ -1,10 +1,7 @@
 package com.reachfree.timetable.util
 
 import android.annotation.SuppressLint
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.ZoneId
+import org.threeten.bp.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,6 +14,11 @@ object DateUtils {
     val yearMonthDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.getDefault())
     val yearDateFormat = SimpleDateFormat("yyyy년", Locale.getDefault())
     val monthDateFormat = SimpleDateFormat("MM월", Locale.getDefault())
+    val dayDateFormat = SimpleDateFormat("dd일", Locale.getDefault())
+
+    fun convertDateToLocalDate(date: Date): LocalDate {
+        return Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()
+    }
 
     fun calculateStartOfDay(localDate: LocalDate): LocalDateTime {
         return LocalDateTime.of(localDate, LocalTime.MIDNIGHT)
@@ -25,7 +27,6 @@ object DateUtils {
     fun calculateEndOfDay(localDate: LocalDate): LocalDateTime {
         return LocalDateTime.of(localDate, LocalTime.MAX)
     }
-
 
     fun calculateDay(day: Int): LocalDate {
         val cal = Calendar.getInstance()
@@ -56,5 +57,17 @@ object DateUtils {
         val month = cal.get(Calendar.MONTH) + 1
         val calDay = cal.get(Calendar.DAY_OF_MONTH)
         return LocalDate.of(year, month, calDay)
+    }
+
+    fun compareStartAndEndTime(startTime: String, endTime: String): Boolean {
+        val startHour = startTime.split(":")[0].toInt()
+        val startMinute = startTime.split(":")[1].toInt()
+        val endHour = endTime.split(":")[0].toInt()
+        val endMinute = endTime.split(":")[1].toInt()
+
+        val start = LocalTime.of(startHour, startMinute)
+        val end = LocalTime.of(endHour, endMinute)
+
+        return start.isAfter(end)
     }
 }

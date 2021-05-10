@@ -8,9 +8,13 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.reachfree.timetable.R
 import com.reachfree.timetable.databinding.SelectTypeBottomSheetBinding
+import com.reachfree.timetable.extension.beGone
+import com.reachfree.timetable.extension.beVisible
 import com.reachfree.timetable.extension.setOnSingleClickListener
 
-class SelectTypeBottomSheet : BottomSheetDialogFragment() {
+class SelectTypeBottomSheet(
+    private val fragmentName: String
+) : BottomSheetDialogFragment() {
 
     private var _binding: SelectTypeBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -41,7 +45,28 @@ class SelectTypeBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupView()
         setupViewHandler()
+    }
+
+    private fun setupView() {
+        when (fragmentName) {
+            "timetable" -> {
+                binding.layoutSemester.beVisible()
+                binding.layoutSubject.beVisible()
+                binding.layoutTest.beGone()
+                binding.layoutTask.beGone()
+            }
+            "task" -> {
+                binding.layoutSemester.beGone()
+                binding.layoutSubject.beGone()
+                binding.layoutTest.beVisible()
+                binding.layoutTask.beVisible()
+            }
+            else -> {
+
+            }
+        }
     }
 
     private fun setupViewHandler() {
@@ -51,6 +76,14 @@ class SelectTypeBottomSheet : BottomSheetDialogFragment() {
         }
         binding.layoutSubject.setOnSingleClickListener {
             selectTypeListener.onSelected(SelectType.SUBJECT)
+            dismiss()
+        }
+        binding.layoutTest.setOnSingleClickListener {
+            selectTypeListener.onSelected(SelectType.TEST)
+            dismiss()
+        }
+        binding.layoutTask.setOnSingleClickListener {
+            selectTypeListener.onSelected(SelectType.TASK)
             dismiss()
         }
         binding.imgCloseIcon.setOnSingleClickListener {

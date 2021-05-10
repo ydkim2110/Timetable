@@ -1,22 +1,45 @@
 package com.reachfree.timetable.ui.task
 
+import android.annotation.SuppressLint
+import android.text.TextUtils
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.reachfree.timetable.R
+import com.reachfree.timetable.data.response.CalendarResponse
 import com.reachfree.timetable.databinding.ItemCalendarBinding
+import com.reachfree.timetable.extension.setOnSingleClickListener
+import timber.log.Timber
 import java.util.*
 
 class CalendarAdapter(
+    private val calendarResponse: CalendarResponse,
     private val dateList: List<Date>,
     private val calendar: Calendar,
     private val itemHeight: Int
 ) : RecyclerView.Adapter<CalendarAdapter.MyViewHolder>() {
 
+    interface OnItemClickListener {
+        fun onItemClick(date: Date)
+    }
+
+    private var onItemClickListener: OnItemClickListener? = null
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.onItemClickListener = listener
+    }
+
     inner class MyViewHolder(
         private val binding: ItemCalendarBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("RtlHardcoded")
         fun bind(date: Date) {
             val dateCalendar = Calendar.getInstance()
             dateCalendar.time = date
@@ -45,7 +68,55 @@ class CalendarAdapter(
                     txtCalendarDay.setTextColor(ContextCompat.getColor(root.context, android.R.color.darker_gray))
                 }
 
+                if (displayYear == todayYear && displayMonth == todayMonth && displayDay == todayDay) {
+                    txtCalendarDay.setBackgroundResource(R.drawable.bg_calendar_day)
+                    txtCalendarDay.setTextColor(ContextCompat.getColor(root.context, android.R.color.white))
+                }
+
+                val eventCalendar = Calendar.getInstance()
+
+                if (!calendarResponse.taskList.isNullOrEmpty()) {
+                    val view = View.inflate(root.context, R.layout.layout_task_list, null)
+                    val container = view.findViewById<LinearLayout>(R.id.task_text_container)
+                    container.gravity = Gravity.CENTER
+
+                    for (i in calendarResponse.taskList!!.indices) {
+                        eventCalendar.time = Date(calendarResponse.taskList!![i].date!!)
+                        if (dayNo == eventCalendar.get(Calendar.DAY_OF_MONTH)
+                            && displayMonth == eventCalendar.get(Calendar.MONTH) + 1
+                            && displayYear == eventCalendar.get(Calendar.YEAR)) {
+                            val item = TextView(root.context)
+
+                            item.run {
+                                id = calendarResponse.taskList!![i].id!!.toInt()
+                                text = calendarResponse.taskList!![i].title
+                                textSize = 10f
+                                gravity = Gravity.LEFT
+                                maxLines = 1
+                                ellipsize = TextUtils.TruncateAt.END
+                                setBackgroundResource(calendarResponse.taskList!![i].backgroundColor)
+                                val params = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                ).apply {
+                                    setMargins(0, 0, 0, 8)
+                                }
+
+                                layoutParams = params
+                            }
+
+                            container.addView(item)
+                        }
+                    }
+
+                    layoutItemContainer.addView(container)
+                }
+
                 txtCalendarDay.text = dayNo.toString()
+
+                root.setOnSingleClickListener {
+                    onItemClickListener?.onItemClick(date)
+                }
             }
         }
     }
@@ -59,7 +130,7 @@ class CalendarAdapter(
     }
 
     override fun getItemCount(): Int {
-        return dateList.size
+        return calendarResponse.dateList.size
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

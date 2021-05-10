@@ -12,13 +12,16 @@ sealed class TimetableEvent {
     abstract val date: LocalDate
     abstract val title: String
     abstract val shortTitle: String
+    abstract val credit: Int
 
     data class Single(
         override val id: Long,
         override val date: LocalDate,
         override val title: String,
         override val shortTitle: String,
-        val location: String? = null,
+        override val credit: Int,
+        val classroom: String? = null,
+        val building: String? = null,
         val subTitle: String? = null,
         val startTime: LocalTime,
         val endTime: LocalTime,
@@ -35,7 +38,8 @@ sealed class TimetableEvent {
         override val id: Long,
         override val date: LocalDate,
         override val title: String,
-        override val shortTitle: String
+        override val shortTitle: String,
+        override val credit: Int
     ) : TimetableEvent()
 
     data class MultiDay(
@@ -43,6 +47,7 @@ sealed class TimetableEvent {
         override val date: LocalDate,
         override val title: String,
         override val shortTitle: String,
+        override val credit: Int,
         val lastDate: LocalDate
     ) : TimetableEvent()
 }

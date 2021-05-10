@@ -30,6 +30,6 @@ interface SemesterDao {
     """)
     fun getAllSemestersWithTotalCount(): LiveData<List<SemesterTotalCreditResponse>>
 
-    @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date")
+    @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
     fun getSemester(date: Long): LiveData<Semester>
 }

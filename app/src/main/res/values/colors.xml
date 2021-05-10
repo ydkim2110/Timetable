@@ -52,4 +52,41 @@
         <item>#78cb87</item>
         <item>#d397ed</item>
     </string-array>
+
+    <color name="color1">#f08676</color>
+    <color name="color2">#ecc369</color>
+    <color name="color3">#a7ca70</color>
+    <color name="color4">#7dd1c1</color>
+    <color name="color5">#7aa5e9</color>
+    <color name="color6">#fbaa68</color>
+    <color name="color7">#9f86e1</color>
+    <color name="color8">#78cb87</color>
+    <color name="color9">#d397ed</color>
+    <color name="color10">#909fa6</color>
+    <color name="color11">#eeb8b8</color>
+    <color name="color12">#eadb80</color>
+    <color name="color13">#cb8a90</color>
+    <color name="color14">#a3b6c5</color>
+    <color name="color15">#cfdd8e</color>
+
+    <color name="green">#3ddc84</color>
+    <color name="greenDark">#00a956</color>
+    <color name="greenLight">#7affb4</color>
+    <color name="orange">#F86734</color>
+    <color name="orange500">#FF9800</color>
+    <color name="deep_orange400">#FF7043</color>
+    <color name="blue">#4285f4</color>
+    <color name="blue500">#2196F3</color>
+    <color name="blueLight">#80b4ff</color>
+    <color name="blueDark">#0059c1</color>
+    <color name="navy">#073042</color>
+    <color name="red">#D32F2F</color>
+    <color name="amber">#ffc107</color>
+    <color name="yellow">#ffeb3b</color>
+    <color name="teal">#009688</color>
+    <color name="indigo">#3f51b5</color>
+    <color name="pink">#d81b60</color>
+    <color name="lime">#cddc39</color>
+    <color name="brown">#795548</color>
+    <color name="color_calendar_today">#FFD700</color>
 </resources>
