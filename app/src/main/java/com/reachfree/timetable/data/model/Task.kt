@@ -19,5 +19,11 @@ data class Task(
     @ColumnInfo(name = "title") var title: String = "",
     @ColumnInfo(name = "description") var description: String = "",
     @ColumnInfo(name = "date") var date: Long? = 0L,
+    @ColumnInfo(name = "type") var type: Int = TaskType.TASK.ordinal,
     @ColumnInfo(name = "subject_id") var subjectId: Long
 )
+
+enum class TaskType {
+    TASK,
+    TEST
+}

@@ -47,10 +47,10 @@ class SetupActivity : BaseActivity<ActivitySetupBinding>({ ActivitySetupBinding.
 
     private fun setupViewHandler() {
         binding.btnSemesterStartDate.setOnSingleClickListener {
-            showDatePicker(START_TIME)
+            showDatePicker(selectedStartDate.time.time, START_TIME)
         }
         binding.btnSemesterEndDate.setOnSingleClickListener {
-            showDatePicker(END_TIME)
+            showDatePicker(selectedEndDate.time.time, END_TIME)
         }
         binding.btnSave.setOnSingleClickListener {
             saveSemester()
@@ -84,8 +84,8 @@ class SetupActivity : BaseActivity<ActivitySetupBinding>({ ActivitySetupBinding.
 
     }
 
-    private fun showDatePicker(typeName: String) {
-        DatePickerFragment.newInstance(typeName).apply {
+    private fun showDatePicker(date: Long, typeName: String) {
+        DatePickerFragment.newInstance(date, typeName).apply {
             dateSelected = { year, month, dayOfMonth, type -> dateSet(year, month, dayOfMonth, type) }
         }.show(supportFragmentManager, DatePickerFragment.TAG)
     }

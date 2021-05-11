@@ -18,11 +18,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
-        private val semesterRepository: SemesterRepository,
-        private val subjectRepository: SubjectRepository,
-        private val testRepository: TestRepository,
-        private val taskRepository: TaskRepository,
-        private val dispatchers: DispatcherProvider
+    private val semesterRepository: SemesterRepository,
+    private val subjectRepository: SubjectRepository,
+    private val testRepository: TestRepository,
+    private val taskRepository: TaskRepository,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     val thisSemester: LiveData<Semester> = semesterRepository.getSemester(Date().time)
@@ -31,14 +31,14 @@ class TimetableViewModel @Inject constructor(
      *  Semester
      */
     fun insertSemester(semester: Semester) =
-            viewModelScope.launch(dispatchers.io) {
-                semesterRepository.insertSemester(semester)
-            }
+        viewModelScope.launch(dispatchers.io) {
+            semesterRepository.insertSemester(semester)
+        }
 
     fun deleteSemesters() =
-            viewModelScope.launch(dispatchers.io) {
-                semesterRepository.deleteAllSemesters()
-            }
+        viewModelScope.launch(dispatchers.io) {
+            semesterRepository.deleteAllSemesters()
+        }
 
     fun getAllSemesters() =
         semesterRepository.getAllSemesters()
@@ -47,22 +47,27 @@ class TimetableViewModel @Inject constructor(
         semesterRepository.getAllSemestersWithTotalCount()
 
 
-
     /**
      *  Subject
      */
     fun insertSubject(subject: Subject) =
-            viewModelScope.launch(dispatchers.io) {
-                subjectRepository.insertSubject(subject)
-            }
+        viewModelScope.launch(dispatchers.io) {
+            subjectRepository.insertSubject(subject)
+        }
 
     fun deleteSubjects() =
-            viewModelScope.launch(dispatchers.io) {
-                subjectRepository.deleteAllSubjects()
-            }
+        viewModelScope.launch(dispatchers.io) {
+            subjectRepository.deleteAllSubjects()
+        }
+
+    fun getAllSubjects() =
+        subjectRepository.getAllSubjects()
+
+    fun getTotalCreditByType() =
+        subjectRepository.getTotalCreditByType()
 
     fun getAllSubjectBySemester(semesterId: Long) =
-            subjectRepository.getAllSubjectBySemester(semesterId)
+        subjectRepository.getAllSubjectBySemester(semesterId)
 
     fun getTotalCreditBySemester(semesterId: Long) =
         subjectRepository.getTotalCreditBySemester(semesterId)
@@ -71,7 +76,6 @@ class TimetableViewModel @Inject constructor(
     /**
      *  Test
      */
-
 
 
     /**
@@ -104,8 +108,8 @@ class TimetableViewModel @Inject constructor(
         }
     }
 
-    fun getAllTaskMediator(subjectsId: LongArray) {
-        val response = taskRepository.getAllTaskBySubject(subjectsId)
+    fun getAllTaskMediator(subjectIds: LongArray) {
+        val response = taskRepository.getAllTaskBySubject(subjectIds)
         calendarTaskList.addSource(response) { result ->
             result?.let { calendarTaskList.value = it }
         }

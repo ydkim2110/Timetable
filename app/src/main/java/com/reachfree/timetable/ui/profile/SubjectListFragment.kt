@@ -9,12 +9,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.R
-import com.reachfree.timetable.data.response.SemesterTotalCreditResponse
-import com.reachfree.timetable.databinding.FragmentAddSemesterBinding
 import com.reachfree.timetable.databinding.FragmentSubjectListBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseDialogFragment
-import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber

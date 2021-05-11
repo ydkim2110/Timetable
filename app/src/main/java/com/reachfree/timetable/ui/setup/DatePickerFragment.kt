@@ -17,16 +17,19 @@ class DatePickerFragment: DialogFragment(),
 
     var dateSelected: ((Int, Int, Int, String) -> Unit)? = null
 
+    private var passedDate: Long = 0L
     private lateinit var type: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        passedDate = requireArguments().getLong(PASSED_DATE, Date().time)
         type = requireArguments().getString(TYPE, SetupActivity.START_TIME)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val cal = Calendar.getInstance()
+        cal.timeInMillis = passedDate
         val year = cal.get(Calendar.YEAR)
         val month = cal.get(Calendar.MONTH)
         val dayOfMonth = cal.get(Calendar.DAY_OF_MONTH)
@@ -48,10 +51,11 @@ class DatePickerFragment: DialogFragment(),
 
     companion object {
         const val TAG = "DatePickerFragment"
+        private const val PASSED_DATE = "passed_date"
         private const val TYPE = "type"
 
-        fun newInstance(type: String) = DatePickerFragment().apply {
-            arguments = bundleOf(TYPE to type)
+        fun newInstance(date: Long, type: String) = DatePickerFragment().apply {
+            arguments = bundleOf(PASSED_DATE to date, TYPE to type)
         }
     }
 

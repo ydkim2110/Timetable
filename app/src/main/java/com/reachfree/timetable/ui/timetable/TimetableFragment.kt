@@ -1,6 +1,7 @@
 package com.reachfree.timetable.ui.timetable
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -12,11 +13,13 @@ import androidx.fragment.app.viewModels
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.databinding.FragmentWeekBinding
 import com.reachfree.timetable.ui.base.BaseFragment
+import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.timetable.TimetableData
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.util.timetable.TimetableEvent
 import com.reachfree.timetable.util.timetable.TimetableEventConfig
+import com.reachfree.timetable.util.timetable.TimetableEventView
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
 
@@ -26,6 +29,20 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
     private val timetableViewModel: TimetableViewModel by viewModels()
 
     private lateinit var timetableDetailDialog: TimetableDetailDialog
+
+    interface TimetableFragmentListener {
+        fun onEditButtonClicked(timetableEventView: TimetableEventView)
+    }
+
+    private lateinit var timetableFragmentListener: TimetableFragmentListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (activity is HomeActivity) {
+            timetableFragmentListener = activity as HomeActivity
+        }
+    }
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -49,6 +66,12 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
             timetableDetailDialog = TimetableDetailDialog(it)
             timetableDetailDialog.isCancelable = true
             timetableDetailDialog.show(childFragmentManager, TimetableDetailDialog.TAG)
+
+            timetableDetailDialog.setOnSelectTypeListener(object : TimetableDetailDialog.TimetableDetailDialogListener {
+                override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
+                    timetableFragmentListener.onEditButtonClicked(timetableEventView)
+                }
+            })
         }
 
         binding.weekView.setOnTouchListener { v, event ->

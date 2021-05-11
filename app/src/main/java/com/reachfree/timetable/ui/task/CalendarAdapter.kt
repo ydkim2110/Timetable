@@ -21,7 +21,6 @@ import java.util.*
 
 class CalendarAdapter(
     private val calendarResponse: CalendarResponse,
-    private val dateList: List<Date>,
     private val calendar: Calendar,
     private val itemHeight: Int
 ) : RecyclerView.Adapter<CalendarAdapter.MyViewHolder>() {
@@ -134,7 +133,7 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(dateList[position])
+        holder.bind(calendarResponse.dateList[position])
     }
 
 }

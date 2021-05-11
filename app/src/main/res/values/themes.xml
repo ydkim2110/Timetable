@@ -97,4 +97,12 @@
         <item name="android:textColor">@android:color/holo_blue_dark</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <!-- ToggleButton -->
+    <style name="SubjectTypeToggleButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/toggle_text_color_state_list</item>
+        <item name="strokeColor">@color/orange</item>
+        <item name="android:minHeight">42dp</item>
+        <item name="backgroundTint">@color/toggle_background_state_list</item>
+    </style>
 </resources>

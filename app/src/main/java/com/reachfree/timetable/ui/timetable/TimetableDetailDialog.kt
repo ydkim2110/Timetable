@@ -13,8 +13,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.data.model.Semester
+import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.databinding.CalendarDayDialogBinding
 import com.reachfree.timetable.databinding.TimetableDetailDialogBinding
+import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.extension.toMillis
 import com.reachfree.timetable.util.ColorTag
 import com.reachfree.timetable.util.DateUtils
@@ -34,11 +36,15 @@ class TimetableDetailDialog(
     private var _binding: TimetableDetailDialogBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    interface TimetableDetailDialogListener {
+        fun onEditButtonClicked(timetableEventView: TimetableEventView)
     }
 
-    private var color: ColorTag = ColorTag.COLOR_1
+    private lateinit var timetableDetailDialogListener: TimetableDetailDialogListener
+
+    fun setOnSelectTypeListener(timetableDetailDialogListener: TimetableDetailDialogListener) {
+        this.timetableDetailDialogListener = timetableDetailDialogListener
+    }
 
     override fun onStart() {
         super.onStart()
@@ -64,6 +70,7 @@ class TimetableDetailDialog(
         super.onViewCreated(view, savedInstanceState)
 
         setupView()
+        setupViewHandler()
     }
 
     private fun setupView() {
@@ -80,7 +87,12 @@ class TimetableDetailDialog(
                 break
             }
         }
+    }
 
+    private fun setupViewHandler() {
+        binding.btnEdit.setOnSingleClickListener {
+            timetableDetailDialogListener.onEditButtonClicked(timetableEventView)
+        }
     }
 
     override fun onDestroyView() {

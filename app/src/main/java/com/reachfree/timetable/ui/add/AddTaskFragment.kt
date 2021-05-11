@@ -1,15 +1,18 @@
 package com.reachfree.timetable.ui.add
 
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.reachfree.timetable.R
-import com.reachfree.timetable.data.model.Semester
-import com.reachfree.timetable.data.model.Subject
-import com.reachfree.timetable.data.model.Task
+import com.reachfree.timetable.data.model.*
 import com.reachfree.timetable.databinding.FragmentAddTaskBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseDialogFragment
@@ -33,12 +36,15 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
     private lateinit var selectSemesterBottomSheet: SelectSemesterBottomSheet
 
     private var selectedSemesterId: Long? = null
+    private var selectedSubjectId: Long? = null
     private var selectedDate = Calendar.getInstance()
+    private var selectedTaskType = TaskType.TASK.ordinal
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
+
+        selectedDate.time = Date(requireArguments().getLong(DATE, Date().time))
     }
 
     override fun getDialogFragmentBinding(
@@ -51,10 +57,21 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupCalendar()
         setupToolbar()
         setupView()
         setupViewHandler()
         subscribeToObserver()
+    }
+
+    private fun setupCalendar() {
+        val startHour = binding.btnTime.text.split(":")[0].toInt()
+        val startMinute = binding.btnTime.text.split(":")[1].toInt()
+
+        selectedDate.set(Calendar.HOUR_OF_DAY, startHour)
+        selectedDate.set(Calendar.MINUTE, startMinute)
+        selectedDate.set(Calendar.SECOND, 0)
+        selectedDate.set(Calendar.MILLISECOND, 0)
     }
 
     private fun setupToolbar() {
@@ -65,6 +82,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
     }
 
     private fun setupView() {
+        binding.btnTaskTypeToggleGroup.check(binding.btnTask.id)
         binding.btnDate.text = DateUtils.defaultDateFormat.format(selectedDate.time.time)
     }
 
@@ -85,9 +103,28 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
                 setupBottomSheetListener()
             }
         }
+        binding.btnTaskTypeToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (group.checkedButtonId == -1) group.check(checkedId)
 
+            if (isChecked) {
+                when (binding.btnTaskTypeToggleGroup.checkedButtonId) {
+                    binding.btnTask.id -> selectedTaskType = TaskType.TASK.ordinal
+                    binding.btnTest.id -> selectedTaskType = TaskType.TEST.ordinal
+                }
+            }
+        }
         binding.btnDate.setOnSingleClickListener {
             showDatePicker(SetupActivity.START_TIME)
+        }
+
+        binding.btnTime.setOnSingleClickListener {
+            openTimePicker { h, min ->
+                binding.btnTime.text = updateHourAndMinute(h, min)
+                selectedDate.set(Calendar.HOUR_OF_DAY, h)
+                selectedDate.set(Calendar.MINUTE, min)
+                selectedDate.set(Calendar.SECOND, 0)
+                selectedDate.set(Calendar.MILLISECOND, 0)
+            }
         }
 
         binding.deleteSaveBtnLayout.btnSave.setOnSingleClickListener {
@@ -100,22 +137,25 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
         val taskDescription = binding.edtTaskDescription.text.toString().trim()
 
         selectedSemesterId?.let {
-            val task = Task(
-                id = null,
-                title = taskTitle,
-                description = taskDescription,
-                date = selectedDate.time.time,
-                subjectId = it
-            )
+            selectedSubjectId?.let { id ->
+                val task = Task(
+                    id = null,
+                    title = taskTitle,
+                    description = taskDescription,
+                    date = selectedDate.time.time,
+                    type = selectedTaskType,
+                    subjectId = id
+                )
 
-            timetableViewModel.insertTask(task)
+                timetableViewModel.insertTask(task)
+
+                dismiss()
+            }
         } ?: return
-
-
     }
 
     private fun showDatePicker(typeName: String) {
-        DatePickerFragment.newInstance(typeName).apply {
+        DatePickerFragment.newInstance(selectedDate.time.time, typeName).apply {
             dateSelected = { year, month, dayOfMonth, type -> dateSet(year, month, dayOfMonth, type) }
         }.show(childFragmentManager, DatePickerFragment.TAG)
     }
@@ -143,6 +183,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
             override fun onSubjectSelected(subject: Subject) {
                 selectedSubject = subject
+                selectedSubjectId = selectedSubject.id
                 binding.btnSubject.text = selectedSubject.title
             }
         })
@@ -174,6 +215,8 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
         selectedSemesterId?.let {
             timetableViewModel.getAllSubjectBySemester(it).observe(viewLifecycleOwner) { subjects ->
                 if (!subjects.isNullOrEmpty()) {
+                    selectedSubject = subjects[0]
+                    selectedSubjectId = selectedSubject.id
                     binding.btnSubject.text = subjects[0].title
                 } else {
                     binding.btnSubject.text = "과목명"
@@ -182,8 +225,45 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
         }
     }
 
+    private fun updateHourAndMinute(h: Int, min: Int): String {
+        return "${if (h < 10) "0$h" else h}:${if (min < 10) "0$min" else min}"
+    }
+
+    private fun openTimePicker(action: (Int, Int) -> Unit) {
+        val isSystem24Hour = DateFormat.is24HourFormat(requireContext())
+        val clickFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(clickFormat)
+            .setHour(9)
+            .setMinute(0)
+            .setTitleText("시간을 입력하세요.")
+            .build()
+        picker.show(childFragmentManager, TIME_PICKER_TAG)
+
+        picker.addOnPositiveButtonClickListener {
+            val h = picker.hour
+            val min = picker.minute
+            action(h, min)
+        }
+        picker.addOnNegativeButtonClickListener {
+
+        }
+        picker.addOnCancelListener {
+
+        }
+        picker.addOnDismissListener {
+
+        }
+    }
+
     companion object {
-        fun newInstance() = AddTaskFragment()
+        private const val TIME_PICKER_TAG = "add_task_fragment_time_picker_tag"
+        private const val DATE = "date"
+
+        fun newInstance(date: Long) = AddTaskFragment().apply {
+            arguments = bundleOf(DATE to date)
+        }
     }
 
 }

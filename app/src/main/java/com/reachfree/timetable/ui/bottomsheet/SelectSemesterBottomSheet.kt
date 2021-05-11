@@ -29,7 +29,8 @@ class SelectSemesterBottomSheet(
 
     private lateinit var selectedSemesterItem: Semester
     private lateinit var selectedSubjectItem: Subject
-    private var selectedItemPosition = 0
+    private var selectedSemesterPosition = 0
+    private var selectedSubjectPosition = 0
 
     interface SelectSemesterListener {
         fun onSemesterSelected(semester: Semester)
@@ -113,11 +114,11 @@ class SelectSemesterBottomSheet(
         when (binding.pickerView.getSelectedItem) {
             is Semester -> {
                 selectedSemesterItem = binding.pickerView.getSelectedItem as Semester
-                selectedItemPosition = binding.pickerView.getSelectedIndex
+                selectedSemesterPosition = binding.pickerView.getSelectedIndex
             }
             is Subject -> {
                 selectedSubjectItem = binding.pickerView.getSelectedItem as Subject
-                selectedItemPosition = binding.pickerView.getSelectedIndex
+                selectedSubjectPosition = binding.pickerView.getSelectedIndex
             }
         }
     }
@@ -154,11 +155,11 @@ class SelectSemesterBottomSheet(
                 when (item) {
                     is Semester -> {
                         selectedSemesterItem = item
-                        selectedItemPosition = selectedIndex
+                        selectedSemesterPosition = selectedIndex
                     }
                     is Subject -> {
                         selectedSubjectItem = item
-                        selectedItemPosition = selectedIndex
+                        selectedSubjectPosition = selectedIndex
                     }
                 }
             }

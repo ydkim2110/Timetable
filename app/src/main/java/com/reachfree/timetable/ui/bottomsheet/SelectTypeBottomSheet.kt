@@ -12,9 +12,7 @@ import com.reachfree.timetable.extension.beGone
 import com.reachfree.timetable.extension.beVisible
 import com.reachfree.timetable.extension.setOnSingleClickListener
 
-class SelectTypeBottomSheet(
-    private val fragmentName: String
-) : BottomSheetDialogFragment() {
+class SelectTypeBottomSheet() : BottomSheetDialogFragment() {
 
     private var _binding: SelectTypeBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -45,28 +43,7 @@ class SelectTypeBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupView()
         setupViewHandler()
-    }
-
-    private fun setupView() {
-        when (fragmentName) {
-            "timetable" -> {
-                binding.layoutSemester.beVisible()
-                binding.layoutSubject.beVisible()
-                binding.layoutTest.beGone()
-                binding.layoutTask.beGone()
-            }
-            "task" -> {
-                binding.layoutSemester.beGone()
-                binding.layoutSubject.beGone()
-                binding.layoutTest.beVisible()
-                binding.layoutTask.beVisible()
-            }
-            else -> {
-
-            }
-        }
     }
 
     private fun setupViewHandler() {
@@ -76,10 +53,6 @@ class SelectTypeBottomSheet(
         }
         binding.layoutSubject.setOnSingleClickListener {
             selectTypeListener.onSelected(SelectType.SUBJECT)
-            dismiss()
-        }
-        binding.layoutTest.setOnSingleClickListener {
-            selectTypeListener.onSelected(SelectType.TEST)
             dismiss()
         }
         binding.layoutTask.setOnSingleClickListener {

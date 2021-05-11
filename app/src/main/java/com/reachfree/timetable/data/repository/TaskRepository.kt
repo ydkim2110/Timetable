@@ -12,7 +12,7 @@ interface TaskRepository {
 
     fun getAllTaskBySubject(subjectId: Long): LiveData<List<CalendarTaskResponse>>
 
-    fun getAllTaskBySubject(subjectId: LongArray): LiveData<List<CalendarTaskResponse>>
+    fun getAllTaskBySubject(subjectIds: LongArray): LiveData<List<CalendarTaskResponse>>
 
     fun getAllTaskBySubject(
         startDate: Long,

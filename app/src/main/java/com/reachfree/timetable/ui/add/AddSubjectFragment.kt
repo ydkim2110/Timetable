@@ -16,6 +16,7 @@ import com.google.android.material.timepicker.TimeFormat
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
+import com.reachfree.timetable.data.model.SubjectType
 import com.reachfree.timetable.databinding.FragmentAddSubjectBinding
 import com.reachfree.timetable.databinding.LayoutStartEndTimeBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
@@ -39,6 +40,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
     private val colorTagDialog: ColorTagDialog by lazy { ColorTagDialog() }
     private var color: ColorTag = ColorTag.COLOR_1
 
+    private var selectedSubjectType = SubjectType.MANDATORY.ordinal
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,6 +61,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         setupToolbar()
         setupChip()
         setupColor()
+        setupView()
         setupViewHandler()
         subscribeToObserver()
     }
@@ -100,7 +104,23 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         binding.backgroundColor.setBackgroundResource(color.resBg)
     }
 
+    private fun setupView() {
+        binding.btnSubjectTypeToggleGroup.check(binding.btnMandatory.id)
+    }
+
     private fun setupViewHandler() {
+        binding.btnSubjectTypeToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (group.checkedButtonId == -1) group.check(checkedId)
+
+            if (isChecked) {
+                when (binding.btnSubjectTypeToggleGroup.checkedButtonId) {
+                    binding.btnMandatory.id -> selectedSubjectType = SubjectType.MANDATORY.ordinal
+                    binding.btnElective.id -> selectedSubjectType = SubjectType.ELECTIVE.ordinal
+                    binding.btnOther.id -> selectedSubjectType = SubjectType.OTHER.ordinal
+                }
+            }
+        }
+
         binding.btnSemester.setOnSingleClickListener {
             selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SEMESTER)
             selectSemesterBottomSheet.isCancelable = true
@@ -199,6 +219,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             classroom = subjectClassroom,
             buildingName = subjectBuildingName,
             credit = subjectCredit,
+            type = selectedSubjectType,
             backgroundColor = color.resId,
             semesterId = selectedSemester.id!!
         )
@@ -212,12 +233,16 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         val layoutBinding = LayoutStartEndTimeBinding.inflate(LayoutInflater.from(requireContext()), null, false)
         layoutBinding.txtSelectedDay.text = chipName
         layoutBinding.btnStartTime.setOnSingleClickListener {
-            openTimePicker { h, min ->
+            val hour = layoutBinding.btnStartTime.text.split(":")[0].toInt()
+            val minute = layoutBinding.btnStartTime.text.split(":")[1].toInt()
+            openTimePicker(hour, minute) { h, min ->
                 layoutBinding.btnStartTime.text = updateHourAndMinute(h, min)
             }
         }
         layoutBinding.btnEndTime.setOnSingleClickListener {
-            openTimePicker { h, min ->
+            val hour = layoutBinding.btnEndTime.text.split(":")[0].toInt()
+            val minute = layoutBinding.btnEndTime.text.split(":")[1].toInt()
+            openTimePicker(hour, minute) { h, min ->
                 layoutBinding.btnEndTime.text = updateHourAndMinute(h, min)
             }
         }
@@ -254,14 +279,14 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         return "${if (h < 10) "0$h" else h}:${if (min < 10) "0$min" else min}"
     }
 
-    private fun openTimePicker(action: (Int, Int) -> Unit) {
+    private fun openTimePicker(hour: Int, minute: Int,action: (Int, Int) -> Unit) {
         val isSystem24Hour = is24HourFormat(requireContext())
         val clickFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
 
         val picker = MaterialTimePicker.Builder()
             .setTimeFormat(clickFormat)
-            .setHour(12)
-            .setMinute(0)
+            .setHour(hour)
+            .setMinute(minute)
             .setTitleText("시간을 입력하세요.")
             .build()
         picker.show(childFragmentManager, TIME_PICKER_TAG)

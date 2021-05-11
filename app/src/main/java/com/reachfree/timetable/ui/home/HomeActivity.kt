@@ -3,14 +3,15 @@ package com.reachfree.timetable.ui.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.reachfree.timetable.R
-import com.reachfree.timetable.data.response.SemesterTotalCreditResponse
+import com.reachfree.timetable.data.response.CalendarTaskResponse
+import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.ActivityHomeBinding
-import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.add.AddSemesterFragment
 import com.reachfree.timetable.ui.add.AddSubjectFragment
 import com.reachfree.timetable.ui.add.AddTaskFragment
@@ -23,13 +24,18 @@ import com.reachfree.timetable.ui.profile.SubjectListFragment
 import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.timetable.TimetableFragment
 import com.reachfree.timetable.util.DateUtils
+import com.reachfree.timetable.util.timetable.TimetableEventView
 import com.reachfree.timetable.weekview.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inflate(it)}),
-    BottomNavigationView.OnNavigationItemSelectedListener, ProfileHandlerListener {
+    BottomNavigationView.OnNavigationItemSelectedListener,
+    ProfileHandlerListener,
+    TimetableFragment.TimetableFragmentListener,
+    TaskFragment.TaskFragmentListener {
 
     private lateinit var selectTypeBottomSheet: SelectTypeBottomSheet
 
@@ -74,21 +80,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     private fun setupViewHandler() {
-        binding.fab.setOnSingleClickListener {
-            when (active) {
-                is TimetableFragment -> {
-                    showSelectTypeBottomSheet("timetable")
-                }
-                is TaskFragment -> {
-                    showSelectTypeBottomSheet("task")
-                }
-            }
 
-        }
     }
 
-    private fun showSelectTypeBottomSheet(fragmentName: String) {
-        selectTypeBottomSheet = SelectTypeBottomSheet(fragmentName)
+    private fun showSelectTypeBottomSheet() {
+        selectTypeBottomSheet = SelectTypeBottomSheet()
         selectTypeBottomSheet.isCancelable = true
         selectTypeBottomSheet.show(supportFragmentManager, SelectTypeBottomSheet.TAG)
         setupSelectTypeListener()
@@ -107,16 +103,27 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
                         AddSubjectFragment.newInstance()
                             .apply { show(supportFragmentManager, null) }
                     }
-                    SelectType.TEST -> {
-
-                    }
                     SelectType.TASK -> {
-                        AddTaskFragment.newInstance()
+                        AddTaskFragment.newInstance(Date().time)
                             .apply { show(supportFragmentManager, null) }
                     }
                 }
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.toolbar_add -> {
+                showSelectTypeBottomSheet()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -140,10 +147,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         return false
     }
 
-    override fun onDetailSubjectClicked(semester: SemesterTotalCreditResponse) {
+    override fun onDetailSubjectClicked(semester: SemesterResponse) {
         semester.id?.let {
             SubjectListFragment.newInstance(it).apply { show(supportFragmentManager, SubjectListFragment.TAG) }
         }
+    }
+
+    override fun onAddButtonClicked(date: Date) {
+        AddTaskFragment.newInstance(date.time)
+            .apply { show(supportFragmentManager, null) }
+    }
+
+    override fun onDetailTaskClicked(data: CalendarTaskResponse) {
+        AddTaskFragment.newInstance(data.date!!)
+            .apply { show(supportFragmentManager, null) }
+    }
+
+    override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
+        //TODO: 수정화면으로 이동
+        AddSubjectFragment.newInstance()
+            .apply { show(supportFragmentManager, null) }
     }
 
     override fun onBackPressed() {
@@ -169,4 +192,5 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             context.startActivity(Intent(context, HomeActivity::class.java))
         }
     }
+
 }

@@ -1,12 +1,12 @@
 package com.reachfree.timetable.ui.task
 
+import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.response.CalendarResponse
+import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.databinding.DatePickerBinding
 import com.reachfree.timetable.databinding.FragmentTaskBinding
 import com.reachfree.timetable.extension.beGone
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseFragment
+import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.DividerItemDecoration
 import com.reachfree.timetable.viewmodel.TimetableViewModel
@@ -43,6 +45,21 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
 
     private var itemHeight = 0
     private var semester: Semester? = null
+
+    interface TaskFragmentListener {
+        fun onAddButtonClicked(date: Date)
+        fun onDetailTaskClicked(data: CalendarTaskResponse)
+    }
+
+    private lateinit var taskFragmentListener: TaskFragmentListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (activity is HomeActivity) {
+            taskFragmentListener = activity as HomeActivity
+        }
+    }
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -133,7 +150,7 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
     }
 
     private fun updateRecyclerViewAdapter() {
-        calendarAdapter = CalendarAdapter(calendarResponse, dateList, calendar, itemHeight)
+        calendarAdapter = CalendarAdapter(calendarResponse, calendar, itemHeight)
         binding.recyclerCalendar.adapter = calendarAdapter
 
         calendarAdapter.setOnItemClickListener(this)
@@ -143,6 +160,10 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
         binding.recyclerCalendar.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 itemHeight = binding.recyclerCalendar.height
+                calendarResponse = CalendarResponse(
+                    dateList = dateList
+                )
+                updateRecyclerViewAdapter()
 
                 timetableViewModel.calendarTaskList.observe(viewLifecycleOwner) {
                     calendarResponse = CalendarResponse(
@@ -183,6 +204,15 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
             calendarDayDialog = CalendarDayDialog(date, it)
             calendarDayDialog.isCancelable = true
             calendarDayDialog.show(childFragmentManager, CalendarDayDialog.TAG)
+            calendarDayDialog.setOnSelectTypeListener(object : CalendarDayDialog.CalendarDayDialogListener {
+                override fun onAddButtonClicked(date: Date) {
+                    taskFragmentListener.onAddButtonClicked(date)
+                }
+
+                override fun onDetailTaskClicked(data: CalendarTaskResponse) {
+                    taskFragmentListener.onDetailTaskClicked(data)
+                }
+            })
         }
     }
 

@@ -13,7 +13,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.data.model.Semester
+import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.databinding.CalendarDayDialogBinding
+import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.extension.toMillis
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.viewmodel.TimetableViewModel
@@ -33,8 +35,15 @@ class CalendarDayDialog(
     private var _binding: CalendarDayDialogBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    interface CalendarDayDialogListener {
+        fun onAddButtonClicked(date: Date)
+        fun onDetailTaskClicked(data: CalendarTaskResponse)
+    }
+
+    private lateinit var calendarDayDialogListener: CalendarDayDialogListener
+
+    fun setOnSelectTypeListener(calendarDayDialogListener: CalendarDayDialogListener) {
+        this.calendarDayDialogListener = calendarDayDialogListener
     }
 
     override fun onStart() {
@@ -53,7 +62,7 @@ class CalendarDayDialog(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding =  CalendarDayDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -63,7 +72,29 @@ class CalendarDayDialog(
 
         setupView()
         setupRecyclerView()
+        setupViewHandler()
+        subscribeToObserver()
+    }
 
+    private fun setupView() {
+        binding.txtDay.text = DateUtils.dayDateFormat.format(date)
+    }
+
+    private fun setupRecyclerView() {
+        binding.recyclerDayItem.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireActivity())
+        }
+    }
+
+    private fun setupViewHandler() {
+        binding.btnAdd.setOnSingleClickListener {
+            calendarDayDialogListener.onAddButtonClicked(date)
+            dismiss()
+        }
+    }
+
+    private fun subscribeToObserver() {
         val startDay = DateUtils.calculateStartOfDay(DateUtils.convertDateToLocalDate(date)).toMillis()
         val endDay = DateUtils.calculateEndOfDay(DateUtils.convertDateToLocalDate(date)).toMillis()
 
@@ -82,21 +113,13 @@ class CalendarDayDialog(
         }
 
         timetableViewModel.calendarTaskList.observe(viewLifecycleOwner) {
-            Timber.d("DEBUG : result $it")
             calendarDayDialogAdapter = CalendarDayDialogAdapter(it)
             binding.recyclerDayItem.adapter = calendarDayDialogAdapter
+            calendarDayDialogAdapter.setOnItemClickListener { data ->
+                calendarDayDialogListener.onDetailTaskClicked(data)
+                dismiss()
+            }
         }
-    }
-
-    private fun setupRecyclerView() {
-        binding.recyclerDayItem.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(requireActivity())
-        }
-    }
-
-    private fun setupView() {
-        binding.txtDay.text = DateUtils.dayDateFormat.format(date)
     }
 
     override fun onDestroyView() {

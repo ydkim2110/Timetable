@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 import com.reachfree.timetable.data.model.Semester
 
-data class SemesterTotalCreditResponse(
+data class SemesterResponse(
     var id: Long?,
     var title: String = "",
     var description: String = "",

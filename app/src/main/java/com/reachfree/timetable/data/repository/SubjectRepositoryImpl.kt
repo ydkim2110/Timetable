@@ -3,6 +3,7 @@ package com.reachfree.timetable.data.repository
 import androidx.lifecycle.LiveData
 import com.reachfree.timetable.data.dao.SubjectDao
 import com.reachfree.timetable.data.model.Subject
+import com.reachfree.timetable.data.response.SubjectTypeResponse
 import javax.inject.Inject
 
 class SubjectRepositoryImpl @Inject constructor(
@@ -19,6 +20,14 @@ class SubjectRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllSubjects() {
         subjectDao.deleteAllSubjects()
+    }
+
+    override fun getAllSubjects(): LiveData<List<Subject>> {
+        return subjectDao.getAllSubjects()
+    }
+
+    override fun getTotalCreditByType(): LiveData<List<SubjectTypeResponse>> {
+        return subjectDao.getTotalCreditByType()
     }
 
     override fun getAllSubjectBySemester(semesterId: Long): LiveData<List<Subject>> {

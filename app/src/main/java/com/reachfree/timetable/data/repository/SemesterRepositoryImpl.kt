@@ -3,7 +3,7 @@ package com.reachfree.timetable.data.repository
 import androidx.lifecycle.LiveData
 import com.reachfree.timetable.data.dao.SemesterDao
 import com.reachfree.timetable.data.model.Semester
-import com.reachfree.timetable.data.response.SemesterTotalCreditResponse
+import com.reachfree.timetable.data.response.SemesterResponse
 import javax.inject.Inject
 
 class SemesterRepositoryImpl @Inject constructor(
@@ -22,7 +22,7 @@ class SemesterRepositoryImpl @Inject constructor(
         return semesterDao.getAllSemesters()
     }
 
-    override fun getAllSemestersWithTotalCount(): LiveData<List<SemesterTotalCreditResponse>> {
+    override fun getAllSemestersWithTotalCount(): LiveData<List<SemesterResponse>> {
         return semesterDao.getAllSemestersWithTotalCount()
     }
 

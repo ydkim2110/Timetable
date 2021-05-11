@@ -4,11 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.reachfree.timetable.data.model.Subject
-import com.reachfree.timetable.data.response.SemesterTotalCreditResponse
-import com.reachfree.timetable.databinding.ItemSemesterBinding
 import com.reachfree.timetable.databinding.ItemSubjectBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
-import com.reachfree.timetable.util.DateUtils
 
 class SubjectAdapter(
     private val semesters: List<Subject>

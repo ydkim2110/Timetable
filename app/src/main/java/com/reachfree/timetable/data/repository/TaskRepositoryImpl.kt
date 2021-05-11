@@ -22,8 +22,8 @@ class TaskRepositoryImpl @Inject constructor(
         return taskDao.getAllTaskBySubject(subjectId)
     }
 
-    override fun getAllTaskBySubject(subjectId: LongArray): LiveData<List<CalendarTaskResponse>> {
-        return taskDao.getAllTaskBySubject(subjectId)
+    override fun getAllTaskBySubject(subjectIds: LongArray): LiveData<List<CalendarTaskResponse>> {
+        return taskDao.getAllTaskBySubject(subjectIds)
     }
 
     override fun getAllTaskBySubject(

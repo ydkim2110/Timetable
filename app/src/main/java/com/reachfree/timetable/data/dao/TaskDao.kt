@@ -22,6 +22,7 @@ interface TaskDao {
             t.title,
             t.description,
             t.date,
+            t.type,
             t.subject_id,
             s.background_color
         FROM tasks t
@@ -36,13 +37,15 @@ interface TaskDao {
             t.title,
             t.description,
             t.date,
+            t.type,
             t.subject_id,
             s.background_color
         FROM tasks t
         INNER JOIN subjects s ON t.subject_id = s.id
-        WHERE subject_id IN (:subjectId)
+        WHERE subject_id IN (:subjectIds)
+        ORDER BY t.date
     """)
-    fun getAllTaskBySubject(subjectId: LongArray): LiveData<List<CalendarTaskResponse>>
+    fun getAllTaskBySubject(subjectIds: LongArray): LiveData<List<CalendarTaskResponse>>
 
     @Query("""
         SELECT
@@ -50,12 +53,14 @@ interface TaskDao {
             t.title,
             t.description,
             t.date,
+            t.type,
             t.subject_id,
             s.background_color
         FROM tasks t
         INNER JOIN subjects s ON t.subject_id = s.id
         WHERE subject_id IN (:subjectId)
         AND t.date BETWEEN :startDate AND :endDate
+        ORDER BY t.date
     """)
     fun getAllTaskBySubject(
         startDate: Long,

@@ -106,11 +106,69 @@
 
             </LinearLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/txt_subject_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="선택"
+                    android:textColor="@color/color_text_secondary"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/btnTaskTypeToggleGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:singleSelection="true"
+                    android:gravity="end"
+                    app:layout_constraintStart_toEndOf="@+id/txt_subject_type"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_task"
+                        style="@style/SubjectTypeToggleButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="과제"
+                        android:textAllCaps="false"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/btnIncome"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_test"
+                        style="@style/SubjectTypeToggleButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="시험"
+                        android:textAllCaps="false"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="과제명"
+                android:layout_marginTop="12dp"
+                android:text="제목"
                 android:textColor="@color/color_text_secondary"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
@@ -120,7 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:hint="예)레포트 제출"
+                android:hint="예)레포트 제출/중간고사"
                 android:textSize="16sp"
                 android:background="@drawable/edit_text_rounded_light_gray"
                 android:importantForAutofill="no"
@@ -129,7 +187,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:text="메모"
                 android:textColor="@color/color_text_secondary"
                 android:paddingHorizontal="8dp"
@@ -146,33 +204,77 @@
                 android:importantForAutofill="no"
                 android:inputType="text" />
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="날짜"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                />
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_date"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:text="2021년 05월 01일"
-                android:textSize="14sp"
-                android:textAlignment="textEnd"
-                android:textColor="@color/color_text_primary"
-                android:textAllCaps="false"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:drawableTint="@color/color_text_primary"
-                app:layout_constraintStart_toEndOf="@+id/txt_semester_title"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="날짜"
+                        android:textColor="@color/color_text_secondary"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_date"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:text="2021년 05월 01일"
+                        android:textSize="14sp"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/color_text_primary"
+                        android:textAllCaps="false"
+                        android:drawableEnd="@drawable/ic_arrow_drop_down"
+                        android:drawableTint="@color/color_text_primary"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="시간"
+                        android:textColor="@color/color_text_secondary"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_time"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:text="09:00"
+                        android:textSize="14sp"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/color_text_primary"
+                        android:textAllCaps="false"
+                        android:drawableEnd="@drawable/ic_arrow_drop_down"
+                        android:drawableTint="@color/color_text_primary"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <include
                 android:id="@+id/delete_save_btn_layout"

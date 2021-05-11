@@ -39,3 +39,9 @@ data class Subject(
     )
 
 }
+
+enum class SubjectType {
+    MANDATORY,
+    ELECTIVE,
+    OTHER
+}

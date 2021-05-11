@@ -3,8 +3,11 @@ package com.reachfree.timetable.ui.task
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.reachfree.timetable.data.model.TaskType
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.databinding.ItemCalendarDayBinding
+import com.reachfree.timetable.extension.setOnSingleClickListener
+import com.reachfree.timetable.util.DateUtils
 
 class CalendarDayDialogAdapter(
     private val dataList: List<CalendarTaskResponse>
@@ -17,8 +20,27 @@ class CalendarDayDialogAdapter(
             with(binding) {
                 txtTitle.text = data.title
                 txtDescription.text = data.description
+                txtDate.text = DateUtils.taskDateFormat.format(data.date)
+
+                if (data.type == TaskType.TASK.ordinal) {
+                    txtType.text = "과제"
+                    txtType.setBackgroundResource(data.backgroundColor)
+                } else {
+                    txtType.text = "시험"
+                    txtType.setBackgroundResource(data.backgroundColor)
+                }
+
+                root.setOnSingleClickListener {
+                    onItemClickListener?.let { it(data) }
+                }
             }
         }
+    }
+
+    private var onItemClickListener: ((CalendarTaskResponse) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (CalendarTaskResponse) -> Unit) {
+        onItemClickListener = listener
     }
 
     override fun onCreateViewHolder(

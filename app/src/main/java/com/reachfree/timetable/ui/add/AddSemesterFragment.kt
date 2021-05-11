@@ -66,10 +66,10 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
 
     private fun setupViewHandler() {
         binding.btnSemesterStartDate.setOnSingleClickListener {
-            showDatePicker(SetupActivity.START_TIME)
+            showDatePicker(selectedStartDate.time.time, SetupActivity.START_TIME)
         }
         binding.btnSemesterEndDate.setOnSingleClickListener {
-            showDatePicker(SetupActivity.END_TIME)
+            showDatePicker(selectedEndDate.time.time, SetupActivity.END_TIME)
         }
         binding.btnSave.setOnSingleClickListener {
             saveSemester()
@@ -81,7 +81,6 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         val semesterDescription = binding.edtSemesterDescription.text.toString()
 
         //TODO: 시작짜 종료날짜 체크
-
         val semester = Semester(
             id = null,
             title = semesterTitle,
@@ -93,14 +92,13 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         timetableViewModel.insertSemester(semester)
     }
 
-    private fun showDatePicker(typeName: String) {
-        DatePickerFragment.newInstance(typeName).apply {
+    private fun showDatePicker(date: Long, typeName: String) {
+        DatePickerFragment.newInstance(date, typeName).apply {
             dateSelected = { year, month, dayOfMonth, type -> dateSet(year, month, dayOfMonth, type) }
         }.show(childFragmentManager, DatePickerFragment.TAG)
     }
 
     private fun dateSet(year: Int, month: Int, dayOfMonth: Int, type: String) {
-        Timber.d("DEBUG: selected date $year, $month, $dayOfMonth, $type")
         when (type) {
             SetupActivity.START_TIME -> {
                 selectedStartDate.set(Calendar.YEAR, year)

@@ -11,6 +11,7 @@ object DateUtils {
     val testDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val defaultDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val semesterDateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+    val taskDateFormat = SimpleDateFormat("a hh:mm", Locale.getDefault())
     val yearMonthDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.getDefault())
     val yearDateFormat = SimpleDateFormat("yyyy년", Locale.getDefault())
     val monthDateFormat = SimpleDateFormat("MM월", Locale.getDefault())
