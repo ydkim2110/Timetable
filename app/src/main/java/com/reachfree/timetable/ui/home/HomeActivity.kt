@@ -27,7 +27,6 @@ import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.timetable.TimetableEventView
 import com.reachfree.timetable.weekview.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
@@ -52,7 +51,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
 
         setupToolbar()
         setupBottomNavigationView()
-        setupViewHandler()
+        subscribeToObserver()
     }
 
     private fun setupToolbar() {
@@ -79,7 +78,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(this)
     }
 
-    private fun setupViewHandler() {
+    private fun subscribeToObserver() {
 
     }
 

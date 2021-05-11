@@ -29,29 +29,42 @@ object DateUtils {
         return LocalDateTime.of(localDate, LocalTime.MAX)
     }
 
+    fun getTodayNumber(): Int {
+        val cal = Calendar.getInstance()
+        return when (cal.get(Calendar.DAY_OF_WEEK)) {
+            1 -> 7
+            2 -> 1
+            3 -> 2
+            4 -> 3
+            5 -> 4
+            6 -> 5
+            else -> 6
+        }
+    }
+
     fun calculateDay(day: Int): LocalDate {
         val cal = Calendar.getInstance()
         when (day) {
-            0 -> {
-                cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-            }
             1 -> {
-                cal.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY)
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
             }
             2 -> {
-                cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY)
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
             }
             3 -> {
-                cal.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY)
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY)
             }
             4 -> {
-                cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY)
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY)
             }
             5 -> {
-                cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY)
+            }
+            6 -> {
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY)
             }
             else -> {
-                cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+                cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
             }
         }
         val year = cal.get(Calendar.YEAR)

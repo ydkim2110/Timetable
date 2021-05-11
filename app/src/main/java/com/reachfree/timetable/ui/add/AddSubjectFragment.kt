@@ -251,26 +251,29 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
     private fun convertDayNameToInt(name: String): Int {
         when (name) {
-            requireContext().resources.getString(R.string.monday_short) -> {
-                return 0
-            }
-            requireContext().resources.getString(R.string.tuesday_short) -> {
+            requireContext().resources.getString(R.string.sunday_short) -> {
                 return 1
             }
-            requireContext().resources.getString(R.string.wednesday_short) -> {
+            requireContext().resources.getString(R.string.monday_short) -> {
                 return 2
             }
-            requireContext().resources.getString(R.string.thursday_short) -> {
+            requireContext().resources.getString(R.string.tuesday_short) -> {
                 return 3
             }
-            requireContext().resources.getString(R.string.thursday_short) -> {
+            requireContext().resources.getString(R.string.wednesday_short) -> {
                 return 4
             }
-            requireContext().resources.getString(R.string.friday_short) -> {
+            requireContext().resources.getString(R.string.thursday_short) -> {
                 return 5
             }
-            else -> {
+            requireContext().resources.getString(R.string.friday_short) -> {
                 return 6
+            }
+            requireContext().resources.getString(R.string.saturday_short) -> {
+                return 6
+            }
+            else -> {
+                return 7
             }
         }
     }

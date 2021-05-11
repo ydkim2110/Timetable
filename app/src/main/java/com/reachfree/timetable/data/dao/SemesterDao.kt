@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.response.SemesterResponse
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SemesterDao {
@@ -32,4 +33,12 @@ interface SemesterDao {
 
     @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
     fun getSemester(date: Long): LiveData<Semester>
+
+    @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
+    fun getSemesterForWidgetService(date: Long): Semester
+
+    @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
+    fun getSemesterByFlow(date: Long): Flow<Semester>
+
+
 }

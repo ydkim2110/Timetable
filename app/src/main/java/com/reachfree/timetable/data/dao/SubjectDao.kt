@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.SubjectTypeResponse
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SubjectDao {
@@ -22,6 +23,12 @@ interface SubjectDao {
     @Query("SELECT * FROM subjects")
     fun getAllSubjects(): LiveData<List<Subject>>
 
+    @Query("SELECT * FROM subjects WHERE semester_id LIKE :semesterId")
+    fun getAllSubjectsForWidgetService(semesterId: Long): List<Subject>
+
+    @Query("SELECT * FROM subjects WHERE semester_id LIKE :semesterId")
+    fun getAllSubjectsByFlow(semesterId: Long): Flow<List<Subject>>
+
     @Query("SELECT type, SUM(credit) AS total_credit FROM subjects GROUP BY type")
     fun getTotalCreditByType(): LiveData<List<SubjectTypeResponse>>
 
@@ -30,5 +37,7 @@ interface SubjectDao {
 
     @Query("SELECT SUM(credit) FROM subjects WHERE semester_id LIKE :semesterId")
     fun getTotalCreditBySemester(semesterId: Long): LiveData<Int>
+
+
 
 }

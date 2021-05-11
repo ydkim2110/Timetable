@@ -35,4 +35,6 @@
     <string name="toast_semester_register_complete">저장이 완료되었습니다.&#128512;\n이제 과목을 등록해 보세요.</string>
 
     <string name="profile_welcome_message">Your Profile &#128512;</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

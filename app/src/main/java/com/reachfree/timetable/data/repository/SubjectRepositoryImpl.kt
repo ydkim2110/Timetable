@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.reachfree.timetable.data.dao.SubjectDao
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.SubjectTypeResponse
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SubjectRepositoryImpl @Inject constructor(
@@ -24,6 +25,14 @@ class SubjectRepositoryImpl @Inject constructor(
 
     override fun getAllSubjects(): LiveData<List<Subject>> {
         return subjectDao.getAllSubjects()
+    }
+
+    override fun getAllSubjectsForWidgetService(semesterId: Long): List<Subject> {
+        return subjectDao.getAllSubjectsForWidgetService(semesterId)
+    }
+
+    override fun getAllSubjectsByFlow(semesterId: Long): Flow<List<Subject>> {
+        return subjectDao.getAllSubjectsByFlow(semesterId)
     }
 
     override fun getTotalCreditByType(): LiveData<List<SubjectTypeResponse>> {

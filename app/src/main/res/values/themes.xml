@@ -105,4 +105,9 @@
         <item name="android:minHeight">42dp</item>
         <item name="backgroundTint">@color/toggle_background_state_list</item>
     </style>
+
+    <style name="ThemeOverlay.Timetable.AppWidgetContainer" parent="">
+        <item name="appWidgetBackgroundColor">@color/light_blue_600</item>
+        <item name="appWidgetTextColor">@color/light_blue_50</item>
+    </style>
 </resources>
