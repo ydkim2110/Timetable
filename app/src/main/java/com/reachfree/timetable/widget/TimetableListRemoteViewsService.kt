@@ -1,6 +1,7 @@
 package com.reachfree.timetable.widget
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
@@ -14,6 +15,7 @@ import com.reachfree.timetable.data.repository.SemesterRepository
 import com.reachfree.timetable.data.repository.SubjectRepository
 import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.util.DateUtils
+import com.reachfree.timetable.util.LIST_CLICK_BROADCAST
 import com.reachfree.timetable.util.timetable.TimetableEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +36,6 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
     lateinit var semesterRepository: SemesterRepository
     @Inject
     lateinit var subjectRepository: SubjectRepository
-    private val job = SupervisorJob()
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
     override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
         return TimetableListRemoteViewsFactory(this)
@@ -48,34 +48,37 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
         private val todayEventList = mutableListOf<TimetableEvent.Single>()
 
         override fun onCreate() {
-
         }
 
         override fun onDataSetChanged() {
+            Timber.d("DEBUG: onDataSetChanged called!!")
+            todayEventList.clear()
             val semester = semesterRepository.getSemesterForWidgetService(Calendar.getInstance().time.time)
-            val subjects = subjectRepository.getAllSubjectsForWidgetService(semester.id!!)
-            Timber.d("DEBUG: onDataSetChanged $semester")
-            Timber.d("DEBUG: onDataSetChanged $subjects")
+            if (semester != null) {
+                val subjects = subjectRepository.getAllSubjectsForWidgetService(semester.id!!)
 
-            for ((index, value) in subjects.withIndex()) {
-                for (i in value.days.indices) {
-                    if (value.days[i].day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                        val event = TimetableEvent.Single(
-                            id = 1,
-                            date = DateUtils.calculateDay(value.days[i].day),
-                            title = value.title,
-                            shortTitle = value.title,
-                            classroom = value.classroom,
-                            building = value.buildingName,
-                            credit = value.credit,
-                            startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
-                            endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
-                            backgroundColor = value.backgroundColor,
-                            textColor = Color.WHITE
-                        )
-                        todayEventList.add(event)
+                for ((index, value) in subjects.withIndex()) {
+                    for (i in value.days.indices) {
+                        if (value.days[i].day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                            val event = TimetableEvent.Single(
+                                id = 1,
+                                date = DateUtils.calculateDay(value.days[i].day),
+                                title = value.title,
+                                shortTitle = value.title,
+                                classroom = value.classroom,
+                                building = value.buildingName,
+                                credit = value.credit,
+                                startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
+                                endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
+                                backgroundColor = value.backgroundColor,
+                                textColor = Color.WHITE
+                            )
+                            todayEventList.add(event)
+                        }
                     }
                 }
+
+                todayEventList.sortBy { it.startTime }
             }
         }
 
@@ -93,24 +96,24 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
             if (!todayEventList.isNullOrEmpty()) {
                 val subject = todayEventList[position]
                 val title = subject.title
-                val date = subject.date.toString()
+                val startTime = subject.startTime.toString()
+                val endTime = subject.endTime.toString()
 
                 val remoteViews = RemoteViews(context.packageName, R.layout.timetable_widget)
                 remoteViews.setTextViewText(R.id.txt_widget_title, title)
-                remoteViews.setTextViewText(R.id.txt_widget_date, date)
+                remoteViews.setTextViewText(R.id.txt_widget_start_time, startTime)
+                remoteViews.setTextViewText(R.id.txt_widget_end_time, endTime)
+                remoteViews.setInt(R.id.background_color, "setBackgroundResource", subject.backgroundColor)
 
-                remoteViews.setOnClickPendingIntent(R.id.widget_layout, getPendingIntent(context))
+                val fillInIntent = Intent()
+                    .putExtra("TITLE", "title")
+                    .setAction(LIST_CLICK_BROADCAST)
+
+                remoteViews.setOnClickFillInIntent(R.id.widget_layout, fillInIntent)
 
                 return remoteViews
             }
-            val remoteViews = RemoteViews(context.packageName, R.layout.timetable_widget)
-            remoteViews.setTextViewText(R.id.txt_widget_title, "ttitle")
-            remoteViews.setTextViewText(R.id.txt_widget_date, "daste")
-
-            remoteViews.setOnClickPendingIntent(R.id.widget_layout, getPendingIntent(context))
-
-            return remoteViews
-//            return null
+            return null
         }
 
         override fun getLoadingView(): RemoteViews? {
@@ -130,11 +133,4 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
         }
 
     }
-
-}
-
-
-private fun getPendingIntent(context: Context): PendingIntent {
-    val intent = Intent(context, HomeActivity::class.java)
-    return PendingIntent.getActivity(context, 0, intent, 0)
 }

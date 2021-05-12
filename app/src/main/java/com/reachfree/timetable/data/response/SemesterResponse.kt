@@ -1,9 +1,10 @@
 package com.reachfree.timetable.data.response
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
-import com.reachfree.timetable.data.model.Semester
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class SemesterResponse(
     var id: Long?,
     var title: String = "",
@@ -11,4 +12,4 @@ data class SemesterResponse(
     @ColumnInfo(name = "start_date") var startDate: Long = 0L,
     @ColumnInfo(name = "end_date") var endDate: Long = 0L,
     @ColumnInfo(name = "total_count")var totalCredit: Int = 0
-)
+) : Parcelable

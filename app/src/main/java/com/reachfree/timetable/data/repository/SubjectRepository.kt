@@ -11,7 +11,15 @@ interface SubjectRepository {
 
     suspend fun insertSubjects(subjects: List<Subject>)
 
+    suspend fun updateSubject(subject: Subject)
+
+    suspend fun deleteSubject(subject: Subject)
+
     suspend fun deleteAllSubjects()
+
+    suspend fun getSubjectById(subjectId: Long): Subject
+
+    fun getSubjectByIdLiveData(subjectId: Long): LiveData<Subject>
 
     fun getAllSubjects(): LiveData<List<Subject>>
 
@@ -24,4 +32,6 @@ interface SubjectRepository {
     fun getAllSubjectBySemester(semesterId: Long): LiveData<List<Subject>>
 
     fun getTotalCreditBySemester(semesterId: Long): LiveData<Int>
+
+
 }

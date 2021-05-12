@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,22 +20,20 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/txt_semester_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="학기 등록"
+                android:layout_marginTop="24dp"
+                android:text="@string/text_add_semester"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <LinearLayout
@@ -52,14 +51,14 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
-                    android:text="등록학기"
+                    android:text="@string/text_semester_title"
                     android:textColor="@color/color_text_secondary" />
                 <EditText
                     android:id="@+id/edt_semester_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edit_text_rounded_light_gray"
-                    android:hint="학기 입력하세요. (1학년 1학기)"
+                    android:hint="@string/text_hint_add_semester_title"
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:padding="8dp"
@@ -68,17 +67,17 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
-                    android:text="메모"
+                    android:text="@string/text_memo"
                     android:textColor="@color/color_text_secondary" />
                 <EditText
                     android:id="@+id/edt_semester_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edit_text_rounded_light_gray"
-                    android:hint="간단한 메모를 입력하세요."
+                    android:hint="@string/text_hint_add_semester_description"
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:padding="8dp"
@@ -87,14 +86,14 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="4dp"
-                        android:text="시작일"
+                        android:text="@string/text_start_date"
                         android:textColor="@color/color_text_secondary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -108,7 +107,7 @@
                         android:drawableEnd="@drawable/ic_arrow_drop_down"
                         android:drawableTint="@color/color_text_primary"
                         android:paddingVertical="8dp"
-                        android:text="2021년 03월 01일"
+                        tools:text="2021-03-01"
                         android:textAlignment="textEnd"
                         android:textAllCaps="false"
                         android:textColor="@color/color_text_primary"
@@ -136,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="4dp"
-                        android:text="종료일"
+                        android:text="@string/text_end_date"
                         android:textColor="@color/color_text_secondary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -150,7 +149,7 @@
                         android:drawableEnd="@drawable/ic_arrow_drop_down"
                         android:drawableTint="@color/color_text_primary"
                         android:paddingVertical="8dp"
-                        android:text="2021년 06월 25일"
+                        android:text="2021-06-30"
                         android:textAlignment="textEnd"
                         android:textAllCaps="false"
                         android:textColor="@color/color_text_primary"
@@ -172,8 +171,8 @@
                 <RelativeLayout
                     android:id="@+id/btn_save"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/ripple_btn_outline"
                     android:clickable="true"
                     android:focusable="true">
@@ -183,8 +182,8 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:padding="12dp"
-                        android:text="저장하기"
-                        android:textSize="18sp"
+                        android:text="@string/text_btn_save"
+                        android:textSize="16sp"
                         android:textAlignment="center"
                         android:textColor="@color/color_text_primary" />
 

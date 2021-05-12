@@ -15,6 +15,10 @@ class SemesterRepositoryImpl @Inject constructor(
         semesterDao.insertSemester(semester)
     }
 
+    override suspend fun deleteSemesterById(semesterId: Long) {
+        semesterDao.deleteSemesterById(semesterId)
+    }
+
     override suspend fun deleteAllSemesters() {
         semesterDao.deleteAllSemesters()
     }

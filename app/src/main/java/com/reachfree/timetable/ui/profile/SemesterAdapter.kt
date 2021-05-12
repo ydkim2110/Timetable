@@ -3,6 +3,7 @@ package com.reachfree.timetable.ui.profile
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.reachfree.timetable.R
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.ItemSemesterBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
@@ -17,9 +18,11 @@ class SemesterAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(semester: SemesterResponse) {
             with(binding) {
-                txtYear.text = DateUtils.yearDateFormat.format(semester.endDate)
                 txtTitle.text = semester.title
-                txtTotalCredit.text = "${semester.totalCredit}학점"
+                val startDate = DateUtils.semesterShortDateFormat.format(semester.startDate)
+                val endDate = DateUtils.semesterShortDateFormat.format(semester.endDate)
+                txtDate.text = "($startDate ~ $endDate)"
+                txtTotalCredit.text = root.context.getString(R.string.text_input_subject_credit, semester.totalCredit)
 
                 root.setOnSingleClickListener {
                     onItemClickListener?.let { it(semester) }

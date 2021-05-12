@@ -26,12 +26,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
 
-@AndroidEntryPoint
 class TimetableDetailDialog(
     private val timetableEventView: TimetableEventView
 ) : DialogFragment() {
-
-    private val timetableViewModel: TimetableViewModel by viewModels()
 
     private var _binding: TimetableDetailDialogBinding? = null
     private val binding get() = _binding!!
@@ -74,6 +71,7 @@ class TimetableDetailDialog(
     }
 
     private fun setupView() {
+        Timber.d("DEBUG: timetableEventView ${timetableEventView.event}")
         binding.txtSubjectTitle.text = timetableEventView.event.title
         binding.txtClassroom.text = timetableEventView.event.classroom
         binding.txtBuilding.text = timetableEventView.event.building
@@ -92,6 +90,7 @@ class TimetableDetailDialog(
     private fun setupViewHandler() {
         binding.btnEdit.setOnSingleClickListener {
             timetableDetailDialogListener.onEditButtonClicked(timetableEventView)
+            dismiss()
         }
     }
 

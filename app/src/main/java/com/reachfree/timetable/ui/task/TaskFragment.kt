@@ -114,8 +114,8 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
 
             AlertDialog.Builder(requireContext())
                 .setView(datePickerBinding.root)
-                .setNegativeButton("취소", null)
-                .setPositiveButton("OK") { dialog, which ->
+                .setNegativeButton(getString(R.string.text_alert_button_cancel), null)
+                .setPositiveButton(getString(R.string.text_alert_button_ok)) { dialog, which ->
                     calendar.set(Calendar.YEAR, datePickerBinding.datePicker.year)
                     calendar.set(Calendar.MONTH, datePickerBinding.datePicker.month)
                     goToDateTime()

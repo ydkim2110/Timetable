@@ -19,8 +19,7 @@ import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
 import com.reachfree.timetable.ui.profile.ProfileFragment
-import com.reachfree.timetable.ui.profile.ProfileHandlerListener
-import com.reachfree.timetable.ui.profile.SubjectListFragment
+import com.reachfree.timetable.ui.profile.SemesterDetailFragment
 import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.timetable.TimetableFragment
 import com.reachfree.timetable.util.DateUtils
@@ -32,9 +31,8 @@ import java.util.*
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inflate(it)}),
     BottomNavigationView.OnNavigationItemSelectedListener,
-    ProfileHandlerListener,
     TimetableFragment.TimetableFragmentListener,
-    TaskFragment.TaskFragmentListener {
+    TaskFragment.TaskFragmentListener, ProfileFragment.ProfileHandlerListener {
 
     private lateinit var selectTypeBottomSheet: SelectTypeBottomSheet
 
@@ -45,6 +43,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     private var active: Fragment = timetableFragment
 
     private var doubleBackToExit = false
+
+    private lateinit var menu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,8 +111,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         })
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        menu.findItem(R.id.toolbar_settings).isVisible = false
+        return true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
+        this.menu = menu
         return true
     }
 
@@ -130,26 +136,37 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             R.id.bottom_week -> {
                 fm.beginTransaction().hide(active).show(timetableFragment).commit()
                 active = timetableFragment
+                showAddToolbarMenu()
                 return true
             }
             R.id.bottom_task -> {
                 fm.beginTransaction().hide(active).show(taskFragment).commit()
                 active = taskFragment
+                showAddToolbarMenu()
                 return true
             }
             R.id.bottom_profile -> {
                 fm.beginTransaction().hide(active).show(profileFragment).commit()
                 active = profileFragment
+                showSettingsToolbarMenu()
                 return true
             }
         }
         return false
     }
 
-    override fun onDetailSubjectClicked(semester: SemesterResponse) {
-        semester.id?.let {
-            SubjectListFragment.newInstance(it).apply { show(supportFragmentManager, SubjectListFragment.TAG) }
-        }
+    private fun showAddToolbarMenu() {
+        menu.findItem(R.id.toolbar_add).isVisible = true
+        menu.findItem(R.id.toolbar_settings).isVisible = false
+    }
+
+    private fun showSettingsToolbarMenu() {
+        menu.findItem(R.id.toolbar_add).isVisible = false
+        menu.findItem(R.id.toolbar_settings).isVisible = true
+    }
+
+    override fun onSemesterItemClicked(semester: SemesterResponse) {
+        SemesterDetailFragment.newInstance(semester).apply { show(supportFragmentManager, SemesterDetailFragment.TAG) }
     }
 
     override fun onAddButtonClicked(date: Date) {
@@ -158,13 +175,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     override fun onDetailTaskClicked(data: CalendarTaskResponse) {
-        AddTaskFragment.newInstance(data.date!!)
+        AddTaskFragment.newInstance(data.date!!, data.id)
             .apply { show(supportFragmentManager, null) }
     }
 
     override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
-        //TODO: 수정화면으로 이동
-        AddSubjectFragment.newInstance()
+        AddSubjectFragment.newInstance(timetableEventView.event.id)
             .apply { show(supportFragmentManager, null) }
     }
 

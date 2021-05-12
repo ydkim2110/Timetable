@@ -1,6 +1,8 @@
 package com.reachfree.timetable.util
 
 import android.annotation.SuppressLint
+import android.content.Context
+import com.reachfree.timetable.R
 import org.threeten.bp.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -10,12 +12,18 @@ object DateUtils {
 
     val testDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val defaultDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val semesterShortDateFormat = SimpleDateFormat("yy.MM.dd", Locale.getDefault())
     val semesterDateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
+    val widgetTitleDateFormat = SimpleDateFormat("yyyy년 MM월 dd일, EEEE", Locale.getDefault())
     val taskDateFormat = SimpleDateFormat("a hh:mm", Locale.getDefault())
     val yearMonthDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.getDefault())
     val yearDateFormat = SimpleDateFormat("yyyy년", Locale.getDefault())
     val monthDateFormat = SimpleDateFormat("MM월", Locale.getDefault())
     val dayDateFormat = SimpleDateFormat("dd일", Locale.getDefault())
+
+    fun updateHourAndMinute(h: Int, min: Int): String {
+        return "${if (h < 10) "0$h" else h}:${if (min < 10) "0$min" else min}"
+    }
 
     fun convertDateToLocalDate(date: Date): LocalDate {
         return Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()
@@ -29,16 +37,29 @@ object DateUtils {
         return LocalDateTime.of(localDate, LocalTime.MAX)
     }
 
-    fun getTodayNumber(): Int {
-        val cal = Calendar.getInstance()
-        return when (cal.get(Calendar.DAY_OF_WEEK)) {
-            1 -> 7
-            2 -> 1
-            3 -> 2
-            4 -> 3
-            5 -> 4
-            6 -> 5
-            else -> 6
+    fun convertDayToString(context: Context, day: Int): String {
+        return when (day) {
+            1 -> {
+                context.resources.getString(R.string.monday_letter)
+            }
+            2 -> {
+                context.resources.getString(R.string.tuesday_letter)
+            }
+            3 -> {
+                context.resources.getString(R.string.wednesday_letter)
+            }
+            4 -> {
+                context.resources.getString(R.string.thursday_letter)
+            }
+            5 -> {
+                context.resources.getString(R.string.friday_letter)
+            }
+            6 -> {
+                context.resources.getString(R.string.saturday_letter)
+            }
+            else -> {
+                context.resources.getString(R.string.sunday_letter)
+            }
         }
     }
 

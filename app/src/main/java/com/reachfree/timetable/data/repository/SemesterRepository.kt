@@ -2,12 +2,15 @@ package com.reachfree.timetable.data.repository
 
 import androidx.lifecycle.LiveData
 import com.reachfree.timetable.data.model.Semester
+import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.SemesterResponse
 import kotlinx.coroutines.flow.Flow
 
 interface SemesterRepository {
 
     suspend fun insertSemester(semester: Semester)
+
+    suspend fun deleteSemesterById(semesterId: Long)
 
     suspend fun deleteAllSemesters()
 
@@ -20,6 +23,5 @@ interface SemesterRepository {
     fun getSemesterForWidgetService(date: Long): Semester
 
     fun getSemesterByFlow(date: Long): Flow<Semester>
-
 
 }

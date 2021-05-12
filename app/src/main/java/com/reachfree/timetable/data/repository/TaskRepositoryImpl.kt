@@ -14,6 +14,18 @@ class TaskRepositoryImpl @Inject constructor(
         taskDao.insertTask(task)
     }
 
+    override suspend fun deleteTask(task: Task) {
+        taskDao.deleteTask(task)
+    }
+
+    override suspend fun getTaskById(taskId: Long): Task {
+        return taskDao.getTaskById(taskId)
+    }
+
+    override fun getTaskByIdLiveData(taskId: Long): LiveData<Task> {
+        return taskDao.getTaskByIdLiveData(taskId)
+    }
+
     override fun getAllTasksBySubject(subjectId: Long): LiveData<List<Task>> {
         return taskDao.getAllTasksBySubject(subjectId)
     }

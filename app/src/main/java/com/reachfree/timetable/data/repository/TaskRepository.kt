@@ -8,6 +8,12 @@ interface TaskRepository {
 
     suspend fun insertTask(task: Task)
 
+    suspend fun deleteTask(task: Task)
+
+    suspend fun getTaskById(taskId: Long): Task
+
+    fun getTaskByIdLiveData(taskId: Long): LiveData<Task>
+
     fun getAllTasksBySubject(subjectId: Long): LiveData<List<Task>>
 
     fun getAllTaskBySubject(subjectId: Long): LiveData<List<CalendarTaskResponse>>

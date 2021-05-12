@@ -9,6 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white_alpha">#10FFFFFF</color>
 
+    <!-- icon color -->
+    <color name="icon_back_arrow">@color/white</color>
+    <color name="icon_delete">@color/white</color>
+
     <color name="divider_gray">#88808080</color>
     <color name="default_background_color">@color/purple_200</color>
     <color name="default_text_color">@android:color/black</color>
@@ -38,6 +42,8 @@
 
     <color name="color_background_calendar">#FFFFFF</color>
     <color name="color_background_top_calendar">#EEEEEE</color>
+
+    <color name="color_background_subject_item">#E6E6E6</color>
 
     <color name="color_recycler_divider">#cccccc</color>
 

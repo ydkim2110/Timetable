@@ -8,7 +8,6 @@ import com.reachfree.timetable.data.LocalDatabase
 import com.reachfree.timetable.data.dao.SemesterDao
 import com.reachfree.timetable.data.dao.SubjectDao
 import com.reachfree.timetable.data.dao.TaskDao
-import com.reachfree.timetable.data.dao.TestDao
 import com.reachfree.timetable.data.repository.*
 import com.reachfree.timetable.util.DispatcherProvider
 import com.reachfree.timetable.util.LOCAL_DATABASE_NAME
@@ -60,10 +59,6 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideTestDao(database: LocalDatabase) = database.testDao()
-
-    @Singleton
-    @Provides
     fun provideTaskDao(database: LocalDatabase) = database.taskDao()
 
     @Singleton
@@ -75,11 +70,6 @@ class DatabaseModule {
     @Provides
     fun provideSubjectRepository(subjectDao: SubjectDao): SubjectRepository =
         SubjectRepositoryImpl(subjectDao)
-
-    @Singleton
-    @Provides
-    fun provideTestRepository(testDao: TestDao): TestRepository =
-        TestRepositoryImpl(testDao)
 
     @Singleton
     @Provides

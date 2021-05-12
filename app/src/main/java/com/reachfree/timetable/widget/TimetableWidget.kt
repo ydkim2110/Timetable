@@ -139,14 +139,12 @@ internal fun updateAppWidget(
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.timetable_widget)
     views.setTextViewText(R.id.txt_widget_title, title)
-    views.setTextViewText(R.id.txt_widget_date, date)
 
     views.setOnClickPendingIntent(R.id.widget_layout, getPendingIntent(context))
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
-
 
 private fun getPendingIntent(context: Context): PendingIntent {
     val intent = Intent(context, HomeActivity::class.java)

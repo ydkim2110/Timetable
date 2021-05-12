@@ -7,12 +7,10 @@ import com.reachfree.timetable.data.model.Task
 import com.reachfree.timetable.data.repository.SemesterRepository
 import com.reachfree.timetable.data.repository.SubjectRepository
 import com.reachfree.timetable.data.repository.TaskRepository
-import com.reachfree.timetable.data.repository.TestRepository
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.util.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -20,7 +18,6 @@ import javax.inject.Inject
 class TimetableViewModel @Inject constructor(
     private val semesterRepository: SemesterRepository,
     private val subjectRepository: SubjectRepository,
-    private val testRepository: TestRepository,
     private val taskRepository: TaskRepository,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
@@ -33,6 +30,11 @@ class TimetableViewModel @Inject constructor(
     fun insertSemester(semester: Semester) =
         viewModelScope.launch(dispatchers.io) {
             semesterRepository.insertSemester(semester)
+        }
+
+    fun deleteSemesterById(semesterId: Long) =
+        viewModelScope.launch(dispatchers.io) {
+            semesterRepository.deleteSemesterById(semesterId)
         }
 
     fun deleteSemesters() =
@@ -55,10 +57,33 @@ class TimetableViewModel @Inject constructor(
             subjectRepository.insertSubject(subject)
         }
 
+    fun updateSubject(subject: Subject) {
+        viewModelScope.launch(dispatchers.io) {
+            subjectRepository.updateSubject(subject)
+        }
+    }
+
+    fun deleteSubject(subject: Subject) {
+        viewModelScope.launch(dispatchers.io) {
+            subjectRepository.deleteSubject(subject)
+        }
+    }
+
     fun deleteSubjects() =
         viewModelScope.launch(dispatchers.io) {
             subjectRepository.deleteAllSubjects()
         }
+
+    private var _subject = MutableLiveData<Subject>()
+    val subject get() = _subject
+    fun getSubjectById(subjectId: Long) =
+        viewModelScope.launch(dispatchers.io) {
+            val result = subjectRepository.getSubjectById(subjectId)
+            _subject.postValue(result)
+        }
+
+    fun getSubjectByIdLiveData(subjectId: Long) =
+        subjectRepository.getSubjectByIdLiveData(subjectId)
 
     fun getAllSubjects() =
         subjectRepository.getAllSubjects()
@@ -72,12 +97,6 @@ class TimetableViewModel @Inject constructor(
     fun getTotalCreditBySemester(semesterId: Long) =
         subjectRepository.getTotalCreditBySemester(semesterId)
 
-
-    /**
-     *  Test
-     */
-
-
     /**
      *  Task
      */
@@ -85,10 +104,28 @@ class TimetableViewModel @Inject constructor(
     val calendarTaskList = MediatorLiveData<List<CalendarTaskResponse>>()
 
     fun insertTask(task: Task) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchers.io) {
             taskRepository.insertTask(task)
         }
     }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch(dispatchers.io) {
+            taskRepository.deleteTask(task)
+        }
+    }
+
+    private var _task = MutableLiveData<Task>()
+    val task get() = _task
+    fun getTaskById(taskId: Long)  {
+        viewModelScope.launch(dispatchers.io) {
+            val result = taskRepository.getTaskById(taskId)
+            _task.postValue(result)
+        }
+    }
+
+    fun getTaskByIdLiveDta(taskId: Long) =
+        taskRepository.getTaskByIdLiveData(taskId)
 
     fun getAllTasksMediator(subjects: List<Subject>) {
         for (i in subjects.indices) {

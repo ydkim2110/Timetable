@@ -112,7 +112,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
             for ((index, value) in subjects.withIndex()) {
                 for (i in value.days.indices) {
                     val event = TimetableEvent.Single(
-                            id = 1,
+                            id = value.id!!,
                             date = DateUtils.calculateDay(value.days[i].day),
                             title = value.title,
                             shortTitle = value.title,

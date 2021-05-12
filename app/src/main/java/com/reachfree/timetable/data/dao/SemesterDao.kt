@@ -12,6 +12,9 @@ interface SemesterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSemester(semester: Semester)
 
+    @Query("DELETE FROM semesters WHERE id LIKE :semesterId")
+    suspend fun deleteSemesterById(semesterId: Long)
+
     @Query("DELETE FROM semesters")
     suspend fun deleteAllSemesters()
 
@@ -39,6 +42,5 @@ interface SemesterDao {
 
     @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
     fun getSemesterByFlow(date: Long): Flow<Semester>
-
 
 }

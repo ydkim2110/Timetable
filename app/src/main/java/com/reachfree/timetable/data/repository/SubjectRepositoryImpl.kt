@@ -19,8 +19,24 @@ class SubjectRepositoryImpl @Inject constructor(
         subjectDao.insertSubjects(subjects)
     }
 
+    override suspend fun updateSubject(subject: Subject) {
+        subjectDao.updateSubject(subject)
+    }
+
+    override suspend fun deleteSubject(subject: Subject) {
+        subjectDao.deleteSubject(subject)
+    }
+
     override suspend fun deleteAllSubjects() {
         subjectDao.deleteAllSubjects()
+    }
+
+    override suspend fun getSubjectById(subjectId: Long): Subject {
+        return subjectDao.getSubjectById(subjectId)
+    }
+
+    override fun getSubjectByIdLiveData(subjectId: Long): LiveData<Subject> {
+        return subjectDao.getSubjectByIdLiveData(subjectId)
     }
 
     override fun getAllSubjects(): LiveData<List<Subject>> {

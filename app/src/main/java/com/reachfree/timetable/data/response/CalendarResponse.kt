@@ -1,15 +1,12 @@
 package com.reachfree.timetable.data.response
 
 import androidx.room.ColumnInfo
-import com.reachfree.timetable.data.model.Task
 import com.reachfree.timetable.data.model.TaskType
-import com.reachfree.timetable.data.model.Test
 import com.reachfree.timetable.util.ColorTag
 import java.util.*
 
 data class CalendarResponse(
     var dateList: List<Date>,
-    var testList: List<Test>? = null,
     var taskList: List<CalendarTaskResponse>? = null
 )
 

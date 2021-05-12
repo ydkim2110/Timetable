@@ -1,5 +1,7 @@
 package com.reachfree.timetable.ui.add
 
+import android.graphics.PorterDuff
+import android.graphics.PorterDuff.Mode.SRC_ATOP
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -54,14 +56,19 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
 
     private fun setupToolbar() {
         binding.appBar.appBar.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple_500))
-        binding.appBar.txtToolbarTitle.text = "학기 등록"
+        binding.appBar.txtToolbarTitle.text = getString(R.string.toolbar_add_semester_title)
         binding.appBar.txtToolbarTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        binding.appBar.btnBack.setColorFilter(
+            ContextCompat.getColor(requireActivity(), R.color.icon_back_arrow),
+            SRC_ATOP
+        )
         binding.appBar.btnBack.setOnSingleClickListener { dismiss() }
     }
 
     private fun setupView() {
-        binding.btnSemesterStartDate.text = DateUtils.defaultDateFormat.format(selectedStartDate.time)
-        binding.btnSemesterEndDate.text = DateUtils.defaultDateFormat.format(selectedEndDate.time)
+        binding.btnSemesterStartDate.text = DateUtils.defaultDateFormat.format(selectedStartDate.time.time)
+        selectedEndDate.add(Calendar.MONTH, 3)
+        binding.btnSemesterEndDate.text = DateUtils.defaultDateFormat.format(selectedEndDate.time.time)
     }
 
     private fun setupViewHandler() {
@@ -72,7 +79,47 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             showDatePicker(selectedEndDate.time.time, SetupActivity.END_TIME)
         }
         binding.btnSave.setOnSingleClickListener {
-            saveSemester()
+            compareDateWithOthers()
+        }
+    }
+
+    private fun compareDateWithOthers() {
+        timetableViewModel.getAllSemesters().observe(viewLifecycleOwner) { semesters ->
+            if (!semesters.isNullOrEmpty()) {
+                for (i in semesters.indices) {
+                    val startDate = DateUtils.convertDateToLocalDate(Date(semesters[i].startDate))
+                    val endDate = DateUtils.convertDateToLocalDate(Date(semesters[i].endDate))
+                    val selectedStartDate = DateUtils.convertDateToLocalDate(Date(selectedStartDate.time.time))
+                    val selectedEndDate = DateUtils.convertDateToLocalDate(Date(selectedEndDate.time.time))
+
+                    // 중간
+                    if (selectedStartDate.isAfter(startDate) && selectedStartDate.isBefore(endDate) &&
+                        selectedEndDate.isAfter(startDate) && selectedEndDate.isBefore(endDate)) {
+                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
+                        return@observe
+                    }
+
+                    // 왼쪽 걸침
+                    if (selectedStartDate.isBefore(startDate) && selectedEndDate.isAfter(startDate) && selectedEndDate.isBefore(endDate)) {
+                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
+                        return@observe
+                    }
+
+                    // 우측 걸침
+                    if (selectedStartDate.isAfter(startDate) && selectedStartDate.isBefore(endDate) && selectedEndDate.isAfter(endDate)) {
+                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
+                        return@observe
+                    }
+
+                    // 모두 포함
+                    if (selectedStartDate.isBefore(startDate) && selectedEndDate.isAfter(endDate)) {
+                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
+                        return@observe
+                    }
+                }
+
+                saveSemester()
+            }
         }
     }
 
@@ -80,7 +127,24 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         val semesterTitle = binding.edtSemesterTitle.text.toString()
         val semesterDescription = binding.edtSemesterDescription.text.toString()
 
-        //TODO: 시작짜 종료날짜 체크
+        if (semesterTitle.isEmpty()) {
+            Toast.makeText(requireActivity(), getString(R.string.toast_name_message),
+                Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (semesterDescription.isEmpty()) {
+            Toast.makeText(requireActivity(), getString(R.string.toast_memo_message),
+                Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (selectedStartDate.time.time > selectedEndDate.time.time) {
+            Toast.makeText(requireActivity(), getString(R.string.toast_start_end_date_message),
+                Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val semester = Semester(
             id = null,
             title = semesterTitle,
@@ -90,6 +154,12 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         )
 
         timetableViewModel.insertSemester(semester)
+
+        runDelayed(500L) {
+            Toast.makeText(requireActivity(), getString(R.string.toast_save_complete_message),
+                Toast.LENGTH_SHORT).show()
+            dismiss()
+        }
     }
 
     private fun showDatePicker(date: Long, typeName: String) {
