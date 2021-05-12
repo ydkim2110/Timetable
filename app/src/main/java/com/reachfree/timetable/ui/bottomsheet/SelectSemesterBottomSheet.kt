@@ -66,7 +66,7 @@ class SelectSemesterBottomSheet(
     private fun subscribeToObserver() {
         when (type) {
             SelectType.SEMESTER -> {
-                timetableViewModel.getAllSemesters().observe(viewLifecycleOwner) { semesters ->
+                timetableViewModel.getAllSemestersLiveData().observe(viewLifecycleOwner) { semesters ->
                     if (!semesters.isNullOrEmpty()) {
                         setupPickerView(semesters)
                     }

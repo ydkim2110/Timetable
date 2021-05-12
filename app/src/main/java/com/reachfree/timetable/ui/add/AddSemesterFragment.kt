@@ -1,6 +1,5 @@
 package com.reachfree.timetable.ui.add
 
-import android.graphics.PorterDuff
 import android.graphics.PorterDuff.Mode.SRC_ATOP
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,9 +12,8 @@ import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.databinding.FragmentAddSemesterBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
+import com.reachfree.timetable.extension.toMillis
 import com.reachfree.timetable.ui.base.BaseDialogFragment
-import com.reachfree.timetable.ui.base.BaseFragment
-import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.ui.setup.DatePickerFragment
 import com.reachfree.timetable.ui.setup.SetupActivity
 import com.reachfree.timetable.util.DateUtils
@@ -32,6 +30,8 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
 
     private var selectedStartDate = Calendar.getInstance()
     private var selectedEndDate = Calendar.getInstance()
+
+    private var semesterList = mutableListOf<Semester>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +52,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         setupToolbar()
         setupView()
         setupViewHandler()
+        subscribeToObserver()
     }
 
     private fun setupToolbar() {
@@ -79,46 +80,20 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             showDatePicker(selectedEndDate.time.time, SetupActivity.END_TIME)
         }
         binding.btnSave.setOnSingleClickListener {
-            compareDateWithOthers()
+            saveSemester()
         }
     }
 
-    private fun compareDateWithOthers() {
-        timetableViewModel.getAllSemesters().observe(viewLifecycleOwner) { semesters ->
+    private fun subscribeToObserver() {
+        timetableViewModel.getAllSemesters()
+        timetableViewModel.semesterList.observe(viewLifecycleOwner) { semesters ->
             if (!semesters.isNullOrEmpty()) {
+                semesterList.clear()
+                semesterList.addAll(semesters)
                 for (i in semesters.indices) {
-                    val startDate = DateUtils.convertDateToLocalDate(Date(semesters[i].startDate))
-                    val endDate = DateUtils.convertDateToLocalDate(Date(semesters[i].endDate))
-                    val selectedStartDate = DateUtils.convertDateToLocalDate(Date(selectedStartDate.time.time))
-                    val selectedEndDate = DateUtils.convertDateToLocalDate(Date(selectedEndDate.time.time))
-
-                    // 중간
-                    if (selectedStartDate.isAfter(startDate) && selectedStartDate.isBefore(endDate) &&
-                        selectedEndDate.isAfter(startDate) && selectedEndDate.isBefore(endDate)) {
-                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
-                        return@observe
-                    }
-
-                    // 왼쪽 걸침
-                    if (selectedStartDate.isBefore(startDate) && selectedEndDate.isAfter(startDate) && selectedEndDate.isBefore(endDate)) {
-                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
-                        return@observe
-                    }
-
-                    // 우측 걸침
-                    if (selectedStartDate.isAfter(startDate) && selectedStartDate.isBefore(endDate) && selectedEndDate.isAfter(endDate)) {
-                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
-                        return@observe
-                    }
-
-                    // 모두 포함
-                    if (selectedStartDate.isBefore(startDate) && selectedEndDate.isAfter(endDate)) {
-                        Toast.makeText(requireActivity(), "날짜가 겹침!!", Toast.LENGTH_SHORT).show()
-                        return@observe
-                    }
+                    Timber.d("DEBUG: semester startDate is ${DateUtils.testDateFormat.format(semesters[i].startDate)}")
+                    Timber.d("DEBUG: semester endDate is ${DateUtils.testDateFormat.format(semesters[i].endDate)}")
                 }
-
-                saveSemester()
             }
         }
     }
@@ -145,12 +120,35 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             return
         }
 
+        val startDate = DateUtils.calculateStartOfDay(
+            DateUtils.convertDateToLocalDate(Date(selectedStartDate.time.time))).toMillis()!!
+        val endDate = DateUtils.calculateEndOfDay(
+            DateUtils.convertDateToLocalDate(Date(selectedEndDate.time.time))).toMillis()!!
+
+        for (i in semesterList.indices) {
+            val savedStartDate = DateUtils.convertDateToLocalDate(Date(semesterList[i].startDate))
+            val savedEndDate = DateUtils.convertDateToLocalDate(Date(semesterList[i].endDate))
+
+            val selectStartDate = DateUtils.convertDateToLocalDate(Date(startDate))
+            val selectEndDate = DateUtils.convertDateToLocalDate(Date(endDate))
+
+            if (!selectStartDate.isBefore(savedStartDate) && selectStartDate.isBefore(savedEndDate)) {
+                Toast.makeText(requireActivity(), "시작 날짜 중복!!", Toast.LENGTH_SHORT).show()
+                return
+            }
+            if (!selectEndDate.isBefore(savedStartDate) && selectEndDate.isBefore(savedEndDate)) {
+                Timber.d("DEBUG: ")
+                Toast.makeText(requireActivity(), "종료 날짜 중복!!", Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+
         val semester = Semester(
             id = null,
             title = semesterTitle,
             description = semesterDescription,
-            startDate = selectedStartDate.time.time,
-            endDate = selectedEndDate.time.time,
+            startDate = startDate,
+            endDate = endDate,
         )
 
         timetableViewModel.insertSemester(semester)

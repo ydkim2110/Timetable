@@ -23,8 +23,12 @@ class SemesterRepositoryImpl @Inject constructor(
         semesterDao.deleteAllSemesters()
     }
 
-    override fun getAllSemesters(): LiveData<List<Semester>> {
+    override suspend fun getAllSemesters(): List<Semester> {
         return semesterDao.getAllSemesters()
+    }
+
+    override fun getAllSemestersLiveData(): LiveData<List<Semester>> {
+        return semesterDao.getAllSemestersLiveData()
     }
 
     override fun getAllSemestersWithTotalCount(): LiveData<List<SemesterResponse>> {

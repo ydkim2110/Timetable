@@ -271,7 +271,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
                 binding.btnSemester.text = selectedSemester.title
                 getAllSubjects()
             } else {
-                timetableViewModel.getAllSemesters().observe(viewLifecycleOwner) { semesters ->
+                timetableViewModel.getAllSemestersLiveData().observe(viewLifecycleOwner) { semesters ->
                     if (!semesters.isNullOrEmpty()) {
                         //TODO: 날짜 비교하여 해당 학기로 세팅
                         selectedSemester = semesters[0]

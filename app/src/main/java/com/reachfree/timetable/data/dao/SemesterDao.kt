@@ -19,7 +19,10 @@ interface SemesterDao {
     suspend fun deleteAllSemesters()
 
     @Query("SELECT * FROM semesters ORDER BY end_date DESC")
-    fun getAllSemesters(): LiveData<List<Semester>>
+    suspend fun getAllSemesters(): List<Semester>
+
+    @Query("SELECT * FROM semesters ORDER BY end_date DESC")
+    fun getAllSemestersLiveData(): LiveData<List<Semester>>
 
     @Query("""
         SELECT

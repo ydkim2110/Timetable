@@ -31,14 +31,12 @@ import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.ui.bottomsheet.SelectSemesterBottomSheet
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.util.ColorTag
-import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.DateUtils.updateHourAndMinute
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.weekview.runDelayed
 import com.reachfree.timetable.widget.TimetableListWidget
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
-import timber.log.Timber
 
 @AndroidEntryPoint
 class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
@@ -287,7 +285,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             }
         })
 
-        timetableViewModel.getAllSemesters().observe(this) { semesters ->
+        timetableViewModel.getAllSemestersLiveData().observe(this) { semesters ->
             if (!semesters.isNullOrEmpty()) {
                 //TODO: 날짜 비교하여 해당 학기로 세팅
                 selectedSemester = semesters[0]

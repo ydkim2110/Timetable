@@ -14,7 +14,9 @@ interface SemesterRepository {
 
     suspend fun deleteAllSemesters()
 
-    fun getAllSemesters(): LiveData<List<Semester>>
+    suspend fun getAllSemesters(): List<Semester>
+
+    fun getAllSemestersLiveData(): LiveData<List<Semester>>
 
     fun getAllSemestersWithTotalCount(): LiveData<List<SemesterResponse>>
 
