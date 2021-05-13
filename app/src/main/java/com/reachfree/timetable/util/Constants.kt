@@ -26,5 +26,11 @@ enum class StartTime(
 enum class EndTime(
     val hour: Int
 ) {
-    PM_SIX(19)
+    PM_FIVE(17),
+    PM_SIX(18),
+    PM_SEVEN(19),
+    PM_EIGHT(20),
+    PM_NINE(21),
+    PM_TEN(22),
+    PM_ELEVEN(23)
 }

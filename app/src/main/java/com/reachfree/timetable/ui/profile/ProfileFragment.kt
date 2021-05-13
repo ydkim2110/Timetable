@@ -27,7 +27,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
     @Inject
     lateinit var sessionManager: SessionManager
-
     private val timetableViewModel: TimetableViewModel by viewModels()
 
     interface ProfileHandlerListener {
@@ -98,6 +97,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, mandatoryCredit, mandatoryTotalCredit)
                 binding.txtElective.text = getString(R.string.text_input_profile_elective, electiveCredit, electiveTotalCredit)
 
+                binding.progressGraduation.animateProgressBar(graduation)
                 binding.progressMandatory.animateProgressBar(mandatory)
                 binding.progressElective.animateProgressBar(elective)
             } else {
@@ -105,6 +105,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, DEFAULT_VALUE, mandatoryTotalCredit)
                 binding.txtElective.text = getString(R.string.text_input_profile_elective, DEFAULT_VALUE, electiveTotalCredit)
 
+                binding.progressGraduation.animateProgressBar(DEFAULT_VALUE)
                 binding.progressMandatory.animateProgressBar(DEFAULT_VALUE)
                 binding.progressElective.animateProgressBar(DEFAULT_VALUE)
             }

@@ -34,7 +34,7 @@ import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.util.ColorTag
 import com.reachfree.timetable.util.DateUtils.updateHourAndMinute
 import com.reachfree.timetable.viewmodel.TimetableViewModel
-import com.reachfree.timetable.weekview.runDelayed
+import com.reachfree.timetable.extension.runDelayed
 import com.reachfree.timetable.widget.TimetableListWidget
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime

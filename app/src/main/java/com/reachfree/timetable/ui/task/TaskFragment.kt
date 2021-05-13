@@ -44,7 +44,6 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
     private var calendar = Calendar.getInstance()
 
     private var itemHeight = 0
-    private var semester: Semester? = null
 
     interface TaskFragmentListener {
         fun onAddButtonClicked(date: Date)
@@ -152,7 +151,6 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
     private fun updateRecyclerViewAdapter() {
         calendarAdapter = CalendarAdapter(calendarResponse, calendar, itemHeight)
         binding.recyclerCalendar.adapter = calendarAdapter
-
         calendarAdapter.setOnItemClickListener(this)
     }
 
@@ -179,9 +177,18 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
             }
         })
 
+        // 모든 과목 가져오기
+        fetchAllSubjects()
+
+        // 해당 학기 과목만 가져옴
+//        fetchAllSubjectsByThisSemester()
+
+
+    }
+
+    private fun fetchAllSubjectsByThisSemester() {
         timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
             if (semester != null) {
-                this.semester = semester
                 timetableViewModel.getAllSubjectBySemester(semester.id!!).observe(viewLifecycleOwner) { subjects ->
                     if (!subjects.isNullOrEmpty()) {
                         try {
@@ -199,21 +206,39 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
         }
     }
 
-    override fun onItemClick(date: Date) {
-        semester?.let {
-            calendarDayDialog = CalendarDayDialog(date, it)
-            calendarDayDialog.isCancelable = true
-            calendarDayDialog.show(childFragmentManager, CalendarDayDialog.TAG)
-            calendarDayDialog.setOnSelectTypeListener(object : CalendarDayDialog.CalendarDayDialogListener {
-                override fun onAddButtonClicked(date: Date) {
-                    taskFragmentListener.onAddButtonClicked(date)
+    private fun fetchAllSubjects() {
+        timetableViewModel.getAllSubjects().observe(viewLifecycleOwner) { subjects ->
+            if (!subjects.isNullOrEmpty()) {
+                try {
+                    val subjectIdArray = LongArray(subjects.size)
+                    for (i in subjects.indices) {
+                        subjectIdArray[i] = subjects[i].id!!
+                    }
+                    timetableViewModel.getAllTaskMediator(subjectIdArray)
+                } catch (e: IndexOutOfBoundsException) {
+                    Timber.d("ERROR: IndexOutOfBoundsException")
                 }
-
-                override fun onDetailTaskClicked(data: CalendarTaskResponse) {
-                    taskFragmentListener.onDetailTaskClicked(data)
-                }
-            })
+            }
         }
+    }
+
+    override fun onItemClick(date: Date) {
+        showSelectedDayDialog(date)
+    }
+
+    private fun showSelectedDayDialog(date: Date) {
+        calendarDayDialog = CalendarDayDialog(date)
+        calendarDayDialog.isCancelable = true
+        calendarDayDialog.show(childFragmentManager, CalendarDayDialog.TAG)
+        calendarDayDialog.setOnSelectTypeListener(object : CalendarDayDialog.CalendarDayDialogListener {
+            override fun onAddButtonClicked(date: Date) {
+                taskFragmentListener.onAddButtonClicked(date)
+            }
+
+            override fun onDetailTaskClicked(data: CalendarTaskResponse) {
+                taskFragmentListener.onDetailTaskClicked(data)
+            }
+        })
     }
 
     companion object {

@@ -12,9 +12,10 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.databinding.CalendarDayDialogBinding
+import com.reachfree.timetable.extension.beGone
+import com.reachfree.timetable.extension.beVisible
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.extension.toMillis
 import com.reachfree.timetable.util.DateUtils
@@ -25,8 +26,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class CalendarDayDialog(
-    private val date: Date,
-    private val semester: Semester
+    private val date: Date
 ) : DialogFragment() {
 
     private val timetableViewModel: TimetableViewModel by viewModels()
@@ -95,10 +95,14 @@ class CalendarDayDialog(
     }
 
     private fun subscribeToObserver() {
+        fetchAllSubjects()
+    }
+
+    private fun fetchAllSubjects() {
         val startDay = DateUtils.calculateStartOfDay(DateUtils.convertDateToLocalDate(date)).toMillis()
         val endDay = DateUtils.calculateEndOfDay(DateUtils.convertDateToLocalDate(date)).toMillis()
 
-        timetableViewModel.getAllSubjectBySemester(semester.id!!).observe(viewLifecycleOwner) { subjects ->
+        timetableViewModel.getAllSubjects().observe(viewLifecycleOwner) { subjects ->
             if (!subjects.isNullOrEmpty()) {
                 try {
                     val subjectIdArray = LongArray(subjects.size)
@@ -113,6 +117,13 @@ class CalendarDayDialog(
         }
 
         timetableViewModel.calendarTaskList.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                binding.recyclerDayItem.beVisible()
+                binding.layoutEmpty.beGone()
+            } else {
+                binding.recyclerDayItem.beGone()
+                binding.layoutEmpty.beVisible()
+            }
             calendarDayDialogAdapter = CalendarDayDialogAdapter(it)
             binding.recyclerDayItem.adapter = calendarDayDialogAdapter
             calendarDayDialogAdapter.setOnItemClickListener { data ->

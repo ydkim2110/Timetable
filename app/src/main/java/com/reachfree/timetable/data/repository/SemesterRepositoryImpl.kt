@@ -15,6 +15,10 @@ class SemesterRepositoryImpl @Inject constructor(
         semesterDao.insertSemester(semester)
     }
 
+    override suspend fun updateSemester(semester: Semester) {
+        semesterDao.updateSemester(semester)
+    }
+
     override suspend fun deleteSemesterById(semesterId: Long) {
         semesterDao.deleteSemesterById(semesterId)
     }
@@ -53,6 +57,10 @@ class SemesterRepositoryImpl @Inject constructor(
 
     override fun getSemesterByFlow(date: Long): Flow<Semester> {
         return semesterDao.getSemesterByFlow(date)
+    }
+
+    override fun getSemesterByIdLiveData(semesterId: Long): LiveData<Semester> {
+        return semesterDao.getSemesterByIdLiveData(semesterId)
     }
 
 }

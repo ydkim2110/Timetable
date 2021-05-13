@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.reachfree.timetable.R
 import org.threeten.bp.*
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.FormatStyle
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -16,6 +18,7 @@ object DateUtils {
     val semesterDateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
     val widgetTitleDateFormat = SimpleDateFormat("yyyy년 MM월 dd일, EEEE", Locale.getDefault())
     val taskDateFormat = SimpleDateFormat("a hh:mm", Locale.getDefault())
+    val shortHourMinuteDateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
     val yearMonthDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.getDefault())
     val yearDateFormat = SimpleDateFormat("yyyy년", Locale.getDefault())
     val monthDateFormat = SimpleDateFormat("MM월", Locale.getDefault())
@@ -27,6 +30,10 @@ object DateUtils {
 
     fun convertDateToLocalDate(date: Date): LocalDate {
         return Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()
+    }
+
+    fun convertDateToLocalDateTime(date: Date): LocalDateTime {
+        return Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDateTime()
     }
 
     fun calculateStartOfDay(localDate: LocalDate): LocalDateTime {

@@ -10,6 +10,8 @@ interface SemesterRepository {
 
     suspend fun insertSemester(semester: Semester)
 
+    suspend fun updateSemester(semester: Semester)
+
     suspend fun deleteSemesterById(semesterId: Long)
 
     suspend fun deleteAllSemesters()
@@ -29,5 +31,7 @@ interface SemesterRepository {
     fun getSemesterForWidgetService(date: Long): Semester
 
     fun getSemesterByFlow(date: Long): Flow<Semester>
+
+    fun getSemesterByIdLiveData(semesterId: Long): LiveData<Semester>
 
 }

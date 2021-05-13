@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
@@ -18,7 +19,7 @@ import com.reachfree.timetable.ui.setup.DatePickerFragment
 import com.reachfree.timetable.ui.setup.SetupActivity
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.viewmodel.TimetableViewModel
-import com.reachfree.timetable.weekview.runDelayed
+import com.reachfree.timetable.extension.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
@@ -33,10 +34,14 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
 
     private var semesterList = mutableListOf<Semester>()
 
+    private var passedSemesterId: Long? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
+
+        passedSemesterId = requireArguments().getLong(SEMESTER_ID, -1L)
     }
 
     override fun getDialogFragmentBinding(
@@ -49,10 +54,30 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupData()
         setupToolbar()
         setupView()
         setupViewHandler()
-        subscribeToObserver()
+    }
+
+    private fun setupData() {
+        if (passedSemesterId != null && passedSemesterId != -1L) {
+            Timber.d("DEBUG: passedSemesterId $passedSemesterId")
+            timetableViewModel.getSemesterById(passedSemesterId!!)
+            timetableViewModel.semesterById.observe(viewLifecycleOwner) { semester ->
+                if (semester != null) {
+                    binding.edtSemesterTitle.setText(semester.title)
+                    binding.edtSemesterDescription.setText(semester.description)
+                    binding.btnSemesterStartDate.text = DateUtils.defaultDateFormat.format(semester.startDate)
+                    binding.btnSemesterEndDate.text = DateUtils.defaultDateFormat.format(semester.endDate)
+
+                    selectedStartDate.time = Date(semester.startDate)
+                    selectedEndDate.time = Date(semester.endDate)
+                }
+            }
+        } else {
+            setupDefaultSubscribeToObserver()
+        }
     }
 
     private fun setupToolbar() {
@@ -84,7 +109,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         }
     }
 
-    private fun subscribeToObserver() {
+    private fun setupDefaultSubscribeToObserver() {
         timetableViewModel.getAllSemesters()
         timetableViewModel.semesterList.observe(viewLifecycleOwner) { semesters ->
             if (!semesters.isNullOrEmpty()) {
@@ -132,26 +157,39 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             val selectStartDate = DateUtils.convertDateToLocalDate(Date(startDate))
             val selectEndDate = DateUtils.convertDateToLocalDate(Date(endDate))
 
-            if (!selectStartDate.isBefore(savedStartDate) && selectStartDate.isBefore(savedEndDate)) {
+            if (!selectStartDate.isBefore(savedStartDate) && selectStartDate.isBefore(savedEndDate.plusDays(1))) {
                 Toast.makeText(requireActivity(), "시작 날짜 중복!!", Toast.LENGTH_SHORT).show()
                 return
             }
             if (!selectEndDate.isBefore(savedStartDate) && selectEndDate.isBefore(savedEndDate)) {
-                Timber.d("DEBUG: ")
                 Toast.makeText(requireActivity(), "종료 날짜 중복!!", Toast.LENGTH_SHORT).show()
                 return
             }
         }
 
-        val semester = Semester(
-            id = null,
-            title = semesterTitle,
-            description = semesterDescription,
-            startDate = startDate,
-            endDate = endDate,
-        )
+        if (passedSemesterId != null && passedSemesterId != -1L) {
+            val semester = Semester(
+                id = passedSemesterId,
+                title = semesterTitle,
+                description = semesterDescription,
+                startDate = startDate,
+                endDate = endDate,
+            )
+            Timber.d("DEBUG : update $semester")
+            timetableViewModel.updateSemester(semester)
+        } else {
+            val semester = Semester(
+                id = null,
+                title = semesterTitle,
+                description = semesterDescription,
+                startDate = startDate,
+                endDate = endDate,
+            )
 
-        timetableViewModel.insertSemester(semester)
+            Timber.d("DEBUG : Insert $semester")
+
+            timetableViewModel.insertSemester(semester)
+        }
 
         runDelayed(500L) {
             Toast.makeText(requireActivity(), getString(R.string.toast_save_complete_message),
@@ -184,7 +222,11 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
     }
 
     companion object {
-        fun newInstance() = AddSemesterFragment()
+        private const val SEMESTER_ID = "semester_id"
+
+        fun newInstance(semesterId: Long? = null) = AddSemesterFragment().apply {
+            arguments = bundleOf(SEMESTER_ID to semesterId)
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-package com.reachfree.timetable.weekview
+package com.reachfree.timetable.util
 
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.temporal.WeekFields

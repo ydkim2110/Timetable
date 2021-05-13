@@ -13,12 +13,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.FragmentSemesterDetailBinding
-import com.reachfree.timetable.extension.setOnSingleClickListener
+import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.util.SpacingItemDecoration
 import com.reachfree.timetable.viewmodel.TimetableViewModel
-import com.reachfree.timetable.weekview.runDelayed
+import com.reachfree.timetable.util.AppUtils
+import com.reachfree.timetable.util.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.temporal.ChronoUnit
+import timber.log.Timber
+import java.util.*
 
 @AndroidEntryPoint
 class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>() {
@@ -27,6 +32,16 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
     private lateinit var subjectAdapter: SemesterDetailSubjectAdapter
 
     private var passedSemester: SemesterResponse? = null
+
+    interface SemesterDetailFragmentListener {
+        fun onEditButtonClicked(semesterId: Long)
+    }
+
+    private lateinit var semesterDetailFragmentListener: SemesterDetailFragmentListener
+
+    fun setOnSemesterDetailFragmentListener(semesterDetailFragmentListener: SemesterDetailFragmentListener){
+        this.semesterDetailFragmentListener = semesterDetailFragmentListener
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +60,58 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupDefaultView()
         setupToolbar()
         setupRecyclerView()
         setupViewHandler()
         subscribeToObserver()
+    }
+
+    private fun setupDefaultView() {
+        passedSemester?.let { passedSemester ->
+            passedSemester.id?.let { semesterId ->
+                timetableViewModel.getSemesterByIdLiveData(semesterId).observe(viewLifecycleOwner) { semester ->
+                    binding.txtSemesterTitle.text = semester.title
+
+                    val startDate = DateUtils.semesterShortDateFormat.format(semester.startDate)
+                    val endDate = DateUtils.semesterShortDateFormat.format(semester.endDate)
+                    binding.txtSemesterDate.text = "($startDate ~ $endDate)"
+
+                    val days = ChronoUnit.DAYS.between(DateUtils.convertDateToLocalDateTime(Date(semester.startDate)),
+                        DateUtils.convertDateToLocalDateTime(Date(semester.endDate))) + 1L
+
+                    if (LocalDateTime.now().isAfter(DateUtils.convertDateToLocalDateTime(Date(semester.startDate))) &&
+                        LocalDateTime.now().isBefore(DateUtils.convertDateToLocalDateTime(Date(semester.endDate)))) {
+                        val passedDays = ChronoUnit.DAYS.between(DateUtils.convertDateToLocalDateTime(Date(semester.startDate)),
+                            LocalDateTime.now()) + 1L
+                        Timber.d("DEBUG: 날짜차이 : $passedDays")
+                        val percentage = AppUtils.calculatePercentage(passedDays.toInt(), days.toInt())
+                        binding.progressbarPassedDays.animateProgressBar(percentage)
+                        binding.txtPassedPercent.text = "$percentage%"
+                        binding.txtPassedDaysComment.text = setupCommentByPercentage(percentage)
+                    } else if (!LocalDateTime.now().isAfter(DateUtils.convertDateToLocalDateTime(Date(semester.startDate)))){
+                        binding.progressbarPassedDays.animateProgressBar(0)
+                        binding.txtPassedPercent.text = "0%"
+                        binding.txtPassedDaysComment.text = setupCommentByPercentage(0)
+                    } else if (!LocalDateTime.now().isBefore(DateUtils.convertDateToLocalDateTime(Date(semester.endDate)))) {
+                        binding.progressbarPassedDays.animateProgressBar(100)
+                        binding.txtPassedPercent.text = "100%"
+                        binding.txtPassedDaysComment.text = setupCommentByPercentage(100)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupCommentByPercentage(percent: Int): String {
+        return when (percent) {
+            0 -> { requireActivity().resources.getString(R.string.text_passed_days_0) }
+            in 1..24 -> { requireActivity().resources.getString(R.string.text_passed_days_25) }
+            in 25..49 -> { requireActivity().resources.getString(R.string.text_passed_days_50) }
+            in 50..74 -> { requireActivity().resources.getString(R.string.text_passed_days_75) }
+            in 75..100 -> { requireActivity().resources.getString(R.string.text_passed_days_100) }
+            else -> "화이팅하세요~!@"
+        }
     }
 
     private fun setupToolbar() {
@@ -69,7 +132,11 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
     }
 
     private fun setupViewHandler() {
-        
+        binding.btnEditSemester.setOnSingleClickListener {
+            passedSemester?.id?.let { semesterId ->
+                semesterDetailFragmentListener.onEditButtonClicked(semesterId)
+            }
+        }
     }
     
     private fun subscribeToObserver() {
@@ -77,6 +144,14 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
             binding.appBar.txtToolbarTitle.text = semester.title
             semester.id?.let { semesterId ->
                 timetableViewModel.getAllSubjectBySemester(semesterId).observe(viewLifecycleOwner) { subjects ->
+                    if (!subjects.isNullOrEmpty()) {
+                        binding.recyclerSubject.beVisible()
+                        binding.layoutEmpty.beGone()
+                    } else {
+                        binding.recyclerSubject.beGone()
+                        binding.layoutEmpty.beVisible()
+                    }
+
                     val totalCredit = subjects.sumBy { it.credit }
                     binding.txtSemesterTotalCredit.text =
                         requireActivity().resources.getString(R.string.text_input_subject_total_credit, totalCredit)

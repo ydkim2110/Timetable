@@ -12,6 +12,7 @@ import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.GraduationCreditType
 import com.reachfree.timetable.databinding.ActivitySettingsBinding
 import com.reachfree.timetable.databinding.DatePickerBinding
+import com.reachfree.timetable.databinding.DialogSettingEndTimeBinding
 import com.reachfree.timetable.databinding.DialogSettingStartTimeBinding
 import com.reachfree.timetable.extension.beGone
 import com.reachfree.timetable.extension.setOnSingleClickListener
@@ -123,13 +124,37 @@ class SettingsActivity :
     }
 
     private fun setupEndTime() {
+        val localtime = LocalTime.of(sessionManager.getEndTime(), 0)
+        val cal = Calendar.getInstance()
+        cal.clear()
+        cal.set(0,0,0,localtime.hour,localtime.minute,localtime.second)
 
+        binding.txtEndTime.text = DateUtils.taskDateFormat.format(cal.time.time)
+        binding.layoutEndTime.setOnSingleClickListener {
+            showEndTimeDialog()
+        }
     }
 
     private fun showStartTimeDialog() {
         val startTimeBinding = DialogSettingStartTimeBinding.inflate(LayoutInflater.from(this))
 
-        startTimeBinding.radio8.isChecked = true
+        when (sessionManager.getStartTime()) {
+            StartTime.AM_SIX.hour -> {
+                startTimeBinding.radio6.isChecked = true
+            }
+            StartTime.AM_SEVEN.hour -> {
+                startTimeBinding.radio7.isChecked = true
+            }
+            StartTime.AM_EIGHT.hour -> {
+                startTimeBinding.radio8.isChecked = true
+            }
+            StartTime.AM_NINE.hour -> {
+                startTimeBinding.radio9.isChecked = true
+            }
+            StartTime.AM_TEN.hour -> {
+                startTimeBinding.radio10.isChecked = true
+            }
+        }
 
         AlertDialog.Builder(this)
             .setView(startTimeBinding.root)
@@ -157,6 +182,68 @@ class SettingsActivity :
             .show()
     }
 
+    private fun showEndTimeDialog() {
+        val endTimeBinding = DialogSettingEndTimeBinding.inflate(LayoutInflater.from(this))
+
+        Timber.d("DEBUG: getEndTime is ${sessionManager.getEndTime()}")
+
+        when (sessionManager.getEndTime()) {
+            EndTime.PM_FIVE.hour -> {
+                endTimeBinding.radio5.isChecked = true
+            }
+            EndTime.PM_SIX.hour -> {
+                endTimeBinding.radio6.isChecked = true
+            }
+            EndTime.PM_SEVEN.hour -> {
+                endTimeBinding.radio7.isChecked = true
+            }
+            EndTime.PM_EIGHT.hour -> {
+                endTimeBinding.radio8.isChecked = true
+            }
+            EndTime.PM_NINE.hour -> {
+                endTimeBinding.radio9.isChecked = true
+            }
+            EndTime.PM_TEN.hour -> {
+                endTimeBinding.radio10.isChecked = true
+            }
+            EndTime.PM_ELEVEN.hour -> {
+                endTimeBinding.radio11.isChecked = true
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setView(endTimeBinding.root)
+            .setNegativeButton(getString(R.string.text_alert_button_cancel), null)
+            .setPositiveButton(getString(R.string.text_alert_button_ok)) { dialog, which ->
+                when (endTimeBinding.radioGroup.checkedRadioButtonId) {
+                    R.id.radio_5 -> {
+                        sessionManager.setEndTime(EndTime.PM_FIVE.hour)
+                    }
+                    R.id.radio_6 -> {
+                        sessionManager.setEndTime(EndTime.PM_SIX.hour)
+                    }
+                    R.id.radio_7 -> {
+                        sessionManager.setEndTime(EndTime.PM_SEVEN.hour)
+                    }
+                    R.id.radio_8 -> {
+                        sessionManager.setEndTime(EndTime.PM_EIGHT.hour)
+                    }
+                    R.id.radio_9 -> {
+                        sessionManager.setEndTime(EndTime.PM_NINE.hour)
+                    }
+                    R.id.radio_10 -> {
+                        sessionManager.setEndTime(EndTime.PM_TEN.hour)
+                    }
+                    R.id.radio_11 -> {
+                        sessionManager.setEndTime(EndTime.PM_ELEVEN.hour)
+                    }
+                }
+            }
+            .create()
+            .show()
+    }
+
+
 
     private val sharedPrefListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
@@ -182,10 +269,19 @@ class SettingsActivity :
 
                     binding.txtStartTime.text = DateUtils.taskDateFormat.format(cal.time.time)
                 }
+                END_TIME ->{
+                    val localtime = LocalTime.of(sessionManager.getEndTime(), 0)
+                    val cal = Calendar.getInstance()
+                    cal.clear()
+                    cal.set(0,0,0,localtime.hour,localtime.minute,localtime.second)
+
+                    binding.txtEndTime.text = DateUtils.taskDateFormat.format(cal.time.time)
+                }
             }
         }
 
     companion object {
+        private const val END_TIME_ADJUST_VALUE = 1
         fun start(context: Context) {
             context.startActivity(Intent(context, SettingsActivity::class.java))
         }

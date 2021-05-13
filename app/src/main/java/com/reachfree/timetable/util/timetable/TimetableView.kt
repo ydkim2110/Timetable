@@ -1,5 +1,6 @@
 package com.reachfree.timetable.util.timetable
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -11,8 +12,9 @@ import android.view.View
 import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import com.reachfree.timetable.R
-import com.reachfree.timetable.weekview.DayOfWeekUtil
-import com.reachfree.timetable.weekview.dipToPixelF
+import com.reachfree.timetable.util.Animation
+import com.reachfree.timetable.util.DayOfWeekUtil
+import com.reachfree.timetable.extension.dipToPixelF
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
@@ -40,7 +42,7 @@ class TimetableView(context: Context, attributeSet: AttributeSet) : RelativeLayo
     private val scaleGestureDetector: ScaleGestureDetector
     private val weekViewConfig: TimetableConfig
 
-    var eventConfig = TimetableEventConfig()
+//    var eventConfig = TimetableEventConfig()
     var timetableConfig = TimetableEventConfig()
 
     init {
@@ -74,6 +76,7 @@ class TimetableView(context: Context, attributeSet: AttributeSet) : RelativeLayo
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         scaleGestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
@@ -147,14 +150,14 @@ class TimetableView(context: Context, attributeSet: AttributeSet) : RelativeLayo
             }
         }
 
-        val lv = TimetableEventView(context, event, eventConfig, weekViewConfig.scalingFactor)
+        val lv = TimetableEventView(context, event, timetableConfig, weekViewConfig.scalingFactor)
         backgroundView.updateTimes(event.startTime, event.endTime)
 
         // mark active event
         val now = LocalTime.now()
         if (LocalDate.now().dayOfWeek == event.date.dayOfWeek && // this day
             event.startTime < now && event.endTime > now) {
-            lv.animation = com.reachfree.timetable.weekview.Animation.createBlinkAnimation()
+            lv.animation = Animation.createBlinkAnimation()
         }
 
         lv.setOnClickListener { clickListener?.invoke(lv) }

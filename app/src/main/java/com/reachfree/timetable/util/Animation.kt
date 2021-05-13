@@ -1,4 +1,4 @@
-package com.reachfree.timetable.weekview
+package com.reachfree.timetable.util
 
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation

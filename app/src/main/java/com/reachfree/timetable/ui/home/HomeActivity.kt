@@ -25,8 +25,9 @@ import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.timetable.TimetableFragment
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.timetable.TimetableEventView
-import com.reachfree.timetable.weekview.runDelayed
+import com.reachfree.timetable.extension.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
@@ -170,7 +171,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     override fun onSemesterItemClicked(semester: SemesterResponse) {
-        SemesterDetailFragment.newInstance(semester).apply { show(supportFragmentManager, SemesterDetailFragment.TAG) }
+        val detail = SemesterDetailFragment.newInstance(semester)
+            .apply { show(supportFragmentManager, SemesterDetailFragment.TAG) }
+
+        detail.setOnSemesterDetailFragmentListener(object: SemesterDetailFragment.SemesterDetailFragmentListener {
+            override fun onEditButtonClicked(semesterId: Long) {
+                Timber.d("DEBUG : onEditButtonClicked $semesterId")
+                AddSemesterFragment.newInstance(semesterId)
+                    .apply { show(supportFragmentManager, null) }
+            }
+        })
     }
 
     override fun onAddButtonClicked(date: Date) {

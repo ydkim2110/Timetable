@@ -1,10 +1,7 @@
 package com.reachfree.timetable.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.response.SemesterResponse
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +11,9 @@ interface SemesterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSemester(semester: Semester)
+
+    @Update
+    suspend fun updateSemester(semester: Semester)
 
     @Query("DELETE FROM semesters WHERE id LIKE :semesterId")
     suspend fun deleteSemesterById(semesterId: Long)
@@ -61,4 +61,7 @@ interface SemesterDao {
 
     @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
     fun getSemesterByFlow(date: Long): Flow<Semester>
+
+    @Query("SELECT * FROM semesters WHERE id LIKE :semesterId LIMIT 1")
+    fun getSemesterByIdLiveData(semesterId: Long): LiveData<Semester>
 }

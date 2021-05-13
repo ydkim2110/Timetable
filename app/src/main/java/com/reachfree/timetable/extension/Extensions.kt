@@ -1,12 +1,9 @@
-package com.reachfree.timetable.weekview
+package com.reachfree.timetable.extension
 
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 
 internal fun Context.dipToPixelF(dip: Float): Float {
     val metrics = resources.displayMetrics
@@ -16,13 +13,6 @@ internal fun Context.dipToPixelF(dip: Float): Float {
 internal fun Context.dipToPixelI(dip: Float): Int {
     return dipToPixelF(dip).toInt()
 }
-
-internal fun LocalTime.toLocalString(): String {
-    return localTimeFormat.format(this)
-}
-
-private val localTimeFormat: DateTimeFormatter =
-    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 
 fun runDelayed(millis: Long, function: () -> Unit) {
     Handler(Looper.getMainLooper()).postDelayed(function, millis)

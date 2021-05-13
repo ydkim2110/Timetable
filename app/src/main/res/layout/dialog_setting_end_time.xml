@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_start_time"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+   <RadioGroup
+       android:id="@+id/radio_group"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+       <RadioButton
+           android:id="@+id/radio_5"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="PM 05:00" />
+
+       <RadioButton
+           android:id="@+id/radio_6"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="PM 06:00" />
+
+       <RadioButton
+           android:id="@+id/radio_7"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="PM 07:00" />
+
+       <RadioButton
+           android:id="@+id/radio_8"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="PM 08:00" />
+
+       <RadioButton
+           android:id="@+id/radio_9"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="PM 09:00" />
+
+       <RadioButton
+           android:id="@+id/radio_10"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="PM 10:00" />
+
+       <RadioButton
+           android:id="@+id/radio_11"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="PM 11:00" />
+
+   </RadioGroup>
+
+</LinearLayout>

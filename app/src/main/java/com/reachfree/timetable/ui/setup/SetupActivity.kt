@@ -16,7 +16,7 @@ import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.SessionManager
 import com.reachfree.timetable.viewmodel.TimetableViewModel
-import com.reachfree.timetable.weekview.runDelayed
+import com.reachfree.timetable.extension.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*

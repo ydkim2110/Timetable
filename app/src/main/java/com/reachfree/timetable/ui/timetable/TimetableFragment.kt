@@ -78,6 +78,9 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
                 START_TIME -> {
                     subscribeToObserver()
                 }
+                END_TIME -> {
+                    subscribeToObserver()
+                }
             }
         }
 
@@ -109,6 +112,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
     }
 
     private fun subscribeToObserver() {
+        Timber.d("DEBUG : subscribeToObserver~!!")
         timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
             semester?.id?.let {
                 timetableViewModel.getAllSubjectBySemester(it).observe(viewLifecycleOwner) { subjects ->

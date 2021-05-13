@@ -9,10 +9,10 @@ import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
 import com.reachfree.timetable.util.SessionManager
-import com.reachfree.timetable.weekview.DayOfWeekUtil
-import com.reachfree.timetable.weekview.dipToPixelF
-import com.reachfree.timetable.weekview.dipToPixelI
-import com.reachfree.timetable.weekview.toLocalString
+import com.reachfree.timetable.util.DayOfWeekUtil
+import com.reachfree.timetable.extension.dipToPixelF
+import com.reachfree.timetable.extension.dipToPixelI
+import com.reachfree.timetable.extension.toLocalString
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
@@ -109,6 +109,9 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
     private fun Canvas.drawHorizontalDividers() {
         var localTime = startTime
         var last = LocalTime.MIN
+
+        endTime = LocalTime.of(23, 59)
+
         while (localTime.isBefore(endTime) && !last.isAfter(localTime)) {
             val offset = Duration.between(startTime, localTime)
             val y = topOffsetPx + context.dipToPixelF(offset.toMinutes() * scalingFactor)
@@ -219,6 +222,12 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
 
         if (startTime.isBefore(this.startTime)) {
             this.startTime = startTime.truncatedTo(ChronoUnit.HOURS)
+            timesHaveChanged = true
+        }
+
+        if (changedEndTime != 0) {
+            this.endTime = LocalTime.of(changedEndTime!!, 0).truncatedTo(ChronoUnit.HOURS)
+            Timber.d("DEBUG: changed endTime ${this.endTime}")
             timesHaveChanged = true
         }
 
