@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.view.LayoutInflater
@@ -43,8 +44,6 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
     private val timetableViewModel: TimetableViewModel by viewModels()
 
-    private lateinit var selectedSemester: Semester
-
     private lateinit var selectSemesterBottomSheet: SelectSemesterBottomSheet
 
     private val colorTagDialog: ColorTagDialog by lazy { ColorTagDialog() }
@@ -52,6 +51,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
     private var selectedSubjectType = SubjectType.MANDATORY.ordinal
 
+    private lateinit var selectedSemester: Semester
+    private var selectedSemesterId: Long? = null
     private var passedSubjectId: Long? = null
     private var passedSubject: Subject? = null
 
@@ -84,6 +85,17 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             timetableViewModel.subject.observe(viewLifecycleOwner) { subject ->
                 if (subject != null) {
                     passedSubject = subject
+                    selectedSemesterId = subject.semesterId
+
+                    timetableViewModel.getSemesterById(subject.semesterId)
+                    timetableViewModel.semesterById.observe(viewLifecycleOwner) { semester ->
+                        if (semester != null) {
+                            selectedSemester = semester
+                            selectedSemesterId = selectedSemester.id
+                            binding.btnSemester.text = semester.title
+                        }
+                    }
+
                     binding.edtSubjectTitle.setText(subject.title)
                     binding.edtSubjectClassroom.setText(subject.classroom)
                     binding.edtSubjectBuildingName.setText(subject.buildingName)
@@ -170,8 +182,22 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             setupDefaultChip()
             setupDefaultColor()
             setupDefaultToggleGroup()
+            setupDefaultSubscribeToObserver()
 
             binding.deleteSaveBtnLayout.btnDelete.beGone()
+        }
+    }
+
+    private fun setupDefaultSubscribeToObserver() {
+        timetableViewModel.getAllSemestersLiveData().observe(this) { semesters ->
+            if (!semesters.isNullOrEmpty()) {
+                //TODO: 날짜 비교하여 해당 학기로 세팅
+                selectedSemester = semesters[0]
+                selectedSemesterId = selectedSemester.id
+                binding.btnSemester.text = selectedSemester.title
+            } else {
+                showNoSemesterWaringAlert()
+            }
         }
     }
 
@@ -188,6 +214,10 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 requireContext(),
                 R.color.white
             )
+        )
+        binding.appBar.btnBack.setColorFilter(
+            ContextCompat.getColor(requireActivity(), R.color.icon_back_arrow),
+            PorterDuff.Mode.SRC_ATOP
         )
         binding.appBar.btnBack.setOnSingleClickListener { dismiss() }
     }
@@ -241,7 +271,11 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         }
 
         binding.btnSemester.setOnSingleClickListener {
-            selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SEMESTER)
+            selectSemesterBottomSheet = if (passedSubject != null) {
+                SelectSemesterBottomSheet(SelectType.SEMESTER, selectedSemesterId)
+            } else {
+                SelectSemesterBottomSheet(SelectType.SEMESTER)
+            }
             selectSemesterBottomSheet.isCancelable = true
             selectSemesterBottomSheet.show(childFragmentManager, SelectSemesterBottomSheet.TAG)
 
@@ -249,6 +283,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 SelectSemesterBottomSheet.SelectSemesterListener {
                 override fun onSemesterSelected(semester: Semester) {
                     selectedSemester = semester
+                    selectedSemesterId = selectedSemester.id
+                    binding.btnSemester.text = selectedSemester.title
                 }
 
                 override fun onSubjectSelected(subject: Subject) {
@@ -284,16 +320,6 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 binding.backgroundColor.setBackgroundResource(color.resBg)
             }
         })
-
-        timetableViewModel.getAllSemestersLiveData().observe(this) { semesters ->
-            if (!semesters.isNullOrEmpty()) {
-                //TODO: 날짜 비교하여 해당 학기로 세팅
-                selectedSemester = semesters[0]
-                binding.btnSemester.text = selectedSemester.title
-            } else {
-                showNoSemesterWaringAlert()
-            }
-        }
     }
 
     private fun showNoSemesterWaringAlert() {
@@ -359,39 +385,44 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
         var toastMessage = ""
         if (passedSubject == null) {
-            val subject = Subject(
-                null,
-                title = subjectTitle,
-                days = selectedDays,
-                classroom = subjectClassroom,
-                buildingName = subjectBuildingName,
-                credit = subjectCredit,
-                type = selectedSubjectType,
-                backgroundColor = color.resId,
-                semesterId = selectedSemester.id!!
-            )
+            selectedSemesterId?.let { semesterId ->
+                val subject = Subject(
+                    null,
+                    title = subjectTitle,
+                    days = selectedDays,
+                    classroom = subjectClassroom,
+                    buildingName = subjectBuildingName,
+                    credit = subjectCredit,
+                    type = selectedSubjectType,
+                    backgroundColor = color.resId,
+                    semesterId = semesterId
+                )
 
-            timetableViewModel.insertSubject(subject)
-            toastMessage = "저장 완료!"
+                timetableViewModel.insertSubject(subject)
+                toastMessage = "저장 완료!"
+            } ?: Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
         } else {
-            val subject = Subject(
-                id = passedSubject!!.id,
-                title = subjectTitle,
-                days = selectedDays,
-                classroom = subjectClassroom,
-                buildingName = subjectBuildingName,
-                credit = subjectCredit,
-                type = selectedSubjectType,
-                backgroundColor = color.resId,
-                semesterId = selectedSemester.id!!
-            )
+            selectedSemesterId?.let { semesterId ->
+                val subject = Subject(
+                    id = passedSubject!!.id,
+                    title = subjectTitle,
+                    days = selectedDays,
+                    classroom = subjectClassroom,
+                    buildingName = subjectBuildingName,
+                    credit = subjectCredit,
+                    type = selectedSubjectType,
+                    backgroundColor = color.resId,
+                    semesterId = semesterId
+                )
 
-            timetableViewModel.updateSubject(subject)
-            toastMessage = "수정 완료!"
+                timetableViewModel.updateSubject(subject)
+                toastMessage = "수정 완료!"
+            } ?: Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
         }
 
         val man = AppWidgetManager.getInstance(requireActivity())
-        val ids = man.getAppWidgetIds(ComponentName(requireActivity(), TimetableListWidget::class.java))
+        val ids =
+            man.getAppWidgetIds(ComponentName(requireActivity(), TimetableListWidget::class.java))
         val updateIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
         updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
         requireActivity().sendBroadcast(updateIntent)

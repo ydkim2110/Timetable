@@ -119,15 +119,15 @@ class TimetableView(context: Context, attributeSet: AttributeSet) : RelativeLayo
         }
     }
 
-    fun addEvents(weekData: TimetableData) {
-        backgroundView.updateTimes(weekData.earliestStart, weekData.latestEnd)
+    fun addEvents(weekData: TimetableData, startTime: Int, endTime: Int) {
+        backgroundView.updateTimes(weekData.earliestStart, weekData.latestEnd, startTime, endTime)
 
         for (event in weekData.getSingleEvents()) {
             addEvent(event)
         }
     }
 
-    fun addEvent(event: TimetableEvent.Single) {
+    private fun addEvent(event: TimetableEvent.Single) {
         when (event.date.dayOfWeek) {
             DayOfWeek.SATURDAY -> {
                 if (!backgroundView.days.contains(DayOfWeek.SATURDAY)) {

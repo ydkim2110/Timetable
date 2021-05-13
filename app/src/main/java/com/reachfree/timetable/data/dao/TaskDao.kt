@@ -7,7 +7,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.reachfree.timetable.data.model.Task
 import com.reachfree.timetable.data.response.CalendarTaskResponse
-import retrofit2.http.DELETE
 
 @Dao
 interface TaskDao {

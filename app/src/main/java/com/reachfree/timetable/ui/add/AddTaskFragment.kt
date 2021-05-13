@@ -31,6 +31,7 @@ import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.weekview.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
@@ -55,7 +56,6 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
         selectedDate.time = Date(requireArguments().getLong(DATE, Date().time))
         passedTaskId = requireArguments().getLong(TASK_ID, -1L)
-
     }
 
     override fun getDialogFragmentBinding(
@@ -80,6 +80,15 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
             timetableViewModel.task.observe(viewLifecycleOwner) { task ->
                 if (task != null) {
                     passedTask = task
+
+                    timetableViewModel.getSemesterByTaskId(task.id!!)
+                    timetableViewModel.semesterByTaskId.observe(viewLifecycleOwner) { semester ->
+                        selectedSemester = semester
+                        selectedSemesterId = selectedSemester.id
+                        binding.btnSemester.text = semester.title
+                        getAllSubjects()
+                    }
+
                     binding.edtTaskTitle.setText(task.title)
                     binding.edtTaskDescription.setText(task.description)
 
@@ -110,9 +119,33 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
             }
         } else {
             setupDefaultData()
+            setupDefaultSubscribeToObserver()
             binding.deleteSaveBtnLayout.btnDelete.beGone()
         }
 
+    }
+
+    private fun setupDefaultSubscribeToObserver() {
+        timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
+            if (semester != null) {
+                selectedSemester = semester
+                selectedSemesterId = selectedSemester.id
+                binding.btnSemester.text = selectedSemester.title
+                getAllSubjects()
+            } else {
+                timetableViewModel.getAllSemestersLiveData().observe(viewLifecycleOwner) { semesters ->
+                    if (!semesters.isNullOrEmpty()) {
+                        //TODO: 날짜 비교하여 해당 학기로 세팅
+                        selectedSemester = semesters[0]
+                        selectedSemesterId = selectedSemester.id
+                        binding.btnSemester.text = selectedSemester.title
+                        getAllSubjects()
+                    } else {
+                        showNoSemesterWaringAlert()
+                    }
+                }
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -141,7 +174,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
     private fun setupViewHandler() {
         binding.btnSemester.setOnSingleClickListener {
-            selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SEMESTER)
+            selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SEMESTER, selectedSemesterId)
             selectSemesterBottomSheet.isCancelable = true
             selectSemesterBottomSheet.show(childFragmentManager, SelectSemesterBottomSheet.TAG)
 
@@ -149,7 +182,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
         }
         binding.btnSubject.setOnSingleClickListener {
             selectedSemesterId?.let {
-                selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SUBJECT, it)
+                selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SUBJECT, it, selectedSubjectId)
                 selectSemesterBottomSheet.isCancelable = true
                 selectSemesterBottomSheet.show(childFragmentManager, SelectSemesterBottomSheet.TAG)
 
@@ -264,35 +297,30 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
 
     private fun subscribeToObserver() {
-        timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
-            if (semester != null) {
-                selectedSemester = semester
-                selectedSemesterId = selectedSemester.id
-                binding.btnSemester.text = selectedSemester.title
-                getAllSubjects()
-            } else {
-                timetableViewModel.getAllSemestersLiveData().observe(viewLifecycleOwner) { semesters ->
-                    if (!semesters.isNullOrEmpty()) {
-                        //TODO: 날짜 비교하여 해당 학기로 세팅
-                        selectedSemester = semesters[0]
-                        selectedSemesterId = selectedSemester.id
-                        binding.btnSemester.text = selectedSemester.title
-                        getAllSubjects()
-                    } else {
-                        showNoSemesterWaringAlert()
-                    }
-                }
-            }
-        }
+
     }
 
     private fun getAllSubjects() {
         selectedSemesterId?.let {
             timetableViewModel.getAllSubjectBySemester(it).observe(viewLifecycleOwner) { subjects ->
                 if (!subjects.isNullOrEmpty()) {
-                    selectedSubject = subjects[0]
-                    selectedSubjectId = selectedSubject.id
-                    binding.btnSubject.text = subjects[0].title
+                    if (passedTask != null) {
+                        val subjectIdList = subjects.map { subject -> subject.id }
+                        if (subjectIdList.contains(passedTask!!.subjectId)) {
+                            val index = subjectIdList.indexOf(passedTask!!.subjectId)
+                            selectedSubject = subjects[index]
+                            selectedSubjectId = selectedSubject.id
+                            binding.btnSubject.text = subjects[index].title
+                        } else {
+                            selectedSubject = subjects[0]
+                            selectedSubjectId = selectedSubject.id
+                            binding.btnSubject.text = subjects[0].title
+                        }
+                    } else {
+                        selectedSubject = subjects[0]
+                        selectedSubjectId = selectedSubject.id
+                        binding.btnSubject.text = subjects[0].title
+                    }
                 } else {
                     showNoSubjectWaringAlert()
                     binding.btnSubject.text = getString(R.string.text_subject_name)

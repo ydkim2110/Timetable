@@ -40,25 +40,25 @@ object DateUtils {
     fun convertDayToString(context: Context, day: Int): String {
         return when (day) {
             1 -> {
-                context.resources.getString(R.string.monday_letter)
+                context.resources.getString(R.string.sunday_letter)
             }
             2 -> {
-                context.resources.getString(R.string.tuesday_letter)
+                context.resources.getString(R.string.monday_letter)
             }
             3 -> {
-                context.resources.getString(R.string.wednesday_letter)
+                context.resources.getString(R.string.tuesday_letter)
             }
             4 -> {
-                context.resources.getString(R.string.thursday_letter)
+                context.resources.getString(R.string.wednesday_letter)
             }
             5 -> {
-                context.resources.getString(R.string.friday_letter)
+                context.resources.getString(R.string.thursday_letter)
             }
             6 -> {
-                context.resources.getString(R.string.saturday_letter)
+                context.resources.getString(R.string.friday_letter)
             }
             else -> {
-                context.resources.getString(R.string.sunday_letter)
+                context.resources.getString(R.string.saturday_letter)
             }
         }
     }

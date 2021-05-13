@@ -20,6 +20,7 @@ import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
 import com.reachfree.timetable.ui.profile.ProfileFragment
 import com.reachfree.timetable.ui.profile.SemesterDetailFragment
+import com.reachfree.timetable.ui.settings.SettingsActivity
 import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.timetable.TimetableFragment
 import com.reachfree.timetable.util.DateUtils
@@ -126,6 +127,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         when (item.itemId) {
             R.id.toolbar_add -> {
                 showSelectTypeBottomSheet()
+            }
+            R.id.toolbar_settings -> {
+                SettingsActivity.start(this)
             }
         }
         return super.onOptionsItemSelected(item)

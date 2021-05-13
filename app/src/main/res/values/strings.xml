@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">Timetable</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">대학시간</string>
 
     <string name="january">1월</string>
     <string name="february">2월</string>
@@ -34,11 +32,13 @@
     <string name="toast_exit_message">종료하시려면 뒤로가기를 한번 더 눌러주세요.</string>
     <string name="toast_semester_register_complete">저장이 완료되었습니다.&#128512;\n이제 과목을 등록해 보세요.</string>
 
+    <string name="text_input_current_credit">현재: %d학점</string>
     <string name="text_input_subject_credit">%d학점</string>
     <string name="text_input_subject_total_credit">총 %d학점</string>
     <string name="text_input_subject_building_classroom">위치: %1$s %2$s</string>
-    <string name="text_input_profile_mandatory">(%1$d/%2$d)</string>
-    <string name="text_input_profile_elective">(%1$d/%2$d)</string>
+    <string name="text_input_profile_graduation">졸업 (%1$d/%2$d)</string>
+    <string name="text_input_profile_mandatory">전공 (%1$d/%2$d)</string>
+    <string name="text_input_profile_elective">교양 (%1$d/%2$d)</string>
 
     <string name="profile_welcome_message">Your Profile &#128512;</string>
     <string name="appwidget_text">EXAMPLE</string>
@@ -49,7 +49,7 @@
     <string name="text_alert_title_semester_delete_title">학기 삭제</string>
     <string name="text_alert_title_semester_delete_message">해당 학기를 정말 삭제하시겠습니까?\n삭제 시 해당 학기와 관련된 모든 정보(과목, 과제 등)가 삭제됩니다.</string>
     <string name="text_mandatory">전공</string>
-    <string name="text_elective">선택</string>
+    <string name="text_elective">교양</string>
     <string name="text_semester">학기</string>
     <string name="text_subject_name">과목명</string>
     <string name="text_hint_subject_title">예) 경제학원론</string>
@@ -80,4 +80,5 @@
     <string name="toast_memo_message">메모를 입력해주세요.</string>
     <string name="toast_start_end_date_message">시작 또는 종료 일자를 확인해주세요.</string>
     <string name="toast_save_complete_message">저장 완료!</string>
+    <string name="text_graduation">졸업</string>
 </resources>

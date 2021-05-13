@@ -8,10 +8,12 @@ import android.graphics.Rect
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
+import com.reachfree.timetable.util.SessionManager
 import com.reachfree.timetable.weekview.DayOfWeekUtil
 import com.reachfree.timetable.weekview.dipToPixelF
 import com.reachfree.timetable.weekview.dipToPixelI
 import com.reachfree.timetable.weekview.toLocalString
+import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
@@ -20,9 +22,14 @@ import org.threeten.bp.format.TextStyle
 import org.threeten.bp.temporal.ChronoUnit
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 internal class TimetableBackgroundView constructor(context: Context) : View(context) {
+
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     private val accentPaint: Paint by lazy {
         Paint().apply { strokeWidth = DIVIDER_WIDTH_PX.toFloat() * 2 }
@@ -58,9 +65,9 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
             remove(DayOfWeek.SUNDAY)
         }
 
-    var startTime: LocalTime = LocalTime.of(8, 0)
+    var startTime: LocalTime = LocalTime.of(sessionManager.getStartTime(), 0)
         private set
-    private var endTime: LocalTime = LocalTime.of(19, 0)
+    private var endTime: LocalTime = LocalTime.of(sessionManager.getEndTime(), 0)
 
     var scalingFactor = 1f
         /**
@@ -194,23 +201,21 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
         isInScreenshotMode = screenshotMode
     }
 
-    fun updateTimes(startTime: LocalTime, endTime: LocalTime) {
+    fun updateTimes(startTime: LocalTime, endTime: LocalTime, changedStartTime: Int? = 0, changedEndTime: Int? = 0) {
+
+        Timber.d("DEBUG: updateTimes $startTime / ${this.startTime}")
+        Timber.d("DEBUG: changedStartTime $changedStartTime")
+
         if (startTime.isAfter(endTime)) {
             throw IllegalArgumentException("Start time $startTime must be before end time $endTime")
         }
         var timesHaveChanged = false
 
-        Timber.d("DEBUG: startTime $startTime")
-
-//        2021-05-08 12:53:03.779 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:20
-//        2021-05-08 12:53:03.781 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:30
-//        2021-05-08 12:53:03.782 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:40
-//        2021-05-08 12:53:03.783 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:20
-//        2021-05-08 12:53:03.784 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 00:30
-//        2021-05-08 12:53:03.784 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 09:30
-//        2021-05-08 12:53:03.785 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 09:30
-//        2021-05-08 12:53:03.785 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 10:10
-//        2021-05-08 12:53:03.786 26316-26316/com.reachfree.timetable D/TimetableBackgroundView: DEBUG: startTime 14:30
+        if (changedStartTime != 0) {
+            this.startTime = LocalTime.of(changedStartTime!!, 0).truncatedTo(ChronoUnit.HOURS)
+            Timber.d("DEBUG: changed starTime ${this.startTime}")
+            timesHaveChanged = true
+        }
 
         if (startTime.isBefore(this.startTime)) {
             this.startTime = startTime.truncatedTo(ChronoUnit.HOURS)

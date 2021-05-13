@@ -23,8 +23,16 @@ class SemesterRepositoryImpl @Inject constructor(
         semesterDao.deleteAllSemesters()
     }
 
+    override suspend fun getSemesterById(semesterId: Long): Semester {
+        return semesterDao.getSemesterById(semesterId)
+    }
+
     override suspend fun getAllSemesters(): List<Semester> {
         return semesterDao.getAllSemesters()
+    }
+
+    override suspend fun getSemesterByTaskId(taskId: Long): Semester {
+        return semesterDao.getSemesterByTaskId(taskId)
     }
 
     override fun getAllSemestersLiveData(): LiveData<List<Semester>> {

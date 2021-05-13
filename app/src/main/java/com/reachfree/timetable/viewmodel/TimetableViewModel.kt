@@ -42,6 +42,23 @@ class TimetableViewModel @Inject constructor(
             semesterRepository.deleteAllSemesters()
         }
 
+    private var _semesterById = MutableLiveData<Semester>()
+    val semesterById get() = _semesterById
+    fun getSemesterById(semesterId: Long) =
+        viewModelScope.launch(dispatchers.io) {
+            val result = semesterRepository.getSemesterById(semesterId)
+            _semesterById.postValue(result)
+        }
+
+    private var _semesterByTaskId = MutableLiveData<Semester>()
+    val semesterByTaskId get() = _semesterByTaskId
+
+    fun getSemesterByTaskId(taskId: Long) =
+        viewModelScope.launch(dispatchers.io) {
+            val result = semesterRepository.getSemesterByTaskId(taskId)
+            _semesterByTaskId.postValue(result)
+        }
+
     private var _semesterList = MutableLiveData<List<Semester>>()
     val semesterList get() = _semesterList
     fun getAllSemesters() =

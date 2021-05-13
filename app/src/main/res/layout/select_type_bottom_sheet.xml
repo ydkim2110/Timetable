@@ -152,7 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="시험/과제 등록하기"
+            android:text="과제/시험 등록하기"
             android:textSize="16sp"
             android:textColor="@color/color_text_primary"
             app:layout_constraintStart_toEndOf="@+id/img_task_icon"

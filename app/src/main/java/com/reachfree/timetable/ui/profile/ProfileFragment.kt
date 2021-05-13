@@ -1,6 +1,7 @@
 package com.reachfree.timetable.ui.profile
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,10 @@ import com.reachfree.timetable.databinding.FragmentProfileBinding
 import com.reachfree.timetable.extension.animateProgressBar
 import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.ui.home.HomeActivity
-import com.reachfree.timetable.util.AppUtils
-import com.reachfree.timetable.util.SessionManager
-import com.reachfree.timetable.util.SpacingItemDecoration
+import com.reachfree.timetable.util.*
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -69,13 +69,15 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
         setupRecyclerView()
         subscribeToObserver()
+
+        sessionManager.getPrefs().registerOnSharedPreferenceChangeListener(sharedPrefListener)
     }
 
     private fun setupRecyclerView() {
         binding.recyclerSemester.apply {
             setHasFixedSize(true)
-            layoutManager = GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(SpacingItemDecoration(2, 32))
+            layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(SpacingItemDecoration(SPAN_COUNT, SPAN_SPACING))
         }
     }
 
@@ -86,16 +88,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                     .sumOf { it.credit }
                 val electiveCredit = response.filter { it.type == SubjectType.ELECTIVE.ordinal }
                     .sumOf { it.credit }
+                val graduationCredit = mandatoryCredit + electiveCredit
 
+                val graduation = AppUtils.calculatePercentage(graduationCredit, graduationTotalCredit)
                 val mandatory = AppUtils.calculatePercentage(mandatoryCredit, mandatoryTotalCredit)
                 val elective = AppUtils.calculatePercentage(electiveCredit, electiveTotalCredit)
 
+                binding.txtGraduation.text = getString(R.string.text_input_profile_graduation, graduationCredit, graduationTotalCredit)
                 binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, mandatoryCredit, mandatoryTotalCredit)
                 binding.txtElective.text = getString(R.string.text_input_profile_elective, electiveCredit, electiveTotalCredit)
 
                 binding.progressMandatory.animateProgressBar(mandatory)
                 binding.progressElective.animateProgressBar(elective)
             } else {
+                binding.txtGraduation.text = getString(R.string.text_input_profile_graduation, DEFAULT_VALUE, graduationTotalCredit)
                 binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, DEFAULT_VALUE, mandatoryTotalCredit)
                 binding.txtElective.text = getString(R.string.text_input_profile_elective, DEFAULT_VALUE, electiveTotalCredit)
 
@@ -116,7 +122,32 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         }
     }
 
+    private fun setCreditValue(numerator: Int, denominator: Int) {
+
+    }
+
+    private val sharedPrefListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
+            Timber.d("DEBUG: Changed key is $key")
+            when (key) {
+                GRADUATION_CREDIT -> {
+                    graduationTotalCredit = sessionManager.getGraduationTotalCredit()
+                    subscribeToObserver()
+                }
+                MANDATORY_CREDIT -> {
+                    mandatoryTotalCredit = sessionManager.getMandatoryTotalCredit()
+                    subscribeToObserver()
+                }
+                ELECTIVE_CREDIT -> {
+                    electiveTotalCredit = sessionManager.getElectiveTotalCredit()
+                    subscribeToObserver()
+                }
+            }
+        }
+
     companion object {
+        private const val SPAN_COUNT = 2
+        private const val SPAN_SPACING = 32
         private const val DEFAULT_VALUE = 0
 
         fun newInstance() = ProfileFragment()

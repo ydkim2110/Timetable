@@ -14,7 +14,11 @@ interface SemesterRepository {
 
     suspend fun deleteAllSemesters()
 
+    suspend fun getSemesterById(semesterId: Long): Semester
+
     suspend fun getAllSemesters(): List<Semester>
+
+    suspend fun getSemesterByTaskId(taskId: Long): Semester
 
     fun getAllSemestersLiveData(): LiveData<List<Semester>>
 

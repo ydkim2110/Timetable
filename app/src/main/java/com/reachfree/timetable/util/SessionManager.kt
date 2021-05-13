@@ -12,12 +12,30 @@ class SessionManager(
 
     private val prefs: SharedPreferences = PreferenceHelper.defaultPrefs(context)
 
+    fun getPrefs(): SharedPreferences = prefs
+
     fun getResisterSemester(): Boolean {
         return prefs[REGISTER_SEMESTER, false]
     }
 
     fun setRegisterSemester(value: Boolean) {
         prefs.edit { putBoolean(REGISTER_SEMESTER, value) }
+    }
+
+    fun getStartTime(): Int {
+        return prefs[START_TIME, StartTime.AM_EIGHT.hour]
+    }
+
+    fun setStartTime(value: Int) {
+        prefs.edit { putInt(START_TIME, value) }
+    }
+
+    fun getEndTime(): Int {
+        return prefs[END_TIME, EndTime.PM_SIX.hour]
+    }
+
+    fun setEndTime(value: Int) {
+        prefs.edit { putInt(END_TIME, value) }
     }
 
     fun getMandatoryTotalCredit(): Int {

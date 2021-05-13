@@ -2,6 +2,7 @@ package com.reachfree.timetable.ui.timetable
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -14,7 +15,7 @@ import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.databinding.FragmentWeekBinding
 import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.ui.home.HomeActivity
-import com.reachfree.timetable.util.DateUtils
+import com.reachfree.timetable.util.*
 import com.reachfree.timetable.util.timetable.TimetableData
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.util.timetable.TimetableEvent
@@ -22,10 +23,14 @@ import com.reachfree.timetable.util.timetable.TimetableEventConfig
 import com.reachfree.timetable.util.timetable.TimetableEventView
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
+import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
 
+    @Inject
+    lateinit var sessionManager: SessionManager
     private val timetableViewModel: TimetableViewModel by viewModels()
 
     private lateinit var timetableDetailDialog: TimetableDetailDialog
@@ -58,7 +63,23 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
         setupViewHandler()
         subscribeToObserver()
 
+        sessionManager.getPrefs().registerOnSharedPreferenceChangeListener(sharedPrefListener)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        sessionManager.getPrefs().unregisterOnSharedPreferenceChangeListener(sharedPrefListener)
+    }
+
+    private val sharedPrefListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
+            Timber.d("DEBUG: Changed key is $key")
+            when (key) {
+                START_TIME -> {
+                    subscribeToObserver()
+                }
+            }
+        }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupViewHandler() {
@@ -92,6 +113,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
             semester?.id?.let {
                 timetableViewModel.getAllSubjectBySemester(it).observe(viewLifecycleOwner) { subjects ->
                     if (!subjects.isNullOrEmpty()) {
+                        Timber.d("DEBUG: Called!!!!!")
                         removeAllEvents()
                         showThisSemesterSubjects(subjects)
                     }
@@ -108,7 +130,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
         val config = TimetableEventConfig()
         binding.weekView.timetableConfig = config
 
-        val timetableData: TimetableData = TimetableData().apply {
+        val timetableData: TimetableData = TimetableData(sessionManager).apply {
             for ((index, value) in subjects.withIndex()) {
                 for (i in value.days.indices) {
                     val event = TimetableEvent.Single(
@@ -129,7 +151,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
             }
         }
 
-        binding.weekView.addEvents(timetableData)
+        binding.weekView.addEvents(timetableData, sessionManager.getStartTime(), sessionManager.getEndTime())
     }
 
     companion object {

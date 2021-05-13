@@ -19,7 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SelectSemesterBottomSheet(
     private val type: SelectType,
-    private val semesterId: Long? = null
+    private val semesterId: Long? = null,
+    private val subjectId: Long? = null
 ) : BottomSheetDialogFragment() {
 
     private val timetableViewModel: TimetableViewModel by viewModels()
@@ -68,7 +69,7 @@ class SelectSemesterBottomSheet(
             SelectType.SEMESTER -> {
                 timetableViewModel.getAllSemestersLiveData().observe(viewLifecycleOwner) { semesters ->
                     if (!semesters.isNullOrEmpty()) {
-                        setupPickerView(semesters)
+                        setupSemesterPickerView(semesters)
                     }
                 }
             }
@@ -83,27 +84,27 @@ class SelectSemesterBottomSheet(
             }
             else -> throw IllegalStateException("Error...")
         }
-
     }
 
-    private fun setupPickerView(semesters: List<Semester>) {
+    private fun setupSemesterPickerView(semesters: List<Semester>) {
         with(binding.pickerView) {
             selectedItemColor = Color.RED
             unselectedItemColor = Color.RED
             linesColor = Color.GRAY
             offset = 1
 
-            val semesterTitleList = semesters.map { it.title }
-
-            val defaultValue = semesterTitleList[0]
-
-            if (semesterTitleList.contains(defaultValue)) {
-                val valueIndex = semesterTitleList.indexOf(defaultValue)
-                setSelection(valueIndex)
+            val selection = if (semesterId != null) {
+                val semesterIdList = semesters.map { it.id }
+                if (semesterIdList.contains(semesterId)) {
+                    semesterIdList.indexOf(semesterId)
+                } else {
+                    0
+                }
             } else {
-                setSelection(0)
+                0
             }
 
+            setSelection(selection)
             setItems(semesters)
         }
 
@@ -130,17 +131,19 @@ class SelectSemesterBottomSheet(
             linesColor = Color.GRAY
             offset = 1
 
-            val subjectTitleList = subjects.map { it.title }
 
-            val defaultValue = subjectTitleList[0]
-
-            if (subjectTitleList.contains(defaultValue)) {
-                val valueIndex = subjectTitleList.indexOf(defaultValue)
-                setSelection(valueIndex)
+            val selection = if (subjectId != null) {
+                val subjectIdList = subjects.map { it.id }
+                if (subjectIdList.contains(subjectId)) {
+                    subjectIdList.indexOf(subjectId)
+                } else {
+                    0
+                }
             } else {
-                setSelection(0)
+                0
             }
 
+            setSelection(selection)
             setItems(subjects)
         }
 

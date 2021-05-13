@@ -40,6 +40,12 @@ data class Subject(
 
 }
 
+enum class GraduationCreditType {
+    GRADUATION,
+    MANDATORY,
+    ELECTIVE
+}
+
 enum class SubjectType {
     MANDATORY,
     ELECTIVE,
