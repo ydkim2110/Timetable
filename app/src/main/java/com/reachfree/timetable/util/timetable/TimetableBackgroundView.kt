@@ -110,8 +110,6 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
         var localTime = startTime
         var last = LocalTime.MIN
 
-        endTime = LocalTime.of(23, 59)
-
         while (localTime.isBefore(endTime) && !last.isAfter(localTime)) {
             val offset = Duration.between(startTime, localTime)
             val y = topOffsetPx + context.dipToPixelF(offset.toMinutes() * scalingFactor)

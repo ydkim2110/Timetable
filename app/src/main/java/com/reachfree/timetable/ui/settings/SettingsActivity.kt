@@ -3,24 +3,19 @@ package com.reachfree.timetable.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.GraduationCreditType
 import com.reachfree.timetable.databinding.ActivitySettingsBinding
-import com.reachfree.timetable.databinding.DatePickerBinding
 import com.reachfree.timetable.databinding.DialogSettingEndTimeBinding
 import com.reachfree.timetable.databinding.DialogSettingStartTimeBinding
-import com.reachfree.timetable.extension.beGone
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
-import org.threeten.bp.temporal.ChronoField
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -39,15 +34,13 @@ class SettingsActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Timber.d("DEBUG: startTime ${sessionManager.getStartTime()}")
-        Timber.d("DEBUG: endTime ${sessionManager.getEndTime()}")
-
         setupToolbar()
         setupGraduation()
         setupMandatory()
         setupElective()
         setupStartTime()
         setupEndTime()
+        setupIncludeWeekend()
 
         sessionManager.getPrefs().registerOnSharedPreferenceChangeListener(sharedPrefListener)
     }
@@ -59,7 +52,7 @@ class SettingsActivity :
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar).apply {
-            title = "설정"
+            title = getString(R.string.text_settings)
         }
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -154,6 +147,12 @@ class SettingsActivity :
             StartTime.AM_TEN.hour -> {
                 startTimeBinding.radio10.isChecked = true
             }
+            StartTime.AM_ELEVEN.hour -> {
+                startTimeBinding.radio11.isChecked = true
+            }
+            StartTime.AM_TWELVE.hour -> {
+                startTimeBinding.radio12.isChecked = true
+            }
         }
 
         AlertDialog.Builder(this)
@@ -176,6 +175,12 @@ class SettingsActivity :
                     R.id.radio_10 -> {
                         sessionManager.setStartTime(StartTime.AM_TEN.hour)
                     }
+                    R.id.radio_11 -> {
+                        sessionManager.setStartTime(StartTime.AM_ELEVEN.hour)
+                    }
+                    R.id.radio_12 -> {
+                        sessionManager.setStartTime(StartTime.AM_TWELVE.hour)
+                    }
                 }
             }
             .create()
@@ -184,8 +189,6 @@ class SettingsActivity :
 
     private fun showEndTimeDialog() {
         val endTimeBinding = DialogSettingEndTimeBinding.inflate(LayoutInflater.from(this))
-
-        Timber.d("DEBUG: getEndTime is ${sessionManager.getEndTime()}")
 
         when (sessionManager.getEndTime()) {
             EndTime.PM_FIVE.hour -> {
@@ -243,11 +246,15 @@ class SettingsActivity :
             .show()
     }
 
-
+    private fun setupIncludeWeekend() {
+        binding.switchIncludeWeekend.isChecked = sessionManager.getIncludeWeekend()
+        binding.switchIncludeWeekend.setOnCheckedChangeListener { buttonView, isChecked ->
+            sessionManager.setIncludeWeekend(isChecked)
+        }
+    }
 
     private val sharedPrefListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
-            Timber.d("DEBUG: Changed key is $key")
             when (key) {
                 GRADUATION_CREDIT -> {
                     binding.txtGraduation.text = getString(R.string.text_input_subject_credit,
@@ -261,7 +268,7 @@ class SettingsActivity :
                     binding.txtElective.text = getString(R.string.text_input_subject_credit,
                         sessionManager.getElectiveTotalCredit())
                 }
-                START_TIME ->{
+                START_TIME -> {
                     val localtime = LocalTime.of(sessionManager.getStartTime(), 0)
                     val cal = Calendar.getInstance()
                     cal.clear()
@@ -269,7 +276,7 @@ class SettingsActivity :
 
                     binding.txtStartTime.text = DateUtils.taskDateFormat.format(cal.time.time)
                 }
-                END_TIME ->{
+                END_TIME -> {
                     val localtime = LocalTime.of(sessionManager.getEndTime(), 0)
                     val cal = Calendar.getInstance()
                     cal.clear()
@@ -281,7 +288,6 @@ class SettingsActivity :
         }
 
     companion object {
-        private const val END_TIME_ADJUST_VALUE = 1
         fun start(context: Context) {
             context.startActivity(Intent(context, SettingsActivity::class.java))
         }

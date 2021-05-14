@@ -5,6 +5,7 @@ const val LIST_CLICK_BROADCAST = "list_click_broadcast"
 val DARK_GREY = 0xFF333333.toInt()
 
 // SharedPreferences
+const val INCLUDE_WEEKEND = "include_weekend"
 const val START_TIME = "start_time"
 const val END_TIME = "end_time"
 const val REGISTER_SEMESTER = "register_semester"
@@ -20,7 +21,9 @@ enum class StartTime(
     AM_SEVEN(7),
     AM_EIGHT(8),
     AM_NINE(9),
-    AM_TEN(10)
+    AM_TEN(10),
+    AM_ELEVEN(11),
+    AM_TWELVE(12),
 }
 
 enum class EndTime(

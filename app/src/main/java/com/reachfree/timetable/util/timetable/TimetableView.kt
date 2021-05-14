@@ -12,9 +12,10 @@ import android.view.View
 import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import com.reachfree.timetable.R
+import com.reachfree.timetable.extension.dipToPixelF
 import com.reachfree.timetable.util.Animation
 import com.reachfree.timetable.util.DayOfWeekUtil
-import com.reachfree.timetable.extension.dipToPixelF
+import com.reachfree.timetable.util.SessionManager
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
@@ -25,7 +26,10 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class TimetableView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet) {
+class TimetableView(
+    context: Context,
+    attributeSet: AttributeSet
+) : RelativeLayout(context, attributeSet) {
 
     private val backgroundView: TimetableBackgroundView
     private val overlapsWith = ArrayList<TimetableEventView>()
@@ -42,7 +46,6 @@ class TimetableView(context: Context, attributeSet: AttributeSet) : RelativeLayo
     private val scaleGestureDetector: ScaleGestureDetector
     private val weekViewConfig: TimetableConfig
 
-//    var eventConfig = TimetableEventConfig()
     var timetableConfig = TimetableEventConfig()
 
     init {

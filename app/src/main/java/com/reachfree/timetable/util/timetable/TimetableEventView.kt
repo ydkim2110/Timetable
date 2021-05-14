@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.drawable.PaintDrawable
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -50,8 +51,8 @@ class TimetableEventView(
 
         setBackgroundResource(event.backgroundColor)
 
+
 //        background = PaintDrawable().apply {
-//            paint.color = event.backgroundColor
 //            setCornerRadius(CORNER_RADIUS_PX)
 //        }
 
@@ -101,22 +102,6 @@ class TimetableEventView(
             getY(position = 1, bounds = titleBounds) - getY(position = 0, bounds = titleBounds)
         )
 
-        // 건물
-//        val buildingMaxTextSize = TextHelper.fitText(
-//            building,
-//            titlePaint.textSize * 1.6f,
-//            width - (paddingLeft + paddingRight + 24),
-//            height / 6
-//        )
-//        buildingPaint.textSize = buildingMaxTextSize
-//        buildingPaint.getTextBounds(building, 0, building.length, buildingBounds)
-//        canvas.drawText(
-//            building,
-//            (width / 2 - buildingBounds.centerX()).toFloat(),
-//            subjectY + buildingBounds.height().toFloat() + 12f,
-//            buildingPaint
-//        )
-
         val buildingMaxTextSize = TextHelper.fitText(
             building,
             titlePaint.textSize * 1.2f,
@@ -131,22 +116,6 @@ class TimetableEventView(
             subjectY - titleBounds.height().toFloat()-8f,
             buildingPaint
         )
-
-        // 강의실
-//        val classroomMaxTextSize = TextHelper.fitText(
-//            classroom,
-//            titlePaint.textSize * 1.6f,
-//            width - (paddingLeft + paddingRight + 24),
-//            height / 6
-//        )
-//        classroomPaint.textSize = classroomMaxTextSize
-//        classroomPaint.getTextBounds(classroom, 0, classroom.length, classRoomBounds)
-//        canvas.drawText(
-//            classroom,
-//            (width / 2 - classRoomBounds.centerX()).toFloat(),
-//            subjectY + buildingBounds.height().toFloat() + classRoomBounds.height().toFloat() + 24f,
-//            classroomPaint
-//        )
 
         val classroomMaxTextSize = TextHelper.fitText(
             classroom,
@@ -164,7 +133,6 @@ class TimetableEventView(
         )
 
 
-
         // 시작시간
         if (config.showTimeStart) {
             val localtime = event.startTime
@@ -172,7 +140,6 @@ class TimetableEventView(
             cal.clear()
             cal.set(0, 0, 0, localtime.hour, localtime.minute, localtime.second)
 
-//            val startText = event.startTime.toLocalString()
             val startText = DateUtils.shortHourMinuteDateFormat.format(cal.time.time)
             titlePaint.getTextBounds(startText, 0, startText.length, titleBounds)
             canvas.drawText(
@@ -190,7 +157,6 @@ class TimetableEventView(
             cal.clear()
             cal.set(0, 0, 0, localtime.hour, localtime.minute, localtime.second)
 
-//            val endText = event.endTime.toLocalString()
             val endText = DateUtils.shortHourMinuteDateFormat.format(cal.time.time)
             titlePaint.getTextBounds(endText, 0, endText.length, titleBounds)
             canvas.drawText(

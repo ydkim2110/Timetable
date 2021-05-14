@@ -60,6 +60,9 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //TODO: 마지막 과목 삭제시 시간표 반영이 안됨
+        //TODO: 주말 과목 삭제시 주말이 안보여지게 안됨
+
         setupViewHandler()
         subscribeToObserver()
 
@@ -75,12 +78,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
             Timber.d("DEBUG: Changed key is $key")
             when (key) {
-                START_TIME -> {
-                    subscribeToObserver()
-                }
-                END_TIME -> {
-                    subscribeToObserver()
-                }
+                START_TIME, END_TIME, INCLUDE_WEEKEND -> { subscribeToObserver() }
             }
         }
 

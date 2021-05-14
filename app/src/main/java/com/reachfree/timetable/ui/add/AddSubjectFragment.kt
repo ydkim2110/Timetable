@@ -483,9 +483,6 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             requireContext().resources.getString(R.string.friday_short) -> {
                 return 6
             }
-            requireContext().resources.getString(R.string.saturday_short) -> {
-                return 6
-            }
             else -> {
                 return 7
             }

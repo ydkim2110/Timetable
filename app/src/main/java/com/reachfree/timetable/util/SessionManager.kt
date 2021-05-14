@@ -22,6 +22,14 @@ class SessionManager(
         prefs.edit { putBoolean(REGISTER_SEMESTER, value) }
     }
 
+    fun getIncludeWeekend(): Boolean {
+        return prefs[INCLUDE_WEEKEND, false]
+    }
+
+    fun setIncludeWeekend(value: Boolean) {
+        prefs.edit { putBoolean(INCLUDE_WEEKEND, value) }
+    }
+
     fun getStartTime(): Int {
         return prefs[START_TIME, StartTime.AM_EIGHT.hour]
     }
