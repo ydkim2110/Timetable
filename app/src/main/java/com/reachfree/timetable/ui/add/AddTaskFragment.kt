@@ -1,5 +1,8 @@
 package com.reachfree.timetable.ui.add
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -21,15 +24,17 @@ import com.reachfree.timetable.data.model.TaskType
 import com.reachfree.timetable.databinding.FragmentAddTaskBinding
 import com.reachfree.timetable.extension.beGone
 import com.reachfree.timetable.extension.beVisible
+import com.reachfree.timetable.extension.runDelayed
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.ui.bottomsheet.SelectSemesterBottomSheet
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.setup.DatePickerFragment
 import com.reachfree.timetable.ui.setup.SetupActivity
+import com.reachfree.timetable.util.ACTION_TASK_WIDGET_UPDATE
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.viewmodel.TimetableViewModel
-import com.reachfree.timetable.extension.runDelayed
+import com.reachfree.timetable.widget.TaskListWidget
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
@@ -126,7 +131,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
     }
 
     private fun setupDefaultSubscribeToObserver() {
-        timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
+        timetableViewModel.thisSemesterLiveData.observe(viewLifecycleOwner) { semester ->
             if (semester != null) {
                 selectedSemester = semester
                 selectedSemesterId = selectedSemester.id
@@ -222,6 +227,9 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
         binding.deleteSaveBtnLayout.btnDelete.setOnSingleClickListener {
             passedTask?.let {
                 timetableViewModel.deleteTask(it)
+
+                TaskListWidget.updateWidgetListView(requireContext())
+
                 runDelayed(500L) {
                     Toast.makeText(requireActivity(), "삭제 완료!",
                         Toast.LENGTH_SHORT).show()
@@ -242,22 +250,56 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
             return
         }
 
-        selectedSemesterId?.let {
-            selectedSubjectId?.let { id ->
-                val task = Task(
-                    id = null,
-                    title = taskTitle,
-                    description = taskDescription,
-                    date = selectedDate.time.time,
-                    type = selectedTaskType,
-                    subjectId = id
-                )
+        var toastMessage = ""
+        if (passedTask == null) {
+            selectedSemesterId?.let {
+                selectedSubjectId?.let { id ->
+                    val task = Task(
+                        id = null,
+                        title = taskTitle,
+                        description = taskDescription,
+                        date = selectedDate.time.time,
+                        type = selectedTaskType,
+                        subjectId = id
+                    )
 
-                timetableViewModel.insertTask(task)
-
-                dismiss()
+                    timetableViewModel.insertTask(task)
+                    toastMessage = "저장 완료!"
+                }
+            } ?: run {
+                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
+                    Toast.LENGTH_LONG).show()
             }
-        } ?: return
+        } else {
+            selectedSemesterId?.let {
+                selectedSubjectId?.let { id ->
+                    val task = Task(
+                        id = passedTask!!.id,
+                        title = taskTitle,
+                        description = taskDescription,
+                        date = selectedDate.time.time,
+                        type = selectedTaskType,
+                        subjectId = id
+                    )
+
+                    timetableViewModel.updateTask(task)
+                    toastMessage = "수정 완료!"
+                }
+            } ?: run {
+                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
+                    Toast.LENGTH_LONG).show()
+            }
+        }
+
+        TaskListWidget.updateWidgetListView(requireContext())
+
+        runDelayed(500L) {
+            Toast.makeText(
+                requireActivity(), toastMessage,
+                Toast.LENGTH_SHORT
+            ).show()
+            dismiss()
+        }
     }
 
     private fun showDatePicker(typeName: String) {

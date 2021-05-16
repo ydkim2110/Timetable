@@ -22,16 +22,19 @@ interface SemesterRepository {
 
     suspend fun getSemesterByTaskId(taskId: Long): Semester
 
+    suspend fun getSemester(date: Long): Semester
+
+    fun getLatestSemester(): LiveData<Semester>
+
     fun getAllSemestersLiveData(): LiveData<List<Semester>>
 
     fun getAllSemestersWithTotalCount(): LiveData<List<SemesterResponse>>
 
-    fun getSemester(date: Long): LiveData<Semester>
+    fun getSemesterLiveData(date: Long): LiveData<Semester>
 
     fun getSemesterForWidgetService(date: Long): Semester
 
     fun getSemesterByFlow(date: Long): Flow<Semester>
 
     fun getSemesterByIdLiveData(semesterId: Long): LiveData<Semester>
-
 }

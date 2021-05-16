@@ -15,7 +15,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import com.google.android.material.chip.Chip
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -38,11 +40,12 @@ import com.reachfree.timetable.extension.runDelayed
 import com.reachfree.timetable.widget.TimetableListWidget
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
+import timber.log.Timber
 
 @AndroidEntryPoint
 class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
-    private val timetableViewModel: TimetableViewModel by viewModels()
+    private val timetableViewModel: TimetableViewModel by activityViewModels()
 
     private lateinit var selectSemesterBottomSheet: SelectSemesterBottomSheet
 
@@ -83,7 +86,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         if (passedSubjectId != null && passedSubjectId != -1L) {
             timetableViewModel.getSubjectById(passedSubjectId!!)
             timetableViewModel.subject.observe(viewLifecycleOwner) { subject ->
-                if (subject != null) {
+                if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                    if (subject != null) {
                     passedSubject = subject
                     selectedSemesterId = subject.semesterId
 
@@ -177,6 +181,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
                     binding.deleteSaveBtnLayout.btnDelete.beVisible()
                 }
+                }
+
             }
         } else {
             setupDefaultChip()
@@ -192,6 +198,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         timetableViewModel.getAllSemestersLiveData().observe(this) { semesters ->
             if (!semesters.isNullOrEmpty()) {
                 //TODO: 날짜 비교하여 해당 학기로 세팅
+                Timber.d("DEBUG: SEMESTER SIZE IS ${semesters.size}")
                 selectedSemester = semesters[0]
                 selectedSemesterId = selectedSemester.id
                 binding.btnSemester.text = selectedSemester.title
@@ -298,6 +305,9 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         binding.deleteSaveBtnLayout.btnDelete.setOnSingleClickListener {
             passedSubject?.let {
                 timetableViewModel.deleteSubject(it)
+
+                TimetableListWidget.updateWidgetListView(requireContext())
+
                 runDelayed(500L) {
                     Toast.makeText(
                         requireActivity(), "삭제되었습니다.",
@@ -400,7 +410,10 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
                 timetableViewModel.insertSubject(subject)
                 toastMessage = "저장 완료!"
-            } ?: Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
+            } ?: run {
+                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
+                    Toast.LENGTH_LONG).show()
+            }
         } else {
             selectedSemesterId?.let { semesterId ->
                 val subject = Subject(
@@ -417,15 +430,13 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
                 timetableViewModel.updateSubject(subject)
                 toastMessage = "수정 완료!"
-            } ?: Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
+            } ?: run {
+                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
+                    Toast.LENGTH_LONG).show()
+            }
         }
 
-        val man = AppWidgetManager.getInstance(requireActivity())
-        val ids =
-            man.getAppWidgetIds(ComponentName(requireActivity(), TimetableListWidget::class.java))
-        val updateIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-        requireActivity().sendBroadcast(updateIntent)
+        TimetableListWidget.updateWidgetListView(requireContext())
 
         runDelayed(500L) {
             Toast.makeText(

@@ -74,7 +74,6 @@ class TimetableEventView(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        Timber.d("DEBUG: width $width")
 
         // 과목
         val maxTextSize = TextHelper.fitText(

@@ -62,7 +62,6 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
 
     private fun setupData() {
         if (passedSemesterId != null && passedSemesterId != -1L) {
-            Timber.d("DEBUG: passedSemesterId $passedSemesterId")
             timetableViewModel.getSemesterById(passedSemesterId!!)
             timetableViewModel.semesterById.observe(viewLifecycleOwner) { semester ->
                 if (semester != null) {
@@ -116,8 +115,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
                 semesterList.clear()
                 semesterList.addAll(semesters)
                 for (i in semesters.indices) {
-                    Timber.d("DEBUG: semester startDate is ${DateUtils.testDateFormat.format(semesters[i].startDate)}")
-                    Timber.d("DEBUG: semester endDate is ${DateUtils.testDateFormat.format(semesters[i].endDate)}")
+                    //TODO: ?
                 }
             }
         }
@@ -175,7 +173,6 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
                 startDate = startDate,
                 endDate = endDate,
             )
-            Timber.d("DEBUG : update $semester")
             timetableViewModel.updateSemester(semester)
         } else {
             val semester = Semester(
@@ -185,9 +182,6 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
                 startDate = startDate,
                 endDate = endDate,
             )
-
-            Timber.d("DEBUG : Insert $semester")
-
             timetableViewModel.insertSemester(semester)
         }
 

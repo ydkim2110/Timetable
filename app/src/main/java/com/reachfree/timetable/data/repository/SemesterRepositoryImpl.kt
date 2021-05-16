@@ -39,6 +39,14 @@ class SemesterRepositoryImpl @Inject constructor(
         return semesterDao.getSemesterByTaskId(taskId)
     }
 
+    override suspend fun getSemester(date: Long): Semester {
+        return semesterDao.getSemester(date)
+    }
+
+    override fun getLatestSemester(): LiveData<Semester> {
+        return semesterDao.getLatestSemester()
+    }
+
     override fun getAllSemestersLiveData(): LiveData<List<Semester>> {
         return semesterDao.getAllSemestersLiveData()
     }
@@ -47,8 +55,8 @@ class SemesterRepositoryImpl @Inject constructor(
         return semesterDao.getAllSemestersWithTotalCount()
     }
 
-    override fun getSemester(date: Long): LiveData<Semester> {
-        return semesterDao.getSemester(date)
+    override fun getSemesterLiveData(date: Long): LiveData<Semester> {
+        return semesterDao.getSemesterLiveData(date)
     }
 
     override fun getSemesterForWidgetService(date: Long): Semester {

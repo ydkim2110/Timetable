@@ -1,10 +1,7 @@
 package com.reachfree.timetable.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.reachfree.timetable.data.model.Task
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 
@@ -13,6 +10,9 @@ interface TaskDao {
 
     @Insert
     suspend fun insertTask(task: Task)
+
+    @Update
+    suspend fun updateTask(task: Task)
 
     @Delete
     suspend fun deleteTask(task: Task)
@@ -40,6 +40,24 @@ interface TaskDao {
         WHERE subject_id LIKE :subjectId
     """)
     fun getAllTaskBySubject(subjectId: Long): LiveData<List<CalendarTaskResponse>>
+
+    @Query("""
+        SELECT
+            t.id,
+            t.title,
+            t.description,
+            t.date,
+            t.type,
+            t.subject_id,
+            s.background_color
+        FROM tasks t
+        INNER JOIN subjects s ON t.subject_id = s.id
+        WHERE 
+            t.subject_id LIKE :subjectId
+            AND t.date >= :startDate 
+        ORDER BY t.date
+    """)
+    fun getAllTaskBySubjectForWidgetService(subjectId: Long, startDate: Long): List<CalendarTaskResponse>
 
     @Query("""
         SELECT
@@ -80,5 +98,4 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks")
     fun getAllTasks(): LiveData<List<Task>>
-
 }

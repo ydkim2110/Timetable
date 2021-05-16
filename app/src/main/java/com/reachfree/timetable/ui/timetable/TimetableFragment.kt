@@ -10,33 +10,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.databinding.FragmentWeekBinding
 import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.ui.home.HomeActivity
+import com.reachfree.timetable.ui.home.SemesterChangedListener
 import com.reachfree.timetable.util.*
 import com.reachfree.timetable.util.timetable.TimetableData
-import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.util.timetable.TimetableEvent
 import com.reachfree.timetable.util.timetable.TimetableEventConfig
 import com.reachfree.timetable.util.timetable.TimetableEventView
+import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
+class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedListener {
 
     @Inject
     lateinit var sessionManager: SessionManager
-    private val timetableViewModel: TimetableViewModel by viewModels()
+    private val timetableViewModel: TimetableViewModel by activityViewModels()
 
     private lateinit var timetableDetailDialog: TimetableDetailDialog
 
+    private var semesterId: Long? = null
+
     interface TimetableFragmentListener {
         fun onEditButtonClicked(timetableEventView: TimetableEventView)
+        fun onSemesterTitle(title: String)
     }
 
     private lateinit var timetableFragmentListener: TimetableFragmentListener
@@ -47,6 +54,8 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
         if (activity is HomeActivity) {
             timetableFragmentListener = activity as HomeActivity
         }
+
+        (activity as HomeActivity).setOnSemesterChangedListener(this)
     }
 
     override fun getFragmentBinding(
@@ -76,7 +85,6 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
 
     private val sharedPrefListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
-            Timber.d("DEBUG: Changed key is $key")
             when (key) {
                 START_TIME, END_TIME, INCLUDE_WEEKEND -> { subscribeToObserver() }
             }
@@ -110,16 +118,48 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
     }
 
     private fun subscribeToObserver() {
-        Timber.d("DEBUG : subscribeToObserver~!!")
+        Timber.d("DEBUG: subscribeToObserver!!")
+        timetableViewModel.getSemester(Calendar.getInstance().time.time)
         timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
+            Timber.d("DEBUG: thisSemester!!")
             semester?.id?.let {
-                timetableViewModel.getAllSubjectBySemester(it).observe(viewLifecycleOwner) { subjects ->
-                    if (!subjects.isNullOrEmpty()) {
-                        Timber.d("DEBUG: Called!!!!!")
-                        removeAllEvents()
-                        showThisSemesterSubjects(subjects)
+                timetableFragmentListener.onSemesterTitle(semester.title)
+                fetchSubjectsBySemester(it)
+            } ?: run {
+                timetableViewModel.getLatestSemester().observe(viewLifecycleOwner) { semester ->
+                    Timber.d("DEBUG: getLatestSemester!!")
+                    semester?.id?.let {
+                        timetableFragmentListener.onSemesterTitle(semester.title)
+                        fetchSubjectsBySemester(it)
+                    } ?: run {
+                        timetableFragmentListener.onSemesterTitle(getString(R.string.app_name))
                     }
                 }
+            }
+        }
+//        timetableViewModel.thisSemesterLiveData.observe(viewLifecycleOwner) { semester ->
+//            semester?.id?.let {
+//                timetableFragmentListener.onSemesterTitle(semester.title)
+//                fetchSubjectsBySemester(it)
+//            } ?: run {
+//                timetableViewModel.getLatestSemester().observe(viewLifecycleOwner) { semester ->
+//                    semester?.id?.let {
+//                        timetableFragmentListener.onSemesterTitle(semester.title)
+//                        fetchSubjectsBySemester(it)
+//                    } ?: run {
+//                        timetableFragmentListener.onSemesterTitle(getString(R.string.app_name))
+//                    }
+//                }
+//            }
+//        }
+    }
+
+    private fun fetchSubjectsBySemester(id: Long) {
+        semesterId = id
+        timetableViewModel.getAllSubjectBySemester(id).observe(viewLifecycleOwner) { subjects ->
+            removeAllEvents()
+            if (!subjects.isNullOrEmpty()) {
+                showThisSemesterSubjects(subjects)
             }
         }
     }
@@ -156,7 +196,25 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>() {
         binding.weekView.addEvents(timetableData, sessionManager.getStartTime(), sessionManager.getEndTime())
     }
 
+    override fun onSemesterChanged(semester: Semester) {
+        Timber.d("DEBUG: onSemesterChanged $semester")
+        semester.id?.let { id ->
+            timetableFragmentListener.onSemesterTitle(semester.title)
+            timetableViewModel.getAllSubjectBySemester(id).observe(viewLifecycleOwner) { subjects ->
+                removeAllEvents()
+                if (!subjects.isNullOrEmpty()) {
+                    showThisSemesterSubjects(subjects)
+                }
+            }
+        }
+    }
+
+    override fun onSemesterDeleted() {
+        timetableViewModel.getSemester(Calendar.getInstance().time.time)
+    }
+
     companion object {
         fun newInstance() = TimetableFragment()
     }
+
 }

@@ -69,7 +69,6 @@ class TimetableView(
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             val factor = weekViewConfig.scalingFactor * detector.scaleFactor
             // Don't let the object get too small or too large.
-            Timber.d("DEBUG : factor : $factor")
             val scaleFactor = max(1.0f, min(factor, 4.0f))
             weekViewConfig.scalingFactor = scaleFactor
             backgroundView.scalingFactor = scaleFactor
@@ -200,10 +199,8 @@ class TimetableView(
 
             // FIXME   lessonView.setShortNameEnabled(isShortNameEnabled);
             val column: Int = DayOfWeekUtil.mapDayToColumn(eventView.event.date.dayOfWeek, saturdayEnabled, sundayEnabled)
-            Log.d("DEBUG: ", "column: $column")
             if (column < 0) {
                 // should not be necessary as wrong days get filtered before.
-                Log.v(TAG, "Removing view for event $eventView")
                 childView.setVisibility(View.GONE)
                 removeView(childView)
                 continue

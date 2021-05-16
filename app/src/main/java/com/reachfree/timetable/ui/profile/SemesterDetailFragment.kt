@@ -1,5 +1,6 @@
 package com.reachfree.timetable.ui.profile
 
+import android.annotation.SuppressLint
 import android.graphics.PorterDuff.Mode.SRC_ATOP
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +12,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.FragmentSemesterDetailBinding
 import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
+import com.reachfree.timetable.ui.timetable.TimetableDetailDialog
 import com.reachfree.timetable.util.SpacingItemDecoration
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.util.AppUtils
@@ -35,6 +38,9 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
 
     interface SemesterDetailFragmentListener {
         fun onEditButtonClicked(semesterId: Long)
+        fun onSubjectItemClicked(subject: Subject)
+        fun onAddButtonClicked()
+        fun onSemesterDeleteButtonClicked()
     }
 
     private lateinit var semesterDetailFragmentListener: SemesterDetailFragmentListener
@@ -108,8 +114,9 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
             0 -> { requireActivity().resources.getString(R.string.text_passed_days_0) }
             in 1..24 -> { requireActivity().resources.getString(R.string.text_passed_days_25) }
             in 25..49 -> { requireActivity().resources.getString(R.string.text_passed_days_50) }
-            in 50..74 -> { requireActivity().resources.getString(R.string.text_passed_days_75) }
-            in 75..100 -> { requireActivity().resources.getString(R.string.text_passed_days_100) }
+            in 50..74 -> { requireActivity().resources.getString(R.string.text_passed_days_99) }
+            in 75..99 -> { requireActivity().resources.getString(R.string.text_passed_days_99) }
+            100 -> { requireActivity().resources.getString(R.string.text_passed_days_100) }
             else -> "화이팅하세요~!@"
         }
     }
@@ -137,6 +144,10 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
                 semesterDetailFragmentListener.onEditButtonClicked(semesterId)
             }
         }
+
+        binding.btnAddSubject.setOnSingleClickListener {
+            semesterDetailFragmentListener.onAddButtonClicked()
+        }
     }
     
     private fun subscribeToObserver() {
@@ -157,8 +168,9 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
                         requireActivity().resources.getString(R.string.text_input_subject_total_credit, totalCredit)
 
                     subjectAdapter = SemesterDetailSubjectAdapter(subjects)
-                    binding.recyclerSubject.apply {
-                        adapter = subjectAdapter
+                    binding.recyclerSubject.adapter = subjectAdapter
+                    subjectAdapter.setOnItemClickListener { subject ->
+                        semesterDetailFragmentListener.onSubjectItemClicked(subject)
                     }
                 }
             }
@@ -175,6 +187,7 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
                     semester.id?.let { semesterId ->
                         runDelayed(500L) {
                             timetableViewModel.deleteSemesterById(semesterId)
+                            semesterDetailFragmentListener.onSemesterDeleteButtonClicked()
                             Toast.makeText(requireActivity(), "삭제 완료!", Toast.LENGTH_SHORT).show()
                             dismiss()
                         }

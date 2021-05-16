@@ -27,6 +27,12 @@ interface SemesterDao {
     @Query("SELECT * FROM semesters ORDER BY end_date DESC")
     suspend fun getAllSemesters(): List<Semester>
 
+    @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
+    suspend fun getSemester(date: Long): Semester
+
+    @Query("SELECT * FROM semesters ORDER BY end_date DESC LIMIT 1")
+    fun getLatestSemester(): LiveData<Semester>
+
     @Query("""
         SELECT *
         FROM semesters
@@ -54,7 +60,7 @@ interface SemesterDao {
     fun getAllSemestersWithTotalCount(): LiveData<List<SemesterResponse>>
 
     @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
-    fun getSemester(date: Long): LiveData<Semester>
+    fun getSemesterLiveData(date: Long): LiveData<Semester>
 
     @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
     fun getSemesterForWidgetService(date: Long): Semester

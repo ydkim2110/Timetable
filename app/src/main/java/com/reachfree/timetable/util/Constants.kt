@@ -1,7 +1,11 @@
 package com.reachfree.timetable.util
 
 const val LOCAL_DATABASE_NAME = "reachfree_timetable_db"
-const val LIST_CLICK_BROADCAST = "list_click_broadcast"
+const val TIMETABLE_LIST_CLICK_BROADCAST = "timetable_list_click_broadcast"
+const val TASK_LIST_CLICK_BROADCAST = "task_list_click_broadcast"
+const val ACTION_AUTO_UPDATE_WIDGET = "action_auto_update_widget"
+const val ACTION_TASK_WIDGET_UPDATE = "action_task_widget_update"
+const val ACTION_TASK = "action_task"
 val DARK_GREY = 0xFF333333.toInt()
 
 // SharedPreferences

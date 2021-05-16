@@ -11,6 +11,7 @@ import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.util.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ class TimetableViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
-    val thisSemester: LiveData<Semester> = semesterRepository.getSemester(Date().time)
+    val thisSemesterLiveData: LiveData<Semester> = semesterRepository.getSemesterLiveData(Date().time)
 
     /**
      *  Semester
@@ -47,12 +48,23 @@ class TimetableViewModel @Inject constructor(
             semesterRepository.deleteAllSemesters()
         }
 
+    fun getLatestSemester() =
+        semesterRepository.getLatestSemester()
+
     private var _semesterById = MutableLiveData<Semester>()
     val semesterById get() = _semesterById
     fun getSemesterById(semesterId: Long) =
         viewModelScope.launch(dispatchers.io) {
             val result = semesterRepository.getSemesterById(semesterId)
             _semesterById.postValue(result)
+        }
+
+    private var _thisSemester = MutableLiveData<Semester>()
+    val thisSemester get() = _thisSemester
+    fun getSemester(date: Long) =
+        viewModelScope.launch(dispatchers.io) {
+            val result = semesterRepository.getSemester(date)
+            _thisSemester.postValue(result)
         }
 
     fun getSemesterByIdLiveData(semesterId: Long) =
@@ -111,6 +123,7 @@ class TimetableViewModel @Inject constructor(
     val subject get() = _subject
     fun getSubjectById(subjectId: Long) =
         viewModelScope.launch(dispatchers.io) {
+            Timber.d("DEBUG: getSubjectById $subjectId")
             val result = subjectRepository.getSubjectById(subjectId)
             _subject.postValue(result)
         }
@@ -139,6 +152,12 @@ class TimetableViewModel @Inject constructor(
     fun insertTask(task: Task) {
         viewModelScope.launch(dispatchers.io) {
             taskRepository.insertTask(task)
+        }
+    }
+
+    fun updateTask(task: Task) {
+        viewModelScope.launch(dispatchers.io) {
+            taskRepository.updateTask(task)
         }
     }
 

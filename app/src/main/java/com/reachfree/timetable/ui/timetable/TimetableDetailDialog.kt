@@ -10,21 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.reachfree.timetable.data.model.Semester
-import com.reachfree.timetable.data.response.CalendarTaskResponse
-import com.reachfree.timetable.databinding.CalendarDayDialogBinding
 import com.reachfree.timetable.databinding.TimetableDetailDialogBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
-import com.reachfree.timetable.extension.toMillis
 import com.reachfree.timetable.util.ColorTag
-import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.timetable.TimetableEventView
-import com.reachfree.timetable.viewmodel.TimetableViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
-import java.util.*
 
 class TimetableDetailDialog(
     private val timetableEventView: TimetableEventView
@@ -71,7 +60,6 @@ class TimetableDetailDialog(
     }
 
     private fun setupView() {
-        Timber.d("DEBUG: timetableEventView ${timetableEventView.event}")
         binding.txtSubjectTitle.text = timetableEventView.event.title
         binding.txtClassroom.text = timetableEventView.event.classroom
         binding.txtBuilding.text = timetableEventView.event.building

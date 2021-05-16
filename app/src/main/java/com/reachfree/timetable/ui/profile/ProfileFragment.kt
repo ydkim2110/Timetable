@@ -14,12 +14,14 @@ import com.reachfree.timetable.data.model.SubjectType
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.FragmentProfileBinding
 import com.reachfree.timetable.extension.animateProgressBar
+import com.reachfree.timetable.extension.beGone
+import com.reachfree.timetable.extension.beVisible
+import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.util.*
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,11 +31,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     lateinit var sessionManager: SessionManager
     private val timetableViewModel: TimetableViewModel by viewModels()
 
-    interface ProfileHandlerListener {
+    interface ProfileFragmentListener {
         fun onSemesterItemClicked(semesterResponse: SemesterResponse)
+        fun onAddSemesterButtonClicked()
     }
 
-    private lateinit var profileHandlerListener: ProfileHandlerListener
+    private lateinit var profileFragmentListener: ProfileFragmentListener
 
     private lateinit var semesterAdapter: SemesterAdapter
 
@@ -44,7 +47,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (activity is HomeActivity) {
-            profileHandlerListener = activity as HomeActivity
+            profileFragmentListener = activity as HomeActivity
         }
     }
 
@@ -67,6 +70,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupViewHandler()
         subscribeToObserver()
 
         sessionManager.getPrefs().registerOnSharedPreferenceChangeListener(sharedPrefListener)
@@ -77,6 +81,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(SpacingItemDecoration(SPAN_COUNT, SPAN_SPACING))
+        }
+    }
+
+    private fun setupViewHandler() {
+        binding.btnAddSemester.setOnSingleClickListener {
+            profileFragmentListener.onAddSemesterButtonClicked()
         }
     }
 
@@ -113,23 +123,24 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
         timetableViewModel.getAllSemestersWithTotalCount().observe(viewLifecycleOwner) { semesters ->
             if (!semesters.isNullOrEmpty()) {
-                semesterAdapter = SemesterAdapter(semesters)
-                binding.recyclerSemester.adapter = semesterAdapter
+                binding.recyclerSemester.beVisible()
+                binding.layoutEmpty.beGone()
+            } else {
+                binding.recyclerSemester.beGone()
+                binding.layoutEmpty.beVisible()
+            }
 
-                semesterAdapter.setOnItemClickListener { semesterResponse ->
-                    profileHandlerListener.onSemesterItemClicked(semesterResponse)
-                }
+            semesterAdapter = SemesterAdapter(semesters)
+            binding.recyclerSemester.adapter = semesterAdapter
+
+            semesterAdapter.setOnItemClickListener { semesterResponse ->
+                profileFragmentListener.onSemesterItemClicked(semesterResponse)
             }
         }
     }
 
-    private fun setCreditValue(numerator: Int, denominator: Int) {
-
-    }
-
     private val sharedPrefListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
-            Timber.d("DEBUG: Changed key is $key")
             when (key) {
                 GRADUATION_CREDIT -> {
                     graduationTotalCredit = sessionManager.getGraduationTotalCredit()

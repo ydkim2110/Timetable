@@ -1,21 +1,20 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
     android:id="@+id/widget_layout"
-    android:paddingVertical="4dp"
-    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
     android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="4dp"
     android:theme="@style/ThemeOverlay.Timetable.AppWidgetContainer">
 
     <LinearLayout
         android:id="@+id/background_color"
-        android:layout_width="10dp"
+        android:layout_width="8dp"
         android:layout_height="match_parent"
         android:background="@color/orange"
-        android:orientation="vertical"/>
+        android:orientation="vertical" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -30,7 +29,7 @@
             android:contentDescription="@string/appwidget_text"
             android:text="09:00"
             android:textColor="@color/color_text_secondary"
-            />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/txt_widget_end_time"
@@ -40,22 +39,45 @@
             android:contentDescription="@string/appwidget_text"
             android:text="10:20"
             android:textColor="@color/color_text_secondary"
-            />
+            android:textSize="14sp" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txt_widget_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textColor="@color/color_text_primary"
-        android:textStyle="bold|italic"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txt_widget_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:contentDescription="@string/appwidget_text"
+            android:text="미시경제학"
+            android:textColor="@color/color_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold|italic"
+            android:maxLines="1"
+            android:ellipsize="end"
+            />
+
+        <TextView
+            android:id="@+id/txt_widget_classroom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:contentDescription="@string/appwidget_text"
+            android:text="연희관 303호"
+            android:textColor="@color/color_text_secondary"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>

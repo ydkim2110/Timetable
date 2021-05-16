@@ -15,11 +15,6 @@ class TimetableData(
     var earliestStart: LocalTime = LocalTime.of(this.sessionManager.getStartTime(), 0)
     var latestEnd: LocalTime = LocalTime.of(this.sessionManager.getEndTime(), 0)
 
-    init {
-        Timber.d("DEBUG: getStartTime ${sessionManager.getStartTime()}")
-        Timber.d("DEBUG: getEndTime ${sessionManager.getEndTime()}")
-    }
-
     fun add(item: TimetableEvent.AllDay) {
         allDays.add(item)
     }

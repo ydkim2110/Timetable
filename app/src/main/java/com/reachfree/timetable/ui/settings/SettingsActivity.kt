@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.GraduationCreditType
 import com.reachfree.timetable.databinding.ActivitySettingsBinding
@@ -19,6 +21,7 @@ import org.threeten.bp.LocalTime
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class SettingsActivity :
@@ -275,6 +278,7 @@ class SettingsActivity :
                     cal.set(0,0,0,localtime.hour,localtime.minute,localtime.second)
 
                     binding.txtStartTime.text = DateUtils.taskDateFormat.format(cal.time.time)
+                    showRestartDialog()
                 }
                 END_TIME -> {
                     val localtime = LocalTime.of(sessionManager.getEndTime(), 0)
@@ -283,9 +287,29 @@ class SettingsActivity :
                     cal.set(0,0,0,localtime.hour,localtime.minute,localtime.second)
 
                     binding.txtEndTime.text = DateUtils.taskDateFormat.format(cal.time.time)
+                    showRestartDialog()
                 }
             }
         }
+
+    private fun showRestartDialog() {
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle("재시작")
+            .setMessage("변경된 사항을 반영하기 위하여 앱을 재시작합니다.")
+            .setPositiveButton(
+                "재시작"
+            ) { _, _ -> }
+            .setOnDismissListener {
+                restart()
+            }
+            .create().show()
+    }
+
+    private fun restart() {
+        finishAffinity()
+        startActivity(packageManager.getLaunchIntentForPackage(packageName))
+        exitProcess(0)
+    }
 
     companion object {
         fun start(context: Context) {

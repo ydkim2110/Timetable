@@ -14,6 +14,10 @@ class TaskRepositoryImpl @Inject constructor(
         taskDao.insertTask(task)
     }
 
+    override suspend fun updateTask(task: Task) {
+        taskDao.updateTask(task)
+    }
+
     override suspend fun deleteTask(task: Task) {
         taskDao.deleteTask(task)
     }
@@ -44,6 +48,10 @@ class TaskRepositoryImpl @Inject constructor(
         subjectId: LongArray
     ): LiveData<List<CalendarTaskResponse>> {
         return taskDao.getAllTaskBySubject(startDate, endDate, subjectId)
+    }
+
+    override fun getAllTaskBySubjectForWidgetService(subjectId: Long, startDate: Long): List<CalendarTaskResponse> {
+        return taskDao.getAllTaskBySubjectForWidgetService(subjectId, startDate)
     }
 
     override fun getAllTasks(): LiveData<List<Task>> {

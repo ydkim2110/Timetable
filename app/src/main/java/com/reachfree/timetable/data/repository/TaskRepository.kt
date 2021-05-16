@@ -8,6 +8,8 @@ interface TaskRepository {
 
     suspend fun insertTask(task: Task)
 
+    suspend fun updateTask(task: Task)
+
     suspend fun deleteTask(task: Task)
 
     suspend fun getTaskById(taskId: Long): Task
@@ -18,6 +20,8 @@ interface TaskRepository {
 
     fun getAllTaskBySubject(subjectId: Long): LiveData<List<CalendarTaskResponse>>
 
+    fun getAllTaskBySubjectForWidgetService(subjectId: Long, startDate: Long): List<CalendarTaskResponse>
+
     fun getAllTaskBySubject(subjectIds: LongArray): LiveData<List<CalendarTaskResponse>>
 
     fun getAllTaskBySubject(
@@ -27,5 +31,4 @@ interface TaskRepository {
     ): LiveData<List<CalendarTaskResponse>>
 
     fun getAllTasks(): LiveData<List<Task>>
-
 }

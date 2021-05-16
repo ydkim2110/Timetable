@@ -9,31 +9,39 @@ import android.widget.RemoteViewsService
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.repository.SemesterRepository
 import com.reachfree.timetable.data.repository.SubjectRepository
+import com.reachfree.timetable.data.repository.TaskRepository
+import com.reachfree.timetable.data.response.CalendarTaskResponse
+import com.reachfree.timetable.extension.toMillis
 import com.reachfree.timetable.util.DateUtils
+import com.reachfree.timetable.util.TASK_LIST_CLICK_BROADCAST
 import com.reachfree.timetable.util.TIMETABLE_LIST_CLICK_BROADCAST
 import com.reachfree.timetable.util.timetable.TimetableEvent
 import dagger.hilt.android.AndroidEntryPoint
+import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TimetableListRemoteViewsService : RemoteViewsService() {
+class TaskListRemoteViewsService : RemoteViewsService() {
 
     @Inject
     lateinit var semesterRepository: SemesterRepository
     @Inject
     lateinit var subjectRepository: SubjectRepository
+    @Inject
+    lateinit var taskRepository: TaskRepository
 
     override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
-        return TimetableListRemoteViewsFactory(this)
+        return TaskListRemoteViewsFactory(this)
     }
 
-    inner class TimetableListRemoteViewsFactory(
+    inner class TaskListRemoteViewsFactory(
         private val context: Context
     ) : RemoteViewsFactory {
 
-        private val todayEventList = mutableListOf<TimetableEvent.Single>()
+        private val todayEventList = mutableListOf<CalendarTaskResponse>()
 
         override fun onCreate() {
         }
@@ -46,25 +54,24 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
             for ((index, value) in subjects.withIndex()) {
                 for (i in value.days.indices) {
                     if (value.days[i].day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                        val event = TimetableEvent.Single(
-                            id = 1,
-                            date = DateUtils.calculateDay(value.days[i].day),
-                            title = value.title,
-                            shortTitle = value.title,
-                            classroom = value.classroom,
-                            building = value.buildingName,
-                            credit = value.credit,
-                            startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
-                            endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
-                            backgroundColor = value.backgroundColor,
-                            textColor = Color.WHITE
-                        )
-                        todayEventList.add(event)
+                        val today = DateUtils.calculateStartOfDay(LocalDate.now()).toMillis()!!
+                        val task = taskRepository.getAllTaskBySubjectForWidgetService(value.id!!, today)
+
+                        for (j in task.indices) {
+                            val task = CalendarTaskResponse(
+                                id = task[j].id,
+                                title = task[j].title,
+                                description = task[j].description,
+                                date = task[j].date,
+                                type = task[j].type,
+                                subjectId = task[j].subjectId,
+                                backgroundColor = task[j].backgroundColor
+                            )
+                            todayEventList.add(task)
+                        }
                     }
                 }
             }
-
-            todayEventList.sortBy { it.startTime }
         }
 
         override fun onDestroy() {
@@ -77,30 +84,28 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
 
         override fun getViewAt(position: Int): RemoteViews? {
             if (!todayEventList.isNullOrEmpty()) {
-                val subject = todayEventList[position]
-                val title = subject.title
-                val location = "${subject.building} ${subject.classroom}"
-                val startTime = subject.startTime.toString()
-                val endTime = subject.endTime.toString()
+                val task = todayEventList[position]
+                val title = task.title
+                val date = DateUtils.dayDateFormat.format(task.date)
+                val time = DateUtils.taskDateFormat.format(task.date)
 
-                val remoteViews = RemoteViews(context.packageName, R.layout.timetable_widget)
-                remoteViews.setTextViewText(R.id.txt_widget_title, title)
-                remoteViews.setTextViewText(R.id.txt_widget_classroom, location)
-                remoteViews.setTextViewText(R.id.txt_widget_start_time, startTime)
-                remoteViews.setTextViewText(R.id.txt_widget_end_time, endTime)
-                remoteViews.setInt(R.id.background_color, "setBackgroundResource", subject.backgroundColor)
+                val remoteViews = RemoteViews(context.packageName, R.layout.task_widget)
+                remoteViews.setTextViewText(R.id.txt_task_widget_title, title)
+                remoteViews.setTextViewText(R.id.txt_task_widget_date, date)
+                remoteViews.setTextViewText(R.id.txt_task_widget_time, time)
+                remoteViews.setInt(R.id.task_background_color, "setBackgroundResource", task.backgroundColor)
 
-                val appsIntent = Intent(context, TimetableListWidget::class.java)
+                val appsIntent = Intent(context, TaskListWidget::class.java)
                 val pendingIntent = PendingIntent.getActivity(context, 0,
                     appsIntent, PendingIntent.FLAG_UPDATE_CURRENT
                 )
-                remoteViews.setOnClickPendingIntent(R.id.txt_widget_today_title, pendingIntent)
+                remoteViews.setOnClickPendingIntent(R.id.layout_header, pendingIntent)
 
                 val fillInIntent = Intent()
                     .putExtra("TITLE", "title")
-                    .setAction(TIMETABLE_LIST_CLICK_BROADCAST)
+                    .setAction(TASK_LIST_CLICK_BROADCAST)
 
-                remoteViews.setOnClickFillInIntent(R.id.widget_layout, fillInIntent)
+                remoteViews.setOnClickFillInIntent(R.id.task_widget_layout, fillInIntent)
 
                 return remoteViews
             }

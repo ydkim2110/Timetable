@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.reachfree.timetable.R
-import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.response.CalendarResponse
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.databinding.DatePickerBinding
@@ -187,7 +186,7 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
     }
 
     private fun fetchAllSubjectsByThisSemester() {
-        timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
+        timetableViewModel.thisSemesterLiveData.observe(viewLifecycleOwner) { semester ->
             if (semester != null) {
                 timetableViewModel.getAllSubjectBySemester(semester.id!!).observe(viewLifecycleOwner) { subjects ->
                     if (!subjects.isNullOrEmpty()) {

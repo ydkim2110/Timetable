@@ -1,0 +1,164 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/task_widget_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:paddingVertical="4dp"
+    android:theme="@style/ThemeOverlay.Timetable.AppWidgetContainer">
+
+    <LinearLayout
+        android:id="@+id/task_background_color"
+        android:layout_width="8dp"
+        android:layout_height="match_parent"
+        android:background="@color/orange"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_task_widget_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/appwidget_text"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="미시경제학"
+            android:textColor="@color/color_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold|italic" />
+
+        <LinearLayout
+            android:id="@+id/layout_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txt_task_widget_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/appwidget_text"
+                android:text="17일"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txt_task_widget_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@string/appwidget_text"
+                android:text="PM 03:30"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="14sp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
+
+<!--<RelativeLayout-->
+<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--android:id="@+id/task_widget_layout"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:background="@color/white"-->
+<!--android:gravity="center_vertical"-->
+<!--android:paddingVertical="4dp"-->
+<!--android:theme="@style/ThemeOverlay.Timetable.AppWidgetContainer">-->
+
+<!--<LinearLayout-->
+<!--    android:id="@+id/task_background_color"-->
+<!--    android:layout_width="8dp"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:layout_alignParentStart="true"-->
+<!--    android:layout_alignParentTop="true"-->
+<!--    android:layout_alignParentBottom="true"-->
+<!--    android:background="@color/orange"-->
+<!--    android:orientation="vertical" />-->
+
+<!--<LinearLayout-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_marginStart="8dp"-->
+<!--    android:layout_marginEnd="16dp"-->
+<!--    android:layout_toEndOf="@+id/task_background_color"-->
+<!--    android:layout_toStartOf="@+id/layout_day"-->
+<!--    android:layout_alignParentTop="true"-->
+<!--    android:layout_alignParentBottom="true"-->
+<!--    android:gravity="center_vertical"-->
+<!--    android:orientation="vertical">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/txt_task_widget_title"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginHorizontal="8dp"-->
+<!--        android:contentDescription="@string/appwidget_text"-->
+<!--        android:ellipsize="end"-->
+<!--        android:maxLines="1"-->
+<!--        android:text="미시경제학"-->
+<!--        android:textColor="@color/color_text_primary"-->
+<!--        android:textSize="16sp"-->
+<!--        android:textStyle="bold|italic" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/txt_task_widget_memo"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginHorizontal="8dp"-->
+<!--        android:contentDescription="@string/appwidget_text"-->
+<!--        android:ellipsize="end"-->
+<!--        android:maxLines="1"-->
+<!--        android:text="연희관 303호"-->
+<!--        android:textColor="@color/color_text_secondary"-->
+<!--        android:textSize="14sp" />-->
+
+<!--</LinearLayout>-->
+
+<!--<LinearLayout-->
+<!--    android:id="@+id/layout_day"-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:orientation="vertical"-->
+<!--    android:gravity="center"-->
+<!--    android:layout_alignParentTop="true"-->
+<!--    android:layout_alignParentBottom="true"-->
+<!--    android:layout_alignParentEnd="true">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/txt_task_widget_date"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:contentDescription="@string/appwidget_text"-->
+<!--        android:text="17일"-->
+<!--        android:textColor="@color/color_text_secondary"-->
+<!--        android:textSize="14sp" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/txt_task_widget_time"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:contentDescription="@string/appwidget_text"-->
+<!--        android:text="PM 03:30"-->
+<!--        android:textColor="@color/color_text_secondary"-->
+<!--        android:textSize="14sp" />-->
+
+
+<!--</LinearLayout>-->
+
+<!--</RelativeLayout>-->

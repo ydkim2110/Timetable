@@ -16,19 +16,19 @@ interface SubjectDao {
     suspend fun insertSubjects(subjects: List<Subject>)
 
     @Update
-    fun updateSubject(subject: Subject)
+    suspend fun updateSubject(subject: Subject)
 
     @Delete
-    fun deleteSubject(subject: Subject)
+    suspend fun deleteSubject(subject: Subject)
 
     @Query("DELETE FROM subjects")
     suspend fun deleteAllSubjects()
 
     @Query("SELECT * FROM subjects WHERE id LIKE :subjectId")
-    fun getSubjectByIdLiveData(subjectId: Long): LiveData<Subject>
+    suspend fun getSubjectById(subjectId: Long): Subject
 
     @Query("SELECT * FROM subjects WHERE id LIKE :subjectId")
-    suspend fun getSubjectById(subjectId: Long): Subject
+    fun getSubjectByIdLiveData(subjectId: Long): LiveData<Subject>
 
     @Query("SELECT * FROM subjects")
     fun getAllSubjects(): LiveData<List<Subject>>

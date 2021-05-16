@@ -85,7 +85,8 @@
     <string name="text_passed_days_0">남은 시간까지 준비를 해볼까요?&#128512;</string>
     <string name="text_passed_days_25">즐거운 새 학기가 시작되었습니다.^^&#128512;</string>
     <string name="text_passed_days_50">즐거운 학기를 보내시고 계신가요?&#128512;</string>
-    <string name="text_passed_days_75">얼마 남지 않았습니다. 화이팅하세요~!&#128512;</string>
+    <string name="text_passed_days_75">벌써 반이 지났습니다.&#128512;</string>
+    <string name="text_passed_days_99">얼마 남지 않았습니다. 화이팅하세요~!&#128512;</string>
     <string name="text_passed_days_100">이번 학기를 완료하였습니다. Good Job~&#128512;</string>
     <string name="text_settings">설정</string>
 </resources>

@@ -91,7 +91,6 @@ class SetupActivity : BaseActivity<ActivitySetupBinding>({ ActivitySetupBinding.
     }
 
     private fun dateSet(year: Int, month: Int, dayOfMonth: Int, type: String) {
-        Timber.d("DEBUG: selected date $year, $month, $dayOfMonth, $type")
         when (type) {
             START_TIME -> {
                 selectedStartDate.set(Calendar.YEAR, year)

@@ -203,10 +203,6 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
     }
 
     fun updateTimes(startTime: LocalTime, endTime: LocalTime, changedStartTime: Int? = 0, changedEndTime: Int? = 0) {
-
-        Timber.d("DEBUG: updateTimes $startTime / ${this.startTime}")
-        Timber.d("DEBUG: changedStartTime $changedStartTime")
-
         if (startTime.isAfter(endTime)) {
             throw IllegalArgumentException("Start time $startTime must be before end time $endTime")
         }
@@ -214,7 +210,6 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
 
         if (changedStartTime != 0) {
             this.startTime = LocalTime.of(changedStartTime!!, 0).truncatedTo(ChronoUnit.HOURS)
-            Timber.d("DEBUG: changed starTime ${this.startTime}")
             timesHaveChanged = true
         }
 
@@ -225,7 +220,6 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
 
         if (changedEndTime != 0) {
             this.endTime = LocalTime.of(changedEndTime!!, 0).truncatedTo(ChronoUnit.HOURS)
-            Timber.d("DEBUG: changed endTime ${this.endTime}")
             timesHaveChanged = true
         }
 

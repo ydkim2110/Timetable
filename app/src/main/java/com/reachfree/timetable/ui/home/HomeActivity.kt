@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.Semester
+import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.ActivityHomeBinding
@@ -23,9 +25,9 @@ import com.reachfree.timetable.ui.profile.SemesterDetailFragment
 import com.reachfree.timetable.ui.settings.SettingsActivity
 import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.timetable.TimetableFragment
-import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.timetable.TimetableEventView
 import com.reachfree.timetable.extension.runDelayed
+import com.reachfree.timetable.util.ACTION_TASK
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
@@ -34,9 +36,10 @@ import java.util.*
 class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inflate(it)}),
     BottomNavigationView.OnNavigationItemSelectedListener,
     TimetableFragment.TimetableFragmentListener,
-    TaskFragment.TaskFragmentListener, ProfileFragment.ProfileHandlerListener {
+    TaskFragment.TaskFragmentListener, ProfileFragment.ProfileFragmentListener {
 
     private lateinit var selectTypeBottomSheet: SelectTypeBottomSheet
+    private lateinit var semesterListDialog: SemesterListDialog
 
     private val timetableFragment = TimetableFragment.newInstance()
     private val taskFragment = TaskFragment.newInstance()
@@ -48,18 +51,21 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
 
     private lateinit var menu: Menu
 
+    private lateinit var semesterChangedListener: SemesterChangedListener
+
+    fun setOnSemesterChangedListener(semesterChangedListener: SemesterChangedListener) {
+        this.semesterChangedListener = semesterChangedListener
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupToolbar()
         setupBottomNavigationView()
-        subscribeToObserver()
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar).apply {
-            title = DateUtils.defaultDateFormat.format(Date())
-        }
+        setSupportActionBar(binding.toolbar)
     }
 
     private fun setupBottomNavigationView() {
@@ -80,8 +86,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(this)
     }
 
-    private fun subscribeToObserver() {
+    private fun showSemesterListDialog() {
+        semesterListDialog = SemesterListDialog()
+        semesterListDialog.show(supportFragmentManager, null)
+        semesterListDialog.setOnSemesterListDialogListener(object : SemesterListDialog.SemesterListDialogListener {
+            override fun onSemesterItemClicked(semester: Semester) {
+                semesterChangedListener.onSemesterChanged(semester)
+            }
 
+            override fun onSemesterAddButtonClicked() {
+                AddSemesterFragment.newInstance()
+                    .apply { show(supportFragmentManager, null) }
+            }
+        })
     }
 
     private fun showSelectTypeBottomSheet() {
@@ -126,6 +143,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.toolbar_timetable -> {
+                showSemesterListDialog()
+            }
             R.id.toolbar_add -> {
                 showSelectTypeBottomSheet()
             }
@@ -141,31 +161,39 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             R.id.bottom_week -> {
                 fm.beginTransaction().hide(active).show(timetableFragment).commit()
                 active = timetableFragment
-                showAddToolbarMenu()
+                showTimetableFragmentMenu()
                 return true
             }
             R.id.bottom_task -> {
                 fm.beginTransaction().hide(active).show(taskFragment).commit()
                 active = taskFragment
-                showAddToolbarMenu()
+                showTaskFragmentMenu()
                 return true
             }
             R.id.bottom_profile -> {
                 fm.beginTransaction().hide(active).show(profileFragment).commit()
                 active = profileFragment
-                showSettingsToolbarMenu()
+                showProfileFragmentMenu()
                 return true
             }
         }
         return false
     }
 
-    private fun showAddToolbarMenu() {
+    private fun showTimetableFragmentMenu() {
+        menu.findItem(R.id.toolbar_timetable).isVisible = true
         menu.findItem(R.id.toolbar_add).isVisible = true
         menu.findItem(R.id.toolbar_settings).isVisible = false
     }
 
-    private fun showSettingsToolbarMenu() {
+    private fun showTaskFragmentMenu() {
+        menu.findItem(R.id.toolbar_timetable).isVisible = false
+        menu.findItem(R.id.toolbar_add).isVisible = true
+        menu.findItem(R.id.toolbar_settings).isVisible = false
+    }
+
+    private fun showProfileFragmentMenu() {
+        menu.findItem(R.id.toolbar_timetable).isVisible = false
         menu.findItem(R.id.toolbar_add).isVisible = false
         menu.findItem(R.id.toolbar_settings).isVisible = true
     }
@@ -176,11 +204,29 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
 
         detail.setOnSemesterDetailFragmentListener(object: SemesterDetailFragment.SemesterDetailFragmentListener {
             override fun onEditButtonClicked(semesterId: Long) {
-                Timber.d("DEBUG : onEditButtonClicked $semesterId")
                 AddSemesterFragment.newInstance(semesterId)
                     .apply { show(supportFragmentManager, null) }
             }
+
+            override fun onSubjectItemClicked(subject: Subject) {
+                AddSubjectFragment.newInstance(subject.id)
+                    .apply { show(supportFragmentManager, null) }
+            }
+
+            override fun onAddButtonClicked() {
+                AddSubjectFragment.newInstance()
+                    .apply { show(supportFragmentManager, null) }
+            }
+
+            override fun onSemesterDeleteButtonClicked() {
+                semesterChangedListener.onSemesterDeleted()
+            }
         })
+    }
+
+    override fun onAddSemesterButtonClicked() {
+        AddSemesterFragment.newInstance()
+            .apply { show(supportFragmentManager, null) }
     }
 
     override fun onAddButtonClicked(date: Date) {
@@ -196,6 +242,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
         AddSubjectFragment.newInstance(timetableEventView.event.id)
             .apply { show(supportFragmentManager, null) }
+    }
+
+    override fun onSemesterTitle(title: String) {
+        binding.toolbar.title = title
     }
 
     override fun onBackPressed() {
