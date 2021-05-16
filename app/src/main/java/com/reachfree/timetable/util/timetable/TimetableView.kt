@@ -11,6 +11,7 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.reachfree.timetable.R
 import com.reachfree.timetable.extension.dipToPixelF
 import com.reachfree.timetable.util.Animation
@@ -50,7 +51,7 @@ class TimetableView(
 
     init {
         val arr = context.obtainStyledAttributes(attributeSet, R.styleable.TimetableView)
-        accentColor = arr.getColor(R.styleable.TimetableView_accent_color, Color.BLUE)
+        accentColor = arr.getColor(R.styleable.TimetableView_accent_color, Color.RED)
         arr.recycle()
 
         val prefs = context.getSharedPreferences("ts_week_view", Context.MODE_PRIVATE)

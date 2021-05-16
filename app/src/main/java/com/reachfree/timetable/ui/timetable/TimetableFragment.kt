@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
@@ -69,7 +70,6 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //TODO: 마지막 과목 삭제시 시간표 반영이 안됨
         //TODO: 주말 과목 삭제시 주말이 안보여지게 안됨
 
         setupViewHandler()
@@ -137,21 +137,6 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
                 }
             }
         }
-//        timetableViewModel.thisSemesterLiveData.observe(viewLifecycleOwner) { semester ->
-//            semester?.id?.let {
-//                timetableFragmentListener.onSemesterTitle(semester.title)
-//                fetchSubjectsBySemester(it)
-//            } ?: run {
-//                timetableViewModel.getLatestSemester().observe(viewLifecycleOwner) { semester ->
-//                    semester?.id?.let {
-//                        timetableFragmentListener.onSemesterTitle(semester.title)
-//                        fetchSubjectsBySemester(it)
-//                    } ?: run {
-//                        timetableFragmentListener.onSemesterTitle(getString(R.string.app_name))
-//                    }
-//                }
-//            }
-//        }
     }
 
     private fun fetchSubjectsBySemester(id: Long) {
@@ -165,6 +150,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
     }
 
     private fun removeAllEvents() {
+        binding.weekView.forEach { it.clearAnimation() }
         binding.weekView.removeViews(1, binding.weekView.childCount - 1)
     }
 

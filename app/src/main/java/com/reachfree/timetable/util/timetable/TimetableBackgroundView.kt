@@ -8,6 +8,8 @@ import android.graphics.Rect
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import com.reachfree.timetable.R
 import com.reachfree.timetable.util.SessionManager
 import com.reachfree.timetable.util.DayOfWeekUtil
 import com.reachfree.timetable.extension.dipToPixelF
@@ -32,7 +34,9 @@ internal class TimetableBackgroundView constructor(context: Context) : View(cont
     lateinit var sessionManager: SessionManager
 
     private val accentPaint: Paint by lazy {
-        Paint().apply { strokeWidth = DIVIDER_WIDTH_PX.toFloat() * 2 }
+        Paint().apply {
+            strokeWidth = DIVIDER_WIDTH_PX.toFloat() * 2
+        }
     }
 
     private val paintDivider: Paint by lazy {
