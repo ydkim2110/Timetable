@@ -23,6 +23,7 @@ import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
 import com.reachfree.timetable.ui.profile.GradeFragment
+import com.reachfree.timetable.ui.profile.GradeListFragment
 import com.reachfree.timetable.ui.profile.ProfileFragment
 import com.reachfree.timetable.ui.profile.SemesterDetailFragment
 import com.reachfree.timetable.ui.settings.SettingsActivity
@@ -282,6 +283,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
 
     override fun onAddSemesterButtonClicked() {
         setupAddSemesterFragment()
+    }
+
+    override fun onGoToGradeListFragmentClicked() {
+        GradeListFragment.newInstance().apply {
+            show(supportFragmentManager, GradeListFragment.TAG)
+        }
     }
 
     override fun onAddButtonClicked(date: Date) {

@@ -138,6 +138,9 @@ class TimetableViewModel @Inject constructor(
     fun getAllSubjects() =
         subjectRepository.getAllSubjects()
 
+    fun getAllSubjectsWithSemesterInfo() =
+        subjectRepository.getAllSubjectsWithSemesterInfo()
+
     fun getTotalCreditByType() =
         subjectRepository.getTotalCreditByType()
 

@@ -236,7 +236,7 @@
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/btn_height"
-                        tools:text="09:00"
+                        android:text="09:00"
                         android:textSize="14sp"
                         />
 

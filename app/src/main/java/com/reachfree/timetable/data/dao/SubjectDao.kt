@@ -3,6 +3,7 @@ package com.reachfree.timetable.data.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.reachfree.timetable.data.model.Subject
+import com.reachfree.timetable.data.response.GradeListResponse
 import com.reachfree.timetable.data.response.SubjectTypeResponse
 import com.reachfree.timetable.data.response.TimetableResponse
 import kotlinx.coroutines.flow.Flow
@@ -49,7 +50,28 @@ interface SubjectDao {
     @Query("SELECT SUM(credit) FROM subjects WHERE semester_id LIKE :semesterId")
     fun getTotalCreditBySemester(semesterId: Long): LiveData<Int>
 
-
+    @Query("""
+        SELECT
+            x.id,
+            x.title,
+            x.description,
+            x.classroom,
+            x.building_name,
+            x.credit,
+            x.type,
+            x.grade,
+            x.professor_name,
+            x.book_name,
+            x.background_color,
+            x.days,
+            x.semester_id,
+            y.title AS semester_title,
+            y.start_date AS semester_start_date,
+            y.end_date AS semester_end_date
+        FROM subjects x
+        INNER JOIN semesters y ON x.semester_id = y.id
+    """)
+    fun getAllSubjectsWithSemesterInfo(): LiveData<List<GradeListResponse>>
 
     @Query("""
         SELECT 

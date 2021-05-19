@@ -10,6 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.GradeCreditType
+import com.reachfree.timetable.data.model.GradeType
+import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.model.SubjectType
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.FragmentProfileBinding
@@ -22,6 +25,7 @@ import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.util.*
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,6 +38,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     interface ProfileFragmentListener {
         fun onSemesterItemClicked(semesterResponse: SemesterResponse)
         fun onAddSemesterButtonClicked()
+        fun onGoToGradeListFragmentClicked()
     }
 
     private lateinit var profileFragmentListener: ProfileFragmentListener
@@ -88,37 +93,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         binding.btnAddSemester.setOnSingleClickListener {
             profileFragmentListener.onAddSemesterButtonClicked()
         }
+
+        binding.layoutGrade.setOnSingleClickListener {
+            profileFragmentListener.onGoToGradeListFragmentClicked()
+        }
     }
 
     private fun subscribeToObserver() {
-        timetableViewModel.getAllSubjects().observe(viewLifecycleOwner) { response ->
-            if (!response.isNullOrEmpty()) {
-                val mandatoryCredit = response.filter { it.type == SubjectType.MANDATORY.ordinal }
-                    .sumOf { it.credit }
-                val electiveCredit = response.filter { it.type == SubjectType.ELECTIVE.ordinal }
-                    .sumOf { it.credit }
-                val graduationCredit = mandatoryCredit + electiveCredit
-
-                val graduation = AppUtils.calculatePercentage(graduationCredit, graduationTotalCredit)
-                val mandatory = AppUtils.calculatePercentage(mandatoryCredit, mandatoryTotalCredit)
-                val elective = AppUtils.calculatePercentage(electiveCredit, electiveTotalCredit)
-
-                binding.txtGraduation.text = getString(R.string.text_input_profile_graduation, graduationCredit, graduationTotalCredit)
-                binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, mandatoryCredit, mandatoryTotalCredit)
-                binding.txtElective.text = getString(R.string.text_input_profile_elective, electiveCredit, electiveTotalCredit)
-
-                binding.progressGraduation.animateProgressBar(graduation)
-                binding.progressMandatory.animateProgressBar(mandatory)
-                binding.progressElective.animateProgressBar(elective)
-            } else {
-                binding.txtGraduation.text = getString(R.string.text_input_profile_graduation, DEFAULT_VALUE, graduationTotalCredit)
-                binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, DEFAULT_VALUE, mandatoryTotalCredit)
-                binding.txtElective.text = getString(R.string.text_input_profile_elective, DEFAULT_VALUE, electiveTotalCredit)
-
-                binding.progressGraduation.animateProgressBar(DEFAULT_VALUE)
-                binding.progressMandatory.animateProgressBar(DEFAULT_VALUE)
-                binding.progressElective.animateProgressBar(DEFAULT_VALUE)
-            }
+        timetableViewModel.getAllSubjects().observe(viewLifecycleOwner) { subjects ->
+            setupGradeInformation(subjects)
+            setupGraduationInformation(subjects)
         }
 
         timetableViewModel.getAllSemestersWithTotalCount().observe(viewLifecycleOwner) { semesters ->
@@ -136,6 +120,61 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             semesterAdapter.setOnItemClickListener { semesterResponse ->
                 profileFragmentListener.onSemesterItemClicked(semesterResponse)
             }
+        }
+    }
+
+    private fun setupGradeInformation(subjects: List<Subject>?) {
+        if (!subjects.isNullOrEmpty()) {
+            val totalAverageCredit = if (sessionManager.getGradeCreditOption() == GradeCreditType.CREDIT_4_3.ordinal) {
+                GradeType.calculateAverageGradeBy43(subjects)
+            } else {
+                GradeType.calculateAverageGradeBy45(subjects)
+            }
+            binding.txtTotalAverageCredit.text = String.format("%.2f", totalAverageCredit)
+
+            val mandatorySubjects = subjects.filter { it.type == SubjectType.MANDATORY.ordinal }
+            if (!mandatorySubjects.isNullOrEmpty()) {
+                val mandatoryAverageCredit = if (sessionManager.getGradeCreditOption() == GradeCreditType.CREDIT_4_3.ordinal) {
+                    GradeType.calculateAverageGradeBy43(mandatorySubjects)
+                } else {
+                    GradeType.calculateAverageGradeBy45(mandatorySubjects)
+                }
+                binding.txtMandatoryCredit.text = String.format("%.2f", mandatoryAverageCredit)
+            } else {
+                binding.txtMandatoryCredit.text = String.format("%.2f", 0f)
+            }
+        } else {
+            binding.txtTotalAverageCredit.text = String.format("%.2f", 0f)
+        }
+    }
+
+    private fun setupGraduationInformation(subjects: List<Subject>?) {
+        if (!subjects.isNullOrEmpty()) {
+            val mandatoryCredit = subjects.filter { it.type == SubjectType.MANDATORY.ordinal }
+                .sumOf { it.credit }
+            val electiveCredit = subjects.filter { it.type == SubjectType.ELECTIVE.ordinal }
+                .sumOf { it.credit }
+            val graduationCredit = mandatoryCredit + electiveCredit
+
+            val graduation = AppUtils.calculatePercentage(graduationCredit, graduationTotalCredit)
+            val mandatory = AppUtils.calculatePercentage(mandatoryCredit, mandatoryTotalCredit)
+            val elective = AppUtils.calculatePercentage(electiveCredit, electiveTotalCredit)
+
+            binding.txtGraduation.text = getString(R.string.text_input_profile_graduation, graduationCredit, graduationTotalCredit)
+            binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, mandatoryCredit, mandatoryTotalCredit)
+            binding.txtElective.text = getString(R.string.text_input_profile_elective, electiveCredit, electiveTotalCredit)
+
+            binding.progressGraduation.animateProgressBar(graduation)
+            binding.progressMandatory.animateProgressBar(mandatory)
+            binding.progressElective.animateProgressBar(elective)
+        } else {
+            binding.txtGraduation.text = getString(R.string.text_input_profile_graduation, DEFAULT_VALUE, graduationTotalCredit)
+            binding.txtMandatory.text = getString(R.string.text_input_profile_mandatory, DEFAULT_VALUE, mandatoryTotalCredit)
+            binding.txtElective.text = getString(R.string.text_input_profile_elective, DEFAULT_VALUE, electiveTotalCredit)
+
+            binding.progressGraduation.animateProgressBar(DEFAULT_VALUE)
+            binding.progressMandatory.animateProgressBar(DEFAULT_VALUE)
+            binding.progressElective.animateProgressBar(DEFAULT_VALUE)
         }
     }
 

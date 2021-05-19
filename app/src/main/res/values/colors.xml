@@ -21,8 +21,8 @@
     <color name="color_mandatory">#F76353</color>
     <color name="color_elective">#F2B900</color>
 
-    <color name="icon_back_arrow">@color/white</color>
-    <color name="icon_delete">@color/white</color>
+    <color name="icon_back_arrow">@color/black</color>
+    <color name="icon_delete">@color/black</color>
 
     <color name="divider_gray">#88808080</color>
     <color name="default_background_color">@color/purple_200</color>

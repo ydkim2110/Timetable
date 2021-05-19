@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.response.GradeListResponse
 import com.reachfree.timetable.util.ColorTag
 
 @Entity(
@@ -41,6 +42,11 @@ data class Subject(
         var endMinute: Int
     )
 }
+
+data class GradeListGroup(
+    var key: String = "",
+    var subjectList: ArrayList<GradeListResponse> = ArrayList()
+)
 
 enum class GradeCreditType(
     @StringRes val stringRes: Int
@@ -87,7 +93,36 @@ enum class GradeType(
             }
             return 0f
         }
+        fun calculateAverageGradeBy43GradeListResponse(subjects: List<GradeListResponse>): Float {
+            val denominator = subjects.filter { it.grade != PASS.title }.filter { it.grade.isNotBlank() }.sumBy { it.credit }
+
+            if (denominator != 0) {
+                var totalCredit = 0F
+                subjects.forEach { subject ->
+                    if (subject.grade.isNotBlank() && subject.grade != PASS.title) {
+                        val grade = values().find { it.title == subject.grade }
+                        totalCredit += subject.credit * grade?.point43!!
+                    }
+                }
+                return totalCredit/denominator
+            }
+            return 0f
+        }
         fun calculateAverageGradeBy45(subjects: List<Subject>): Float {
+            val denominator = subjects.filter { it.grade != PASS.title }.filter { it.grade.isNotBlank() }.sumBy { it.credit }
+            if (denominator != 0) {
+                var totalCredit = 0F
+                subjects.forEach { subject ->
+                    if (subject.grade.isNotBlank() && subject.grade != PASS.title) {
+                        val grade = values().find { it.title == subject.grade }
+                        totalCredit += subject.credit * grade?.point45!!
+                    }
+                }
+                return totalCredit/denominator
+            }
+            return 0f
+        }
+        fun calculateAverageGradeBy45GradeListResponse(subjects: List<GradeListResponse>): Float {
             val denominator = subjects.filter { it.grade != PASS.title }.filter { it.grade.isNotBlank() }.sumBy { it.credit }
             if (denominator != 0) {
                 var totalCredit = 0F

@@ -93,9 +93,9 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
     }
 
     private fun setupToolbar() {
-        binding.appBar.appBar.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple_500))
+        binding.appBar.appBar.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
         binding.appBar.txtToolbarTitle.text = getString(R.string.toolbar_add_semester_title)
-        binding.appBar.txtToolbarTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        binding.appBar.txtToolbarTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         binding.appBar.btnBack.setColorFilter(
             ContextCompat.getColor(requireActivity(), R.color.icon_back_arrow),
             SRC_ATOP

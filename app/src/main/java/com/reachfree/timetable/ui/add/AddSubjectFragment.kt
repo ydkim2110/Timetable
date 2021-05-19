@@ -212,14 +212,14 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         binding.appBar.appBar.setBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.purple_500
+                R.color.white
             )
         )
         binding.appBar.txtToolbarTitle.text = getString(R.string.toolbar_title_add_subject)
         binding.appBar.txtToolbarTitle.setTextColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.white
+                R.color.black
             )
         )
         binding.appBar.btnBack.setColorFilter(

@@ -69,14 +69,14 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
         binding.appBar.appBar.setBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.purple_500
+                R.color.white
             )
         )
         binding.appBar.txtToolbarTitle.text = "알바 등록"
         binding.appBar.txtToolbarTitle.setTextColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.white
+                R.color.black
             )
         )
         binding.appBar.btnBack.setColorFilter(
