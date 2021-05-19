@@ -1,9 +1,6 @@
 package com.reachfree.timetable.ui.add
 
 import android.annotation.SuppressLint
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
@@ -11,11 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import com.google.android.material.chip.Chip
@@ -27,25 +22,22 @@ import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.model.SubjectType
 import com.reachfree.timetable.databinding.FragmentAddSubjectBinding
 import com.reachfree.timetable.databinding.LayoutStartEndTimeBinding
-import com.reachfree.timetable.extension.beGone
-import com.reachfree.timetable.extension.beVisible
-import com.reachfree.timetable.extension.setOnSingleClickListener
+import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.ui.bottomsheet.SelectSemesterBottomSheet
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.util.ColorTag
+import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.DateUtils.updateHourAndMinute
 import com.reachfree.timetable.viewmodel.TimetableViewModel
-import com.reachfree.timetable.extension.runDelayed
 import com.reachfree.timetable.widget.TimetableListWidget
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
-import timber.log.Timber
 
 @AndroidEntryPoint
 class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
-    private val timetableViewModel: TimetableViewModel by activityViewModels()
+    private val timetableViewModel: TimetableViewModel by viewModels()
 
     private lateinit var selectSemesterBottomSheet: SelectSemesterBottomSheet
 
@@ -88,99 +80,14 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             timetableViewModel.subject.observe(viewLifecycleOwner) { subject ->
                 if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                     if (subject != null) {
-                    passedSubject = subject
-                    selectedSemesterId = subject.semesterId
+                        passedSubject = subject
+                        selectedSemesterId = subject.semesterId
 
-                    timetableViewModel.getSemesterById(subject.semesterId)
-                    timetableViewModel.semesterById.observe(viewLifecycleOwner) { semester ->
-                        if (semester != null) {
-                            selectedSemester = semester
-                            selectedSemesterId = selectedSemester.id
-                            binding.btnSemester.text = semester.title
-                        }
+                        setupPassedSubjectSemester(subject)
+                        setupPassedSubjectInformation(subject)
+                        setupPassedSubjectChip(subject)
+                        binding.deleteSaveBtnLayout.btnDelete.beVisible()
                     }
-
-                    binding.edtSubjectTitle.setText(subject.title)
-                    binding.edtSubjectClassroom.setText(subject.classroom)
-                    binding.edtSubjectBuildingName.setText(subject.buildingName)
-                    binding.numberPickerCredit.progress = subject.credit
-
-                    when (subject.type) {
-                        SubjectType.MANDATORY.ordinal -> {
-                            binding.btnSubjectTypeToggleGroup.check(binding.btnMandatory.id)
-                        }
-                        SubjectType.ELECTIVE.ordinal -> {
-                            binding.btnSubjectTypeToggleGroup.check(binding.btnElective.id)
-                        }
-                        SubjectType.OTHER.ordinal -> {
-                            binding.btnSubjectTypeToggleGroup.check(binding.btnOther.id)
-                        }
-                    }
-
-                    for (i in ColorTag.values().indices) {
-                        if (ColorTag.values()[i].resId == subject.backgroundColor) {
-                            color = ColorTag.values()[i]
-                            binding.backgroundColor.setBackgroundResource(ColorTag.values()[i].resBg)
-                            break
-                        }
-                    }
-
-                    val list = mutableListOf<String>()
-                    for (i in subject.days.indices) {
-                        when (subject.days[i].day) {
-                            1 -> {
-                                binding.chipGroup.check(binding.chipSun.id)
-                                createLayout(binding.chipSun.text.toString(), subject.days[i])
-                                list.add(binding.chipSun.text.toString())
-                            }
-                            2 -> {
-                                binding.chipGroup.check(binding.chipMon.id)
-                                createLayout(binding.chipMon.text.toString(), subject.days[i])
-                                list.add(binding.chipMon.text.toString())
-                            }
-                            3 -> {
-                                binding.chipGroup.check(binding.chipTue.id)
-                                createLayout(binding.chipTue.text.toString(), subject.days[i])
-                                list.add(binding.chipTue.text.toString())
-                            }
-                            4 -> {
-                                binding.chipGroup.check(binding.chipWed.id)
-                                createLayout(binding.chipWed.text.toString(), subject.days[i])
-                                list.add(binding.chipWed.text.toString())
-                            }
-                            5 -> {
-                                binding.chipGroup.check(binding.chipThu.id)
-                                createLayout(binding.chipThu.text.toString(), subject.days[i])
-                                list.add(binding.chipThu.text.toString())
-                            }
-                            6 -> {
-                                binding.chipGroup.check(binding.chipFri.id)
-                                createLayout(binding.chipFri.text.toString(), subject.days[i])
-                                list.add(binding.chipFri.text.toString())
-                            }
-                            else -> {
-                                binding.chipGroup.check(binding.chipSat.id)
-                                createLayout(binding.chipSat.text.toString(), subject.days[i])
-                                list.add(binding.chipSat.text.toString())
-                            }
-                        }
-                    }
-
-                    for (index in 0 until binding.chipGroup.childCount) {
-                        val chip = binding.chipGroup.getChildAt(index) as Chip
-                        chip.setOnCheckedChangeListener { view, isChecked ->
-                            if (isChecked) {
-                                createLayout(chip.text.toString())
-                                list.add(view.text.toString())
-                            } else {
-                                binding.layoutTime.removeViewAt(list.indexOf(view.text.toString()))
-                                list.remove(view.text.toString())
-                            }
-                        }
-                    }
-
-                    binding.deleteSaveBtnLayout.btnDelete.beVisible()
-                }
                 }
 
             }
@@ -194,11 +101,104 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         }
     }
 
+    private fun setupPassedSubjectInformation(subject: Subject) {
+        binding.edtSubjectTitle.setText(subject.title)
+        binding.edtSubjectClassroom.setText(subject.classroom)
+        binding.edtSubjectBuildingName.setText(subject.buildingName)
+        binding.numberPickerCredit.progress = subject.credit
+
+        when (subject.type) {
+            SubjectType.MANDATORY.ordinal -> {
+                binding.btnSubjectTypeToggleGroup.check(binding.btnMandatory.id)
+            }
+            SubjectType.ELECTIVE.ordinal -> {
+                binding.btnSubjectTypeToggleGroup.check(binding.btnElective.id)
+            }
+            SubjectType.OTHER.ordinal -> {
+                binding.btnSubjectTypeToggleGroup.check(binding.btnOther.id)
+            }
+        }
+
+        for (i in ColorTag.values().indices) {
+            if (ColorTag.values()[i].resId == subject.backgroundColor) {
+                color = ColorTag.values()[i]
+                binding.backgroundColor.setBackgroundResource(ColorTag.values()[i].resBg)
+                break
+            }
+        }
+    }
+
+    private fun setupPassedSubjectSemester(subject: Subject) {
+        timetableViewModel.getSemesterById(subject.semesterId)
+        timetableViewModel.semesterById.observe(viewLifecycleOwner) { semester ->
+            if (semester != null) {
+                selectedSemester = semester
+                selectedSemesterId = selectedSemester.id
+                binding.btnSemester.text = semester.title
+            }
+        }
+    }
+
+    private fun setupPassedSubjectChip(subject: Subject) {
+        val list = mutableListOf<String>()
+        for (i in subject.days.indices) {
+            when (subject.days[i].day) {
+                1 -> {
+                    binding.chipGroup.check(binding.chipSun.id)
+                    createLayout(binding.chipSun.text.toString(), subject.days[i])
+                    list.add(binding.chipSun.text.toString())
+                }
+                2 -> {
+                    binding.chipGroup.check(binding.chipMon.id)
+                    createLayout(binding.chipMon.text.toString(), subject.days[i])
+                    list.add(binding.chipMon.text.toString())
+                }
+                3 -> {
+                    binding.chipGroup.check(binding.chipTue.id)
+                    createLayout(binding.chipTue.text.toString(), subject.days[i])
+                    list.add(binding.chipTue.text.toString())
+                }
+                4 -> {
+                    binding.chipGroup.check(binding.chipWed.id)
+                    createLayout(binding.chipWed.text.toString(), subject.days[i])
+                    list.add(binding.chipWed.text.toString())
+                }
+                5 -> {
+                    binding.chipGroup.check(binding.chipThu.id)
+                    createLayout(binding.chipThu.text.toString(), subject.days[i])
+                    list.add(binding.chipThu.text.toString())
+                }
+                6 -> {
+                    binding.chipGroup.check(binding.chipFri.id)
+                    createLayout(binding.chipFri.text.toString(), subject.days[i])
+                    list.add(binding.chipFri.text.toString())
+                }
+                else -> {
+                    binding.chipGroup.check(binding.chipSat.id)
+                    createLayout(binding.chipSat.text.toString(), subject.days[i])
+                    list.add(binding.chipSat.text.toString())
+                }
+            }
+        }
+
+        for (index in 0 until binding.chipGroup.childCount) {
+            val chip = binding.chipGroup.getChildAt(index) as Chip
+            chip.setOnCheckedChangeListener { view, isChecked ->
+                if (isChecked) {
+                    createLayout(chip.text.toString())
+                    list.add(view.text.toString())
+                } else {
+                    binding.layoutTime.removeViewAt(list.indexOf(view.text.toString()))
+                    list.remove(view.text.toString())
+                }
+            }
+        }
+    }
+
     private fun setupDefaultSubscribeToObserver() {
         timetableViewModel.getAllSemestersLiveData().observe(this) { semesters ->
             if (!semesters.isNullOrEmpty()) {
                 //TODO: 날짜 비교하여 해당 학기로 세팅
-                Timber.d("DEBUG: SEMESTER SIZE IS ${semesters.size}")
                 selectedSemester = semesters[0]
                 selectedSemesterId = selectedSemester.id
                 binding.btnSemester.text = selectedSemester.title
@@ -215,7 +215,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 R.color.purple_500
             )
         )
-        binding.appBar.txtToolbarTitle.text = "과목 등록"
+        binding.appBar.txtToolbarTitle.text = getString(R.string.toolbar_title_add_subject)
         binding.appBar.txtToolbarTitle.setTextColor(
             ContextCompat.getColor(
                 requireContext(),
@@ -308,11 +308,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
                 TimetableListWidget.updateWidgetListView(requireContext())
 
-                runDelayed(500L) {
-                    Toast.makeText(
-                        requireActivity(), "삭제되었습니다.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                runDelayed(TIME_DELAY) {
+                    requireActivity().longToast(getString(R.string.toast_delete_completed_message))
                     dismiss()
                 }
             }
@@ -337,7 +334,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             .setTitle(getString(R.string.text_alert_no_semester_warning_title))
             .setMessage(getString(R.string.text_alert_no_semester_warning_message))
             .setCancelable(false)
-            .setPositiveButton(getString(R.string.text_alert_button_ok)) { dialog, which ->
+            .setPositiveButton(getString(R.string.text_alert_button_ok)) { _, _ ->
                 dismiss()
             }
             .create()
@@ -350,17 +347,28 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         val subjectBuildingName = binding.edtSubjectBuildingName.text.toString().trim()
         val subjectCredit = binding.numberPickerCredit.progress
 
+        if (subjectTitle.isEmpty()) {
+            requireActivity().longToast(getString(R.string.toast_subject_name_message))
+            return
+        }
+
         if (subjectClassroom.isEmpty()) {
+            requireActivity().longToast(getString(R.string.toast_subject_classroom_message))
             return
         }
 
         if (subjectBuildingName.isEmpty()) {
+            requireActivity().longToast(getString(R.string.toast_subject_building_message))
+            return
+        }
+
+        if (binding.layoutTime.childCount <= 0) {
+            requireActivity().longToast(getString(R.string.toast_subject_day_message))
             return
         }
 
         val selectedDays = mutableListOf<Subject.Days>()
 
-        //TODO: 시작시간 종료시간 차이 체크
         for (i in 0 until binding.layoutTime.childCount) {
             val child = binding.layoutTime.getChildAt(i)
             val day = child.findViewById<TextView>(R.id.txt_selected_day)
@@ -376,15 +384,12 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             val end = LocalTime.of(endHour, endMinute)
 
             if (start.isAfter(end)) {
-                Toast.makeText(
-                    requireActivity(), "시작 또는 종료시간을 확인해주세요.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                requireActivity().longToast(getString(R.string.toast_start_end_time_warning_message))
                 return
             }
 
             val days = Subject.Days(
-                day = convertDayNameToInt(day.text.toString()),
+                day = DateUtils.convertDayNameToInt(requireContext(), day.text.toString()),
                 startHour = startTime.text.split(":")[0].toInt(),
                 startMinute = startTime.text.split(":")[1].toInt(),
                 endHour = endTime.text.split(":")[0].toInt(),
@@ -409,10 +414,9 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 )
 
                 timetableViewModel.insertSubject(subject)
-                toastMessage = "저장 완료!"
+                toastMessage = getString(R.string.toast_save_complete_message)
             } ?: run {
-                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
-                    Toast.LENGTH_LONG).show()
+                requireActivity().longToast(getString(R.string.toast_error_message))
             }
         } else {
             selectedSemesterId?.let { semesterId ->
@@ -429,20 +433,16 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 )
 
                 timetableViewModel.updateSubject(subject)
-                toastMessage = "수정 완료!"
+                toastMessage = getString(R.string.toast_edit_complete_message)
             } ?: run {
-                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
-                    Toast.LENGTH_LONG).show()
+                requireActivity().longToast(getString(R.string.toast_error_message))
             }
         }
 
         TimetableListWidget.updateWidgetListView(requireContext())
 
-        runDelayed(500L) {
-            Toast.makeText(
-                requireActivity(), toastMessage,
-                Toast.LENGTH_SHORT
-            ).show()
+        runDelayed(TIME_DELAY) {
+            requireActivity().longToast(toastMessage)
             dismiss()
         }
     }
@@ -474,32 +474,6 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         binding.layoutTime.addView(layoutBinding.root)
     }
 
-    private fun convertDayNameToInt(name: String): Int {
-        when (name) {
-            requireContext().resources.getString(R.string.sunday_short) -> {
-                return 1
-            }
-            requireContext().resources.getString(R.string.monday_short) -> {
-                return 2
-            }
-            requireContext().resources.getString(R.string.tuesday_short) -> {
-                return 3
-            }
-            requireContext().resources.getString(R.string.wednesday_short) -> {
-                return 4
-            }
-            requireContext().resources.getString(R.string.thursday_short) -> {
-                return 5
-            }
-            requireContext().resources.getString(R.string.friday_short) -> {
-                return 6
-            }
-            else -> {
-                return 7
-            }
-        }
-    }
-
     private fun openTimePicker(hour: Int, minute: Int, action: (Int, Int) -> Unit) {
         val isSystem24Hour = is24HourFormat(requireContext())
         val clickFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
@@ -508,7 +482,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             .setTimeFormat(clickFormat)
             .setHour(hour)
             .setMinute(minute)
-            .setTitleText("시간을 입력하세요.")
+            .setTitleText(getString(R.string.text_time_picker_title))
             .build()
         picker.show(childFragmentManager, TIME_PICKER_TAG)
 
@@ -531,6 +505,8 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
     companion object {
         private const val TIME_PICKER_TAG = "TIME_PICKER_TAG"
         private const val SUBJECT_ID = "subject_id"
+        private const val TIME_DELAY = 500L
+
         fun newInstance(subjectId: Long? = null) = AddSubjectFragment().apply {
             arguments = bundleOf(SUBJECT_ID to subjectId)
         }

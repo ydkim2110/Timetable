@@ -9,17 +9,18 @@ import org.threeten.bp.LocalTime
 sealed class TimetableEvent {
 
     abstract val id: Long
+    abstract val category: Int
     abstract val date: LocalDate
     abstract val title: String
     abstract val shortTitle: String
-    abstract val credit: Int
 
     data class Single(
         override val id: Long,
+        override val category: Int,
         override val date: LocalDate,
         override val title: String,
         override val shortTitle: String,
-        override val credit: Int,
+        val credit: Int? = 3,
         val classroom: String? = null,
         val building: String? = null,
         val subTitle: String? = null,
@@ -36,18 +37,20 @@ sealed class TimetableEvent {
 
     data class AllDay(
         override val id: Long,
+        override val category: Int,
         override val date: LocalDate,
         override val title: String,
         override val shortTitle: String,
-        override val credit: Int
+        val credit: Int? = 3,
     ) : TimetableEvent()
 
     data class MultiDay(
         override val id: Long,
+        override val category: Int,
         override val date: LocalDate,
         override val title: String,
         override val shortTitle: String,
-        override val credit: Int,
+        val credit: Int? = 3,
         val lastDate: LocalDate
     ) : TimetableEvent()
 }

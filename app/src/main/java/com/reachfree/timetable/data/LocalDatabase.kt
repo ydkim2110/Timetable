@@ -3,15 +3,17 @@ package com.reachfree.timetable.data
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.reachfree.timetable.data.dao.PartTimeJobDao
 import com.reachfree.timetable.data.dao.SemesterDao
 import com.reachfree.timetable.data.dao.SubjectDao
 import com.reachfree.timetable.data.dao.TaskDao
+import com.reachfree.timetable.data.model.PartTimeJob
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.model.Task
 
 @Database(
-    entities = [Semester::class, Subject::class, Task::class],
+    entities = [Semester::class, Subject::class, Task::class, PartTimeJob::class],
     version = 1,
     exportSchema = false
 )
@@ -21,5 +23,6 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun semesterDao(): SemesterDao
     abstract fun subjectDao(): SubjectDao
     abstract fun taskDao(): TaskDao
+    abstract fun partTimeJobDao(): PartTimeJobDao
 
 }

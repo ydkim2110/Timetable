@@ -39,26 +39,18 @@
 
                     <TextView
                         android:id="@+id/txt_semester_title"
+                        style="@style/SubTitleForFormStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="학기"
-                        android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
+                        android:text="@string/text_semester"
                         />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_semester"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:text="학기"
-                        android:textSize="14sp"
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/color_text_primary"
-                        android:textAllCaps="false"
-                        android:drawableEnd="@drawable/ic_arrow_drop_down"
-                        android:drawableTint="@color/color_text_primary"
+                        android:layout_height="@dimen/btn_height"
+                        tools:text="학기"
                         app:layout_constraintStart_toEndOf="@+id/txt_semester_title"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -76,26 +68,19 @@
 
                     <TextView
                         android:id="@+id/txt_subject_title"
+                        style="@style/SubTitleForFormStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="과목명"
-                        android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
+                        android:text="@string/text_subject_name"
                         />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_subject"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:text="과목명"
+                        android:layout_height="@dimen/btn_height"
                         android:textSize="14sp"
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/color_text_primary"
-                        android:textAllCaps="false"
-                        android:drawableEnd="@drawable/ic_arrow_drop_down"
-                        android:drawableTint="@color/color_text_primary"
+                        tools:text="과목명"
                         app:layout_constraintStart_toEndOf="@+id/txt_semester_title"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -109,10 +94,11 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="@dimen/add_form_item_margin_top">
 
                 <TextView
                     android:id="@+id/txt_subject_type"
+                    style="@style/SubTitleForFormStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="선택"
@@ -165,50 +151,45 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                style="@style/SubTitleForFormStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="제목"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:layout_marginTop="@dimen/add_form_item_margin_top"
+                android:text="@string/text_title"
                 />
+
             <EditText
                 android:id="@+id/edt_task_title"
+                style="@style/CustomEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:hint="예)레포트 제출/중간고사"
-                android:textSize="16sp"
-                android:background="@drawable/edit_text_rounded_light_gray"
+                android:hint="@string/text_hint_task_title"
                 android:importantForAutofill="no"
-                android:inputType="text" />
+                />
 
             <TextView
+                style="@style/SubTitleForFormStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="메모"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:layout_marginTop="@dimen/add_form_item_margin_top"
+                android:text="@string/text_memo"
                 />
+
             <EditText
                 android:id="@+id/edt_task_description"
+                style="@style/CustomEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:hint="예)기한 엄수"
-                android:textSize="16sp"
-                android:background="@drawable/edit_text_rounded_light_gray"
+                android:hint="@string/text_hint_task_memo"
                 android:importantForAutofill="no"
-                android:inputType="text" />
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="@dimen/add_form_item_margin_top"
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -218,26 +199,19 @@
                     android:layout_marginEnd="8dp">
 
                     <TextView
+                        style="@style/SubTitleForFormStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="날짜"
-                        android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
+                        android:text="@string/text_date"
                         />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_date"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:text="2021년 05월 01일"
+                        android:layout_height="@dimen/btn_height"
+                        tools:text="2021-05-01"
                         android:textSize="14sp"
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/color_text_primary"
-                        android:textAllCaps="false"
-                        android:drawableEnd="@drawable/ic_arrow_drop_down"
-                        android:drawableTint="@color/color_text_primary"
                         />
 
                 </LinearLayout>
@@ -250,26 +224,20 @@
                     android:layout_marginStart="8dp">
 
                     <TextView
+                        android:theme="@style/SubTitleForFormStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="시간"
+                        android:text="@string/text_time"
                         android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
                         />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_time"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:text="09:00"
+                        android:layout_height="@dimen/btn_height"
+                        tools:text="09:00"
                         android:textSize="14sp"
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/color_text_primary"
-                        android:textAllCaps="false"
-                        android:drawableEnd="@drawable/ic_arrow_drop_down"
-                        android:drawableTint="@color/color_text_primary"
                         />
 
                 </LinearLayout>

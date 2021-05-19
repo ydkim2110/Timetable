@@ -1,9 +1,11 @@
 package com.reachfree.timetable.viewmodel
 
 import androidx.lifecycle.*
+import com.reachfree.timetable.data.model.PartTimeJob
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.model.Task
+import com.reachfree.timetable.data.repository.PartTimeJobRepository
 import com.reachfree.timetable.data.repository.SemesterRepository
 import com.reachfree.timetable.data.repository.SubjectRepository
 import com.reachfree.timetable.data.repository.TaskRepository
@@ -20,14 +22,16 @@ class TimetableViewModel @Inject constructor(
     private val semesterRepository: SemesterRepository,
     private val subjectRepository: SubjectRepository,
     private val taskRepository: TaskRepository,
+    private val partTimeJobRepository: PartTimeJobRepository,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
-
-    val thisSemesterLiveData: LiveData<Semester> = semesterRepository.getSemesterLiveData(Date().time)
 
     /**
      *  Semester
      */
+    val thisSemesterLiveData: LiveData<Semester> = semesterRepository.getSemesterLiveData(Date().time)
+
+
     fun insertSemester(semester: Semester) =
         viewModelScope.launch(dispatchers.io) {
             semesterRepository.insertSemester(semester)
@@ -143,6 +147,9 @@ class TimetableViewModel @Inject constructor(
     fun getTotalCreditBySemester(semesterId: Long) =
         subjectRepository.getTotalCreditBySemester(semesterId)
 
+    fun getAllTimetableList(semesterId: Long, currentDate: Long) =
+        subjectRepository.getAllTimetableList(semesterId, currentDate)
+
     /**
      *  Task
      */
@@ -214,5 +221,22 @@ class TimetableViewModel @Inject constructor(
             result?.let { calendarTaskList.value = it }
         }
     }
+
+
+    /**
+     *  ParTimeJob
+     */
+    fun insertPartTimeJob(partTimeJob: PartTimeJob) =
+        viewModelScope.launch(dispatchers.io) {
+            partTimeJobRepository.insertPartTimeJob(partTimeJob)
+        }
+
+    private val _partTimeJobList = MutableLiveData<List<PartTimeJob>>()
+    val partTimeJobList get() = _partTimeJobList
+    fun getAllPartTimeJobs(currentDate: Long) =
+        viewModelScope.launch(dispatchers.io) {
+            val result = partTimeJobRepository.getAllPartTimeJobs(currentDate)
+            _partTimeJobList.postValue(result)
+        }
 
 }

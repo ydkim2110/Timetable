@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.reachfree.timetable.data.dao.SubjectDao
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.SubjectTypeResponse
+import com.reachfree.timetable.data.response.TimetableResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -61,6 +62,13 @@ class SubjectRepositoryImpl @Inject constructor(
 
     override fun getTotalCreditBySemester(semesterId: Long): LiveData<Int> {
         return subjectDao.getTotalCreditBySemester(semesterId)
+    }
+
+    override fun getAllTimetableList(
+        semesterId: Long,
+        currentDate: Long
+    ): LiveData<List<TimetableResponse>> {
+        return subjectDao.getAllTimetableList(semesterId, currentDate)
     }
 
 }

@@ -37,17 +37,13 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/ProfileTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="졸업요건"
-                android:textStyle="bold"
-                android:textColor="@color/color_text_primary"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginBottom="4dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                android:layout_marginBottom="4dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_graduation"
@@ -146,17 +142,13 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                style="@style/ProfileTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="시간표 설정"
-                android:textStyle="bold"
-                android:textColor="@color/color_text_primary"
+                android:text="시간표"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginBottom="4dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                android:layout_marginBottom="4dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_start_time"
@@ -254,6 +246,47 @@
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                style="@style/ProfileTitleStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="성적"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="4dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_grade_credit_option"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:paddingVertical="@dimen/settings_padding_vertical"
+                android:paddingHorizontal="@dimen/settings_padding_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="학점기준"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_grade_credit_option"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4.3 만점"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </LinearLayout>
 
     </ScrollView>

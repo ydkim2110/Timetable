@@ -176,33 +176,7 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(),
             }
         })
 
-        // 모든 과목 가져오기
         fetchAllSubjects()
-
-        // 해당 학기 과목만 가져옴
-//        fetchAllSubjectsByThisSemester()
-
-
-    }
-
-    private fun fetchAllSubjectsByThisSemester() {
-        timetableViewModel.thisSemesterLiveData.observe(viewLifecycleOwner) { semester ->
-            if (semester != null) {
-                timetableViewModel.getAllSubjectBySemester(semester.id!!).observe(viewLifecycleOwner) { subjects ->
-                    if (!subjects.isNullOrEmpty()) {
-                        try {
-                            val subjectIdArray = LongArray(subjects.size)
-                            for (i in subjects.indices) {
-                                subjectIdArray[i] = subjects[i].id!!
-                            }
-                            timetableViewModel.getAllTaskMediator(subjectIdArray)
-                        } catch (e: IndexOutOfBoundsException) {
-                            Timber.d("ERROR: IndexOutOfBoundsException")
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun fetchAllSubjects() {

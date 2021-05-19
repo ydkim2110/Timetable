@@ -6,19 +6,19 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.GradeCreditType
 import com.reachfree.timetable.data.model.GraduationCreditType
 import com.reachfree.timetable.databinding.ActivitySettingsBinding
 import com.reachfree.timetable.databinding.DialogSettingEndTimeBinding
+import com.reachfree.timetable.databinding.DialogSettingGradeCreditOptionBinding
 import com.reachfree.timetable.databinding.DialogSettingStartTimeBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -44,6 +44,7 @@ class SettingsActivity :
         setupStartTime()
         setupEndTime()
         setupIncludeWeekend()
+        setupGradeCreditOption()
 
         sessionManager.getPrefs().registerOnSharedPreferenceChangeListener(sharedPrefListener)
     }
@@ -256,6 +257,45 @@ class SettingsActivity :
         }
     }
 
+    private fun setupGradeCreditOption() {
+        binding.txtGradeCreditOption.text = GradeCreditType.values()
+            .find { it.ordinal == sessionManager.getGradeCreditOption() }?.stringRes?.let {
+                getString(it)
+            } ?: getString(GradeCreditType.CREDIT_4_3.stringRes)
+        binding.layoutGradeCreditOption.setOnSingleClickListener {
+            showGradeCreditOptionDialog()
+        }
+    }
+
+    private fun showGradeCreditOptionDialog() {
+        val gradeCreditOption = DialogSettingGradeCreditOptionBinding.inflate(LayoutInflater.from(this))
+
+        when (sessionManager.getGradeCreditOption()) {
+            GradeCreditType.CREDIT_4_3.ordinal -> {
+                gradeCreditOption.radio43.isChecked = true
+            }
+            GradeCreditType.CREDIT_4_5.ordinal -> {
+                gradeCreditOption.radio45.isChecked = true
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setView(gradeCreditOption.root)
+            .setNegativeButton(getString(R.string.text_alert_button_cancel), null)
+            .setPositiveButton(getString(R.string.text_alert_button_ok)) { dialog, which ->
+                when (gradeCreditOption.radioGroup.checkedRadioButtonId) {
+                    R.id.radio_4_3 -> {
+                        sessionManager.setGradeCreditOption(GradeCreditType.CREDIT_4_3.ordinal)
+                    }
+                    R.id.radio_4_5 -> {
+                        sessionManager.setGradeCreditOption(GradeCreditType.CREDIT_4_5.ordinal)
+                    }
+                }
+            }
+            .create()
+            .show()
+    }
+
     private val sharedPrefListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
             when (key) {
@@ -288,6 +328,12 @@ class SettingsActivity :
 
                     binding.txtEndTime.text = DateUtils.taskDateFormat.format(cal.time.time)
                     showRestartDialog()
+                }
+                CREDIT_OPTION -> {
+                    binding.txtGradeCreditOption.text = GradeCreditType.values()
+                        .find { it.ordinal == sessionManager.getGradeCreditOption() }?.stringRes?.let {
+                            getString(it)
+                        } ?: getString(GradeCreditType.CREDIT_4_3.stringRes)
                 }
             }
         }

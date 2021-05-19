@@ -126,6 +126,7 @@ class TimetableView(
     }
 
     fun addEvents(weekData: TimetableData, startTime: Int, endTime: Int) {
+        Timber.d("DEBUG: addEvents called!!")
         backgroundView.updateTimes(weekData.earliestStart, weekData.latestEnd, startTime, endTime)
 
         for (event in weekData.getSingleEvents()) {

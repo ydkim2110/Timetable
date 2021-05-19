@@ -1,6 +1,5 @@
 package com.reachfree.timetable.ui.profile
 
-import android.annotation.SuppressLint
 import android.graphics.PorterDuff.Mode.SRC_ATOP
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +16,6 @@ import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.FragmentSemesterDetailBinding
 import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
-import com.reachfree.timetable.ui.timetable.TimetableDetailDialog
 import com.reachfree.timetable.util.SpacingItemDecoration
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.util.AppUtils
@@ -25,7 +23,6 @@ import com.reachfree.timetable.util.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.temporal.ChronoUnit
-import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
@@ -37,10 +34,11 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
     private var passedSemester: SemesterResponse? = null
 
     interface SemesterDetailFragmentListener {
-        fun onEditButtonClicked(semesterId: Long)
-        fun onSubjectItemClicked(subject: Subject)
-        fun onAddButtonClicked()
-        fun onSemesterDeleteButtonClicked()
+        fun onGradeSemesterButtonClicked(semesterId: Long)
+        fun onEditSemesterButtonClicked(semesterId: Long)
+        fun onSubjectListItemClicked(subject: Subject)
+        fun onAddSubjectButtonClicked()
+        fun onDeleteSemesterButtonClicked()
     }
 
     private lateinit var semesterDetailFragmentListener: SemesterDetailFragmentListener
@@ -77,6 +75,7 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
         passedSemester?.let { passedSemester ->
             passedSemester.id?.let { semesterId ->
                 timetableViewModel.getSemesterByIdLiveData(semesterId).observe(viewLifecycleOwner) { semester ->
+                    binding.appBar.txtToolbarTitle.text = semester.title
                     binding.txtSemesterTitle.text = semester.title
 
                     val startDate = DateUtils.semesterShortDateFormat.format(semester.startDate)
@@ -90,7 +89,6 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
                         LocalDateTime.now().isBefore(DateUtils.convertDateToLocalDateTime(Date(semester.endDate)))) {
                         val passedDays = ChronoUnit.DAYS.between(DateUtils.convertDateToLocalDateTime(Date(semester.startDate)),
                             LocalDateTime.now()) + 1L
-                        Timber.d("DEBUG: 날짜차이 : $passedDays")
                         val percentage = AppUtils.calculatePercentage(passedDays.toInt(), days.toInt())
                         binding.progressbarPassedDays.animateProgressBar(percentage)
                         binding.txtPassedPercent.text = "$percentage%"
@@ -141,12 +139,20 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
     private fun setupViewHandler() {
         binding.btnEditSemester.setOnSingleClickListener {
             passedSemester?.id?.let { semesterId ->
-                semesterDetailFragmentListener.onEditButtonClicked(semesterId)
+                semesterDetailFragmentListener.onEditSemesterButtonClicked(semesterId)
+            }
+        }
+
+        binding.btnGrade.setOnSingleClickListener {
+            passedSemester?.id?.let { semesterId ->
+                semesterDetailFragmentListener.onGradeSemesterButtonClicked(semesterId)
             }
         }
 
         binding.btnAddSubject.setOnSingleClickListener {
-            semesterDetailFragmentListener.onAddButtonClicked()
+            passedSemester?.id?.let {
+                semesterDetailFragmentListener.onAddSubjectButtonClicked()
+            }
         }
     }
     
@@ -170,7 +176,7 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
                     subjectAdapter = SemesterDetailSubjectAdapter(subjects)
                     binding.recyclerSubject.adapter = subjectAdapter
                     subjectAdapter.setOnItemClickListener { subject ->
-                        semesterDetailFragmentListener.onSubjectItemClicked(subject)
+                        semesterDetailFragmentListener.onSubjectListItemClicked(subject)
                     }
                 }
             }
@@ -187,7 +193,7 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
                     semester.id?.let { semesterId ->
                         runDelayed(500L) {
                             timetableViewModel.deleteSemesterById(semesterId)
-                            semesterDetailFragmentListener.onSemesterDeleteButtonClicked()
+                            semesterDetailFragmentListener.onDeleteSemesterButtonClicked()
                             Toast.makeText(requireActivity(), "삭제 완료!", Toast.LENGTH_SHORT).show()
                             dismiss()
                         }

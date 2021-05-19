@@ -22,10 +22,7 @@ import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.model.Task
 import com.reachfree.timetable.data.model.TaskType
 import com.reachfree.timetable.databinding.FragmentAddTaskBinding
-import com.reachfree.timetable.extension.beGone
-import com.reachfree.timetable.extension.beVisible
-import com.reachfree.timetable.extension.runDelayed
-import com.reachfree.timetable.extension.setOnSingleClickListener
+import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.ui.bottomsheet.SelectSemesterBottomSheet
 import com.reachfree.timetable.ui.bottomsheet.SelectType
@@ -294,10 +291,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
         TaskListWidget.updateWidgetListView(requireContext())
 
         runDelayed(500L) {
-            Toast.makeText(
-                requireActivity(), toastMessage,
-                Toast.LENGTH_SHORT
-            ).show()
+            requireActivity().longToast(toastMessage)
             dismiss()
         }
     }

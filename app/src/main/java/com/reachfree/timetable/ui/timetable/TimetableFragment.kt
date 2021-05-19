@@ -11,10 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.view.forEach
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
+import com.reachfree.timetable.data.response.TimetableResponse
 import com.reachfree.timetable.databinding.FragmentWeekBinding
 import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.ui.home.HomeActivity
@@ -36,7 +37,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
 
     @Inject
     lateinit var sessionManager: SessionManager
-    private val timetableViewModel: TimetableViewModel by activityViewModels()
+    private val timetableViewModel: TimetableViewModel by viewModels()
 
     private lateinit var timetableDetailDialog: TimetableDetailDialog
 
@@ -66,7 +67,6 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
         return FragmentWeekBinding.inflate(inflater, container, false)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -84,7 +84,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
     }
 
     private val sharedPrefListener =
-        SharedPreferences.OnSharedPreferenceChangeListener { sharedPref, key ->
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 START_TIME, END_TIME, INCLUDE_WEEKEND -> { subscribeToObserver() }
             }
@@ -93,15 +93,19 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
     @SuppressLint("ClickableViewAccessibility")
     private fun setupViewHandler() {
         binding.weekView.setLessonClickListener {
-            timetableDetailDialog = TimetableDetailDialog(it)
-            timetableDetailDialog.isCancelable = true
-            timetableDetailDialog.show(childFragmentManager, TimetableDetailDialog.TAG)
+            if (it.event.category == SUBJECT) {
+                timetableDetailDialog = TimetableDetailDialog(it)
+                timetableDetailDialog.isCancelable = true
+                timetableDetailDialog.show(childFragmentManager, TimetableDetailDialog.TAG)
 
-            timetableDetailDialog.setOnSelectTypeListener(object : TimetableDetailDialog.TimetableDetailDialogListener {
-                override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
-                    timetableFragmentListener.onEditButtonClicked(timetableEventView)
-                }
-            })
+                timetableDetailDialog.setOnSelectTypeListener(object : TimetableDetailDialog.TimetableDetailDialogListener {
+                    override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
+                        timetableFragmentListener.onEditButtonClicked(timetableEventView)
+                    }
+                })
+            } else {
+                Timber.d("DEBUG: PART_TIME_JOB Clicked!!")
+            }
         }
 
         binding.weekView.setOnTouchListener { v, event ->
@@ -118,16 +122,14 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
     }
 
     private fun subscribeToObserver() {
-        Timber.d("DEBUG: subscribeToObserver!!")
         timetableViewModel.getSemester(Calendar.getInstance().time.time)
+
         timetableViewModel.thisSemester.observe(viewLifecycleOwner) { semester ->
-            Timber.d("DEBUG: thisSemester!!")
             semester?.id?.let {
                 timetableFragmentListener.onSemesterTitle(semester.title)
                 fetchSubjectsBySemester(it)
             } ?: run {
                 timetableViewModel.getLatestSemester().observe(viewLifecycleOwner) { semester ->
-                    Timber.d("DEBUG: getLatestSemester!!")
                     semester?.id?.let {
                         timetableFragmentListener.onSemesterTitle(semester.title)
                         fetchSubjectsBySemester(it)
@@ -139,40 +141,36 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
         }
     }
 
+
     private fun fetchSubjectsBySemester(id: Long) {
         semesterId = id
-        timetableViewModel.getAllSubjectBySemester(id).observe(viewLifecycleOwner) { subjects ->
+        timetableViewModel.getAllTimetableList(id, Calendar.getInstance().time.time).observe(viewLifecycleOwner) { result ->
             removeAllEvents()
-            if (!subjects.isNullOrEmpty()) {
-                showThisSemesterSubjects(subjects)
+            if (!result.isNullOrEmpty()) {
+                showTimetableList(result)
             }
         }
     }
 
-    private fun removeAllEvents() {
-        binding.weekView.forEach { it.clearAnimation() }
-        binding.weekView.removeViews(1, binding.weekView.childCount - 1)
-    }
-
-    private fun showThisSemesterSubjects(subjects: List<Subject>) {
+    private fun showTimetableList(result: List<TimetableResponse>) {
         val config = TimetableEventConfig()
         binding.weekView.timetableConfig = config
 
         val timetableData: TimetableData = TimetableData(sessionManager).apply {
-            for ((index, value) in subjects.withIndex()) {
+            for ((index, value) in result.withIndex()) {
                 for (i in value.days.indices) {
                     val event = TimetableEvent.Single(
-                            id = value.id!!,
-                            date = DateUtils.calculateDay(value.days[i].day),
-                            title = value.title,
-                            shortTitle = value.title,
-                            classroom = value.classroom,
-                            building = value.buildingName,
-                            credit = value.credit,
-                            startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
-                            endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
-                            backgroundColor = value.backgroundColor,
-                            textColor = Color.WHITE
+                        id = value.id!!,
+                        category = value.category,
+                        date = DateUtils.calculateDay(value.days[i].day),
+                        title = value.title,
+                        shortTitle = value.title,
+                        classroom = value.classroom,
+                        building = value.buildingName,
+                        startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
+                        endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
+                        backgroundColor = value.backgroundColor,
+                        textColor = Color.WHITE
                     )
                     this.add(event)
                 }
@@ -182,17 +180,25 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
         binding.weekView.addEvents(timetableData, sessionManager.getStartTime(), sessionManager.getEndTime())
     }
 
-    override fun onSemesterChanged(semester: Semester) {
-        Timber.d("DEBUG: onSemesterChanged $semester")
+    private fun removeAllEvents() {
+        binding.weekView.forEach { it.clearAnimation() }
+        binding.weekView.removeViews(1, binding.weekView.childCount - 1)
+    }
+
+    override fun onSemesterSelected(semester: Semester) {
         semester.id?.let { id ->
             timetableFragmentListener.onSemesterTitle(semester.title)
-            timetableViewModel.getAllSubjectBySemester(id).observe(viewLifecycleOwner) { subjects ->
+            timetableViewModel.getAllTimetableList(id, Calendar.getInstance().time.time).observe(viewLifecycleOwner) { result ->
                 removeAllEvents()
-                if (!subjects.isNullOrEmpty()) {
-                    showThisSemesterSubjects(subjects)
+                if (!result.isNullOrEmpty()) {
+                    showTimetableList(result)
                 }
             }
         }
+    }
+
+    override fun onSemesterChanged() {
+        subscribeToObserver()
     }
 
     override fun onSemesterDeleted() {
@@ -200,6 +206,8 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
     }
 
     companion object {
+        private const val SUBJECT = 0
+        private const val PART_TIME_JOB = 1
         fun newInstance() = TimetableFragment()
     }
 

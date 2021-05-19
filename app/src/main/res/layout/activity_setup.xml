@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,14 +12,12 @@
         android:layout_height="match_parent"
         android:overScrollMode="never"
         android:fitsSystemWindows="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <TextView
@@ -27,59 +25,144 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="@string/text_add_semester"
+                android:text="@string/app_name"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:textColor="@color/color_text_primary"
+                />
+
+            <TextView
+                android:id="@+id/txt_intro_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="안녕하세요. 대학시간입니다.\n편리한 사용을 위해 아래의 정보를 입력해주세요."
+                android:textColor="@color/color_text_secondary"
+                />
+
+            <LinearLayout
+                android:id="@+id/layout_grade_credit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp">
+
+                <TextView
+                    style="@style/ProfileTitleStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="학점등록"
+                    android:textSize="18sp"
+                    />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/txt_subject_type"
+                        style="@style/SubTitleForFormStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="학점"
+                        android:textColor="@color/color_text_secondary"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/btn_grade_credit_toggle_group"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        app:singleSelection="true"
+                        android:gravity="end"
+                        app:layout_constraintStart_toEndOf="@+id/txt_subject_type"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_credit_4_3"
+                            style="@style/SubjectTypeToggleButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/credit_4_3"
+                            android:textAllCaps="false"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/btnIncome"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_credit_4_5"
+                            style="@style/SubjectTypeToggleButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/credit_4_5"
+                            android:textAllCaps="false"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            />
+
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:orientation="vertical"
-                tools:context=".ui.setup.SetupActivity"
-                app:layout_constraintTop_toBottomOf="@id/txt_semester_title"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                tools:context=".ui.setup.SetupActivity">
 
                 <TextView
+                    style="@style/ProfileTitleStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
+                    android:text="학기등록"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    style="@style/SubTitleForFormStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/add_form_item_margin_top"
                     android:text="@string/text_semester_title"
-                    android:textColor="@color/color_text_secondary" />
+                    />
+
                 <EditText
                     android:id="@+id/edt_semester_title"
+                    style="@style/CustomEditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text_rounded_light_gray"
                     android:hint="@string/text_hint_add_semester_title"
                     android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:padding="8dp"
-                    android:textSize="16sp" />
+                    />
 
                 <TextView
+                    style="@style/SubTitleForFormStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
+                    android:layout_marginTop="@dimen/add_form_item_margin_top"
                     android:text="@string/text_memo"
-                    android:textColor="@color/color_text_secondary" />
+                    />
+
                 <EditText
                     android:id="@+id/edt_semester_description"
+                    style="@style/CustomEditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text_rounded_light_gray"
                     android:hint="@string/text_hint_add_semester_description"
                     android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:padding="8dp"
-                    android:textSize="16sp" />
+                    />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -87,33 +170,25 @@
                     android:layout_marginTop="12dp">
 
                     <TextView
+                        style="@style/SubTitleForFormStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
                         android:text="@string/text_start_date"
-                        android:textColor="@color/color_text_secondary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_semester_start_date"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_arrow_drop_down"
-                        android:drawableTint="@color/color_text_primary"
-                        android:paddingVertical="8dp"
                         tools:text="2021-03-01"
-                        android:textAlignment="textEnd"
-                        android:textAllCaps="false"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="16sp"
                         app:layout_constraintStart_toEndOf="@id/guideline_start_date"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        />
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline_start_date"
@@ -129,29 +204,20 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        style="@style/SubTitleForFormStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
                         android:text="@string/text_end_date"
-                        android:textColor="@color/color_text_secondary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_semester_end_date"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/OutlinedButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_arrow_drop_down"
-                        android:drawableTint="@color/color_text_primary"
-                        android:paddingVertical="8dp"
-                        android:text="2021-06-30"
-                        android:textAlignment="textEnd"
-                        android:textAllCaps="false"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="16sp"
+                        tools:text="2021-06-30"
                         app:layout_constraintStart_toEndOf="@id/guideline_end_date"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -166,32 +232,32 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <RelativeLayout
-                    android:id="@+id/btn_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/ripple_btn_outline"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:padding="12dp"
-                        android:text="@string/text_btn_save"
-                        android:textSize="16sp"
-                        android:textAlignment="center"
-                        android:textColor="@color/color_text_primary" />
-
-                </RelativeLayout>
-
             </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <RelativeLayout
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginTop="@dimen/add_form_item_margin_top"
+                android:background="@drawable/ripple_btn_outline"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:padding="12dp"
+                    android:text="@string/text_btn_save"
+                    android:textSize="16sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_text_primary" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

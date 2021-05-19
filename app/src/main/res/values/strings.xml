@@ -39,6 +39,7 @@
     <string name="text_input_profile_graduation">졸업 (%1$d/%2$d)</string>
     <string name="text_input_profile_mandatory">전공 (%1$d/%2$d)</string>
     <string name="text_input_profile_elective">교양 (%1$d/%2$d)</string>
+    <string name="text_input_toolbar_grade">%s 성적</string>
 
     <string name="profile_welcome_message">Your Profile &#128512;</string>
     <string name="appwidget_text">EXAMPLE</string>
@@ -61,7 +62,7 @@
     <string name="text_color">색상</string>
     <string name="text_subject_type">전공여부</string>
     <string name="text_other">기타</string>
-    <string name="text_subject_date">수업일</string>
+    <string name="text_subject_time">수업시간</string>
     <string name="text_alert_no_semester_warning_title">주의</string>
     <string name="text_alert_no_semester_warning_message">등록된 학기가 없습니다.\n과목을 등록하시기 전에 먼저 학기를 등록해주세요.</string>
     <string name="text_alert_no_semester_warning_message_by_task">등록된 학기가 없습니다.\n과제/시험을 등록하시기 전에 먼저 학기와 과목을 등록해주세요.</string>
@@ -76,10 +77,11 @@
     <string name="text_btn_save">저장하기</string>
     <string name="text_add_semester">학기 등록</string>
     <string name="toolbar_add_semester_title">학기 등록</string>
-    <string name="toast_name_message">이름을 입력해주세요.</string>
-    <string name="toast_memo_message">메모를 입력해주세요.</string>
-    <string name="toast_start_end_date_message">시작 또는 종료 일자를 확인해주세요.</string>
+    <string name="toast_semester_name_message">이름을 입력해주세요.</string>
+    <string name="toast_semester_memo_message">메모를 입력해주세요.</string>
+    <string name="toast_start_end_date_warning_message">시작 또는 종료 일자를 확인해주세요.</string>
     <string name="toast_save_complete_message">저장 완료!</string>
+    <string name="toast_edit_complete_message">수정 완료!</string>
     <string name="text_graduation">졸업</string>
 
     <string name="text_passed_days_0">남은 시간까지 준비를 해볼까요?&#128512;</string>
@@ -89,4 +91,43 @@
     <string name="text_passed_days_99">얼마 남지 않았습니다. 화이팅하세요~!&#128512;</string>
     <string name="text_passed_days_100">이번 학기를 완료하였습니다. Good Job~&#128512;</string>
     <string name="text_settings">설정</string>
+    <string name="btn_edit">수정</string>
+    <string name="btn_add">등록</string>
+    <string name="text_subject_empty_message">등록된 과목이 없습니다.</string>
+    <string name="text_subtitle_enrolled_subject">수강과목</string>
+    <string name="text_image_edit">수정</string>
+    <string name="text_subtitle_graduation_requirements">졸업요건</string>
+    <string name="text_subtitle_added_semesters">등록학기</string>
+    <string name="text_semester_empty_message">등록된 학기가 없습니다.</string>
+    <string name="toast_start_date_duplicated">시작 날짜가 다른학기와 중복입니다.</string>
+    <string name="toast_end_date_duplicated">종료 날짜가 다른학기와 중복입니다.</string>
+    <string name="toast_start_end_date_cannot_be_the_save">시작날짜와 종료날짜가 일치합니다.</string>
+    <string name="toolbar_title_add_subject">과목 등록</string>
+    <string name="toast_start_end_time_warning_message">시작 또는 종료시간을 확인해주세요.</string>
+    <string name="toast_error_message">에러가 발생했습니다. 다시 시도해주세요.</string>
+    <string name="toast_delete_completed_message">삭제 완료!</string>
+    <string name="toast_subject_name_message">과목명을 입력해주세요.</string>
+    <string name="toast_subject_classroom_message">강의실을 입력해주세요.</string>
+    <string name="toast_subject_building_message">건물(위치)을 입력해주세요.</string>
+    <string name="toast_subject_day_message">시간을 입력해주세요.</string>
+    <string name="btn_hint_semester">학기를 등록해주세요.</string>
+    <string name="img_description_next_month">다음달</string>
+    <string name="img_description_previous_month">전달</string>
+    <string name="text_title">제목</string>
+    <string name="text_hint_task_title">예)레포트 제출/중간고사</string>
+    <string name="text_hint_task_memo">예)기한 엄수</string>
+    <string name="text_date">날짜</string>
+    <string name="text_time">시간</string>
+    <string name="text_grade">성적</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_grade_warning">* 간단한 계산을 할 수 있는 학점계산기입니다. 정확한 변환 결과는 해당학교의 학적과를 통해 확인해주세요.</string>
+    <string name="credit_4_3">4.3 만점</string>
+    <string name="credit_4_5">4.5 만점</string>
+    <string name="text_not_registered">미입력</string>
+
+    <string-array name="filter_credit_options">
+        <item>4.3점</item>
+        <item>4.5점</item>
+    </string-array>
 </resources>

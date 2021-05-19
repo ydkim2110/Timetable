@@ -9,7 +9,18 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white_alpha">#10FFFFFF</color>
 
+    <color name="colorExpense">#EE1111</color>
+    <color name="colorIncome">#00A300</color>
+    <color name="colorDashBoard">#603BE6</color>
+
+    <color name="color_gray">#E6E6E6</color>
+    <color name="color_orange">#FDA14F</color>
+
     <!-- icon color -->
+    <color name="color_graduation">#00CC99</color>
+    <color name="color_mandatory">#F76353</color>
+    <color name="color_elective">#F2B900</color>
+
     <color name="icon_back_arrow">@color/white</color>
     <color name="icon_delete">@color/white</color>
 

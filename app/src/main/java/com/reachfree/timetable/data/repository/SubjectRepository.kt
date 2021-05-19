@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.model.Task
 import com.reachfree.timetable.data.response.SubjectTypeResponse
+import com.reachfree.timetable.data.response.TimetableResponse
 import kotlinx.coroutines.flow.Flow
 
 interface SubjectRepository {
@@ -33,5 +34,7 @@ interface SubjectRepository {
     fun getAllSubjectBySemester(semesterId: Long): LiveData<List<Subject>>
 
     fun getTotalCreditBySemester(semesterId: Long): LiveData<Int>
+
+    fun getAllTimetableList(semesterId: Long, currentDate: Long): LiveData<List<TimetableResponse>>
 
 }

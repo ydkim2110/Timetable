@@ -14,20 +14,21 @@ import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.ActivityHomeBinding
+import com.reachfree.timetable.extension.runDelayed
+import com.reachfree.timetable.ui.add.AddPartTimeJobFragment
 import com.reachfree.timetable.ui.add.AddSemesterFragment
 import com.reachfree.timetable.ui.add.AddSubjectFragment
 import com.reachfree.timetable.ui.add.AddTaskFragment
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
+import com.reachfree.timetable.ui.profile.GradeFragment
 import com.reachfree.timetable.ui.profile.ProfileFragment
 import com.reachfree.timetable.ui.profile.SemesterDetailFragment
 import com.reachfree.timetable.ui.settings.SettingsActivity
 import com.reachfree.timetable.ui.task.TaskFragment
 import com.reachfree.timetable.ui.timetable.TimetableFragment
 import com.reachfree.timetable.util.timetable.TimetableEventView
-import com.reachfree.timetable.extension.runDelayed
-import com.reachfree.timetable.util.ACTION_TASK
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
@@ -87,18 +88,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     private fun showSemesterListDialog() {
-        semesterListDialog = SemesterListDialog()
-        semesterListDialog.show(supportFragmentManager, null)
-        semesterListDialog.setOnSemesterListDialogListener(object : SemesterListDialog.SemesterListDialogListener {
-            override fun onSemesterItemClicked(semester: Semester) {
-                semesterChangedListener.onSemesterChanged(semester)
-            }
+        semesterListDialog = SemesterListDialog().apply {
+            show(supportFragmentManager, null)
+            this.setOnSemesterListDialogListener(object : SemesterListDialog.SemesterListDialogListener {
+                override fun onSemesterItemClicked(semester: Semester) {
+                    semesterChangedListener.onSemesterSelected(semester)
+                }
 
-            override fun onSemesterAddButtonClicked() {
-                AddSemesterFragment.newInstance()
-                    .apply { show(supportFragmentManager, null) }
-            }
-        })
+                override fun onSemesterAddButtonClicked() {
+                    setupAddSemesterFragment()
+                }
+            })
+        }
     }
 
     private fun showSelectTypeBottomSheet() {
@@ -114,16 +115,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             override fun onSelected(type: SelectType) {
                 when (type) {
                     SelectType.SEMESTER -> {
-                        AddSemesterFragment.newInstance()
-                            .apply { show(supportFragmentManager, null) }
+                        setupAddSemesterFragment()
                     }
                     SelectType.SUBJECT -> {
-                        AddSubjectFragment.newInstance()
-                            .apply { show(supportFragmentManager, null) }
+                        setupAddSubjectFragment()
                     }
                     SelectType.TASK -> {
-                        AddTaskFragment.newInstance(Date().time)
-                            .apply { show(supportFragmentManager, null) }
+                        setupAddTaskFragment(Calendar.getInstance().time.time)
+                    }
+                    SelectType.PART_TIME_JOB -> {
+                        setupAddPartTimeJobFragment()
                     }
                 }
             }
@@ -198,50 +199,101 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         menu.findItem(R.id.toolbar_settings).isVisible = true
     }
 
-    override fun onSemesterItemClicked(semester: SemesterResponse) {
-        val detail = SemesterDetailFragment.newInstance(semester)
+    override fun onSemesterItemClicked(semesterResponse: SemesterResponse) {
+        val detail = SemesterDetailFragment.newInstance(semesterResponse)
             .apply { show(supportFragmentManager, SemesterDetailFragment.TAG) }
 
         detail.setOnSemesterDetailFragmentListener(object: SemesterDetailFragment.SemesterDetailFragmentListener {
-            override fun onEditButtonClicked(semesterId: Long) {
-                AddSemesterFragment.newInstance(semesterId)
-                    .apply { show(supportFragmentManager, null) }
+            override fun onGradeSemesterButtonClicked(semesterId: Long) {
+                setupGradeFragment(semesterId)
             }
 
-            override fun onSubjectItemClicked(subject: Subject) {
-                AddSubjectFragment.newInstance(subject.id)
-                    .apply { show(supportFragmentManager, null) }
+            override fun onEditSemesterButtonClicked(semesterId: Long) {
+                setupAddSemesterFragment(semesterId)
             }
 
-            override fun onAddButtonClicked() {
-                AddSubjectFragment.newInstance()
-                    .apply { show(supportFragmentManager, null) }
+            override fun onSubjectListItemClicked(subject: Subject) {
+                setupAddSubjectFragment(subject.id)
             }
 
-            override fun onSemesterDeleteButtonClicked() {
+            override fun onAddSubjectButtonClicked() {
+                setupAddSubjectFragment()
+            }
+
+            override fun onDeleteSemesterButtonClicked() {
                 semesterChangedListener.onSemesterDeleted()
             }
         })
     }
 
+    private fun setupGradeFragment(semesterId: Long) {
+        GradeFragment.newInstance(semesterId).apply {
+            show(supportFragmentManager, GradeFragment.TAG)
+        }
+    }
+
+    private fun setupAddSemesterFragment(semesterId: Long? = null) {
+        semesterId?.let {
+            AddSemesterFragment.newInstance(semesterId).apply {
+                show(supportFragmentManager, null)
+                this.setOnAddSemesterFragmentListener(object : AddSemesterFragment.AddSemesterFragmentListener {
+                    override fun onSemesterChanged() {
+                        semesterChangedListener.onSemesterChanged()
+                    }
+                })
+            }
+        } ?: run {
+            AddSemesterFragment.newInstance().apply {
+                show(supportFragmentManager, null)
+                this.setOnAddSemesterFragmentListener(object : AddSemesterFragment.AddSemesterFragmentListener {
+                    override fun onSemesterChanged() {
+
+                    }
+                })
+            }
+        }
+    }
+
+    private fun setupAddSubjectFragment(subjectId: Long? = null) {
+        subjectId?.let {
+            AddSubjectFragment.newInstance(subjectId)
+                .apply { show(supportFragmentManager, null) }
+        } ?: run {
+            AddSubjectFragment.newInstance()
+                .apply { show(supportFragmentManager, null) }
+        }
+    }
+
+    private fun setupAddTaskFragment(date: Long, taskId: Long? = null) {
+        taskId?.let {
+            AddTaskFragment.newInstance(date, it)
+                .apply { show(supportFragmentManager, null) }
+        } ?: run {
+            AddTaskFragment.newInstance(date)
+                .apply { show(supportFragmentManager, null) }
+        }
+    }
+
+    private fun setupAddPartTimeJobFragment() {
+        AddPartTimeJobFragment.newInstance().apply {
+            show(supportFragmentManager, AddPartTimeJobFragment.TAG)
+        }
+    }
+
     override fun onAddSemesterButtonClicked() {
-        AddSemesterFragment.newInstance()
-            .apply { show(supportFragmentManager, null) }
+        setupAddSemesterFragment()
     }
 
     override fun onAddButtonClicked(date: Date) {
-        AddTaskFragment.newInstance(date.time)
-            .apply { show(supportFragmentManager, null) }
+        setupAddTaskFragment(date.time)
     }
 
     override fun onDetailTaskClicked(data: CalendarTaskResponse) {
-        AddTaskFragment.newInstance(data.date!!, data.id)
-            .apply { show(supportFragmentManager, null) }
+        setupAddTaskFragment(data.date!!, data.id)
     }
 
     override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
-        AddSubjectFragment.newInstance(timetableEventView.event.id)
-            .apply { show(supportFragmentManager, null) }
+        setupAddSubjectFragment(timetableEventView.event.id)
     }
 
     override fun onSemesterTitle(title: String) {

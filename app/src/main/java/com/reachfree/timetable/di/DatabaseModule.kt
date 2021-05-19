@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.reachfree.timetable.data.LocalDatabase
+import com.reachfree.timetable.data.dao.PartTimeJobDao
 import com.reachfree.timetable.data.dao.SemesterDao
 import com.reachfree.timetable.data.dao.SubjectDao
 import com.reachfree.timetable.data.dao.TaskDao
@@ -63,6 +64,10 @@ class DatabaseModule {
 
     @Singleton
     @Provides
+    fun providePartTimeJobDao(database: LocalDatabase) = database.partTimeJobDao()
+
+    @Singleton
+    @Provides
     fun provideSemesterRepository(semesterDao: SemesterDao): SemesterRepository =
         SemesterRepositoryImpl(semesterDao)
 
@@ -75,6 +80,11 @@ class DatabaseModule {
     @Provides
     fun provideTaskRepository(taskDao: TaskDao): TaskRepository =
         TaskRepositoryImpl(taskDao)
+
+    @Singleton
+    @Provides
+    fun providePartTimeJobRepository(partTimeJobDao: PartTimeJobDao): PartTimeJobRepository =
+        PartTimeJobRepositoryImpl(partTimeJobDao)
 
     @Singleton
     @Provides

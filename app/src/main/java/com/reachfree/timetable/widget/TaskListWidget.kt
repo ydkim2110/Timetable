@@ -92,7 +92,7 @@ class TaskListWidget : AppWidgetProvider() {
         }
 
         private fun getPendingIntent(context: Context): PendingIntent {
-            val intent = Intent(context, TimetableListWidget::class.java).apply {
+            val intent = Intent(context, TaskListWidget::class.java).apply {
                 action = TASK_LIST_CLICK_BROADCAST
             }
             return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)

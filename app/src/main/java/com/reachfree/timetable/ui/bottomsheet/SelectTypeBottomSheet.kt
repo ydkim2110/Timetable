@@ -59,6 +59,10 @@ class SelectTypeBottomSheet() : BottomSheetDialogFragment() {
             selectTypeListener.onSelected(SelectType.TASK)
             dismiss()
         }
+        binding.layoutPartTimeJob.setOnSingleClickListener {
+            selectTypeListener.onSelected(SelectType.PART_TIME_JOB)
+            dismiss()
+        }
         binding.imgCloseIcon.setOnSingleClickListener {
             dismiss()
         }

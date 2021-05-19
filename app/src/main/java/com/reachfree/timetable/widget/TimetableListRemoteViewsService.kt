@@ -48,6 +48,7 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
                     if (value.days[i].day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
                         val event = TimetableEvent.Single(
                             id = 1,
+                            category = 0,
                             date = DateUtils.calculateDay(value.days[i].day),
                             title = value.title,
                             shortTitle = value.title,
@@ -94,7 +95,7 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
                 val pendingIntent = PendingIntent.getActivity(context, 0,
                     appsIntent, PendingIntent.FLAG_UPDATE_CURRENT
                 )
-                remoteViews.setOnClickPendingIntent(R.id.txt_widget_today_title, pendingIntent)
+                remoteViews.setOnClickPendingIntent(R.id.layout_header, pendingIntent)
 
                 val fillInIntent = Intent()
                     .putExtra("TITLE", "title")

@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.databinding.FragmentAddSemesterBinding
+import com.reachfree.timetable.extension.longToast
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.extension.toMillis
 import com.reachfree.timetable.ui.base.BaseDialogFragment
@@ -21,7 +21,6 @@ import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.extension.runDelayed
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
@@ -35,6 +34,16 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
     private var semesterList = mutableListOf<Semester>()
 
     private var passedSemesterId: Long? = null
+
+    interface AddSemesterFragmentListener {
+        fun onSemesterChanged()
+    }
+
+    private lateinit var addSemesterFragmentListener: AddSemesterFragmentListener
+
+    fun setOnAddSemesterFragmentListener(addSemesterFragmentListener: AddSemesterFragmentListener) {
+        this.addSemesterFragmentListener = addSemesterFragmentListener
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,18 +74,22 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             timetableViewModel.getSemesterById(passedSemesterId!!)
             timetableViewModel.semesterById.observe(viewLifecycleOwner) { semester ->
                 if (semester != null) {
-                    binding.edtSemesterTitle.setText(semester.title)
-                    binding.edtSemesterDescription.setText(semester.description)
-                    binding.btnSemesterStartDate.text = DateUtils.defaultDateFormat.format(semester.startDate)
-                    binding.btnSemesterEndDate.text = DateUtils.defaultDateFormat.format(semester.endDate)
-
-                    selectedStartDate.time = Date(semester.startDate)
-                    selectedEndDate.time = Date(semester.endDate)
+                    setupPassedSemesterInformation(semester)
                 }
             }
         } else {
             setupDefaultSubscribeToObserver()
         }
+    }
+
+    private fun setupPassedSemesterInformation(semester: Semester) {
+        binding.edtSemesterTitle.setText(semester.title)
+        binding.edtSemesterDescription.setText(semester.description)
+        binding.btnSemesterStartDate.text = DateUtils.defaultDateFormat.format(semester.startDate)
+        binding.btnSemesterEndDate.text = DateUtils.defaultDateFormat.format(semester.endDate)
+
+        selectedStartDate.time = Date(semester.startDate)
+        selectedEndDate.time = Date(semester.endDate)
     }
 
     private fun setupToolbar() {
@@ -114,9 +127,6 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             if (!semesters.isNullOrEmpty()) {
                 semesterList.clear()
                 semesterList.addAll(semesters)
-                for (i in semesters.indices) {
-                    //TODO: ?
-                }
             }
         }
     }
@@ -126,20 +136,24 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         val semesterDescription = binding.edtSemesterDescription.text.toString()
 
         if (semesterTitle.isEmpty()) {
-            Toast.makeText(requireActivity(), getString(R.string.toast_name_message),
-                Toast.LENGTH_SHORT).show()
+            requireActivity().longToast(getString(R.string.toast_semester_name_message))
             return
         }
 
         if (semesterDescription.isEmpty()) {
-            Toast.makeText(requireActivity(), getString(R.string.toast_memo_message),
-                Toast.LENGTH_SHORT).show()
+            requireActivity().longToast(getString(R.string.toast_semester_memo_message))
+            return
+        }
+
+        if (selectedStartDate.get(Calendar.YEAR) == selectedEndDate.get(Calendar.YEAR) &&
+            selectedStartDate.get(Calendar.MONTH) == selectedEndDate.get(Calendar.MONTH) &&
+            selectedStartDate.get(Calendar.DAY_OF_MONTH) == selectedEndDate.get(Calendar.DAY_OF_MONTH)) {
+            requireActivity().longToast(getString(R.string.toast_start_end_date_cannot_be_the_save))
             return
         }
 
         if (selectedStartDate.time.time > selectedEndDate.time.time) {
-            Toast.makeText(requireActivity(), getString(R.string.toast_start_end_date_message),
-                Toast.LENGTH_SHORT).show()
+            requireActivity().longToast(getString(R.string.toast_start_end_date_warning_message))
             return
         }
 
@@ -155,12 +169,13 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             val selectStartDate = DateUtils.convertDateToLocalDate(Date(startDate))
             val selectEndDate = DateUtils.convertDateToLocalDate(Date(endDate))
 
-            if (!selectStartDate.isBefore(savedStartDate) && selectStartDate.isBefore(savedEndDate.plusDays(1))) {
-                Toast.makeText(requireActivity(), "시작 날짜 중복!!", Toast.LENGTH_SHORT).show()
+            if (!selectStartDate.isBefore(savedStartDate) &&
+                selectStartDate.isBefore(savedEndDate.plusDays(1))) {
+                requireActivity().longToast(getString(R.string.toast_start_date_duplicated))
                 return
             }
             if (!selectEndDate.isBefore(savedStartDate) && selectEndDate.isBefore(savedEndDate)) {
-                Toast.makeText(requireActivity(), "종료 날짜 중복!!", Toast.LENGTH_SHORT).show()
+                requireActivity().longToast(getString(R.string.toast_end_date_duplicated))
                 return
             }
         }
@@ -185,9 +200,9 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             timetableViewModel.insertSemester(semester)
         }
 
-        runDelayed(500L) {
-            Toast.makeText(requireActivity(), getString(R.string.toast_save_complete_message),
-                Toast.LENGTH_SHORT).show()
+        runDelayed(TIME_DELAY) {
+            addSemesterFragmentListener.onSemesterChanged()
+            requireActivity().longToast(getString(R.string.toast_save_complete_message))
             dismiss()
         }
     }
@@ -217,6 +232,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
 
     companion object {
         private const val SEMESTER_ID = "semester_id"
+        private const val TIME_DELAY = 500L
 
         fun newInstance(semesterId: Long? = null) = AddSemesterFragment().apply {
             arguments = bundleOf(SEMESTER_ID to semesterId)

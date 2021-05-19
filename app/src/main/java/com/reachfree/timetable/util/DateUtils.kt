@@ -70,6 +70,32 @@ object DateUtils {
         }
     }
 
+    fun convertDayNameToInt(context: Context, name: String): Int {
+        when (name) {
+            context.resources.getString(R.string.sunday_short) -> {
+                return 1
+            }
+            context.resources.getString(R.string.monday_short) -> {
+                return 2
+            }
+            context.resources.getString(R.string.tuesday_short) -> {
+                return 3
+            }
+            context.resources.getString(R.string.wednesday_short) -> {
+                return 4
+            }
+            context.resources.getString(R.string.thursday_short) -> {
+                return 5
+            }
+            context.resources.getString(R.string.friday_short) -> {
+                return 6
+            }
+            else -> {
+                return 7
+            }
+        }
+    }
+
     fun calculateDay(day: Int): LocalDate {
         val cal = Calendar.getInstance()
         when (day) {

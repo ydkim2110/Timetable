@@ -22,6 +22,14 @@ class SessionManager(
         prefs.edit { putBoolean(REGISTER_SEMESTER, value) }
     }
 
+    fun getGradeCreditOption(): Int {
+        return prefs[CREDIT_OPTION, 0]
+    }
+
+    fun setGradeCreditOption(value: Int) {
+        prefs.edit { putInt(CREDIT_OPTION, value) }
+    }
+
     fun getIncludeWeekend(): Boolean {
         return prefs[INCLUDE_WEEKEND, false]
     }

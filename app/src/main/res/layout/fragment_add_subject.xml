@@ -26,199 +26,32 @@
             android:padding="16dp">
 
             <TextView
+                style="@style/SubTitleForFormStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/text_semester"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
                 />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_semester"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/OutlinedButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="8dp"
-                android:text="학기를 등록해주세요."
-                android:textSize="16sp"
-                android:textAlignment="textEnd"
-                android:textColor="@color/color_text_primary"
-                android:textAllCaps="false"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:drawableTint="@color/color_text_primary" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/text_subject_name"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:text="@string/btn_hint_semester"
                 />
-            <EditText
-                android:id="@+id/edt_subject_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:hint="@string/text_hint_subject_title"
-                android:textSize="16sp"
-                android:background="@drawable/edit_text_rounded_light_gray"
-                android:importantForAutofill="no"
-                android:inputType="text" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/text_classroom"
-                        android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        />
-                    <EditText
-                        android:id="@+id/edt_subject_classroom"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:hint="@string/text_hint_subject_classroom"
-                        android:textSize="16sp"
-                        android:background="@drawable/edit_text_rounded_light_gray"
-                        android:importantForAutofill="no"
-                        android:inputType="text" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/text_building"
-                        android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        />
-                    <EditText
-                        android:id="@+id/edt_subject_building_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:hint="@string/text_hint_subject_building"
-                        android:textSize="16sp"
-                        android:background="@drawable/edit_text_rounded_light_gray"
-                        android:importantForAutofill="no"
-                        android:inputType="text" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:baselineAligned="false">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/text_credit"
-                        android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
-
-                    <it.sephiroth.android.library.numberpicker.NumberPicker
-                        android:id="@+id/number_picker_credit"
-                        style="@style/NumberPicker.Filled"
-                        android:layout_width="90dp"
-                        android:layout_height="35dp"
-                        android:progress="3"
-                        app:picker_max="3"
-                        app:picker_min="1"
-                        app:picker_orientation="vertical"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/text_color"
-                        android:textColor="@color/color_text_secondary"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
-
-                    <ImageView
-                        android:id="@+id/background_color"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:contentDescription="@string/app_name" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="@dimen/add_form_item_margin_top">
 
                 <TextView
                     android:id="@+id/txt_subject_type"
+                    style="@style/SubTitleForFormStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_subject_type"
-                    android:textColor="@color/color_text_secondary"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -277,13 +110,155 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                style="@style/SubTitleForFormStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/text_subject_date"
-                android:textColor="@color/color_text_secondary"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:layout_marginTop="@dimen/add_form_item_margin_top"
+                android:text="@string/text_subject_name"
+                />
+
+            <EditText
+                android:id="@+id/edt_subject_title"
+                style="@style/CustomEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_hint_subject_title"
+                android:importantForAutofill="no" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/add_form_item_margin_top"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        style="@style/SubTitleForFormStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_classroom"
+                        />
+
+                    <EditText
+                        android:id="@+id/edt_subject_classroom"
+                        style="@style/CustomEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/text_hint_subject_classroom"
+                        android:importantForAutofill="no"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        style="@style/SubTitleForFormStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_building"
+                        />
+
+                    <EditText
+                        android:id="@+id/edt_subject_building_name"
+                        style="@style/CustomEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/text_hint_subject_building"
+                        android:importantForAutofill="no"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:baselineAligned="false">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        style="@style/SubTitleForFormStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_credit"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <it.sephiroth.android.library.numberpicker.NumberPicker
+                        android:id="@+id/number_picker_credit"
+                        style="@style/NumberPicker.Filled"
+                        android:layout_width="90dp"
+                        android:layout_height="35dp"
+                        android:progress="3"
+                        app:picker_max="3"
+                        app:picker_min="1"
+                        app:picker_orientation="vertical"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        style="@style/SubTitleForFormStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_color"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/background_color"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="@string/app_name" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/SubTitleForFormStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/add_form_item_margin_top"
+                android:text="@string/text_subject_time"
                 />
 
             <HorizontalScrollView
@@ -363,6 +338,5 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
