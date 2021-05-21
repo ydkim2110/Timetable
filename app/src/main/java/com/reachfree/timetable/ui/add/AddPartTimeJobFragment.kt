@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -19,14 +19,11 @@ import com.reachfree.timetable.data.model.PartTimeJob
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.databinding.FragmentAddPartTimeJobBinding
 import com.reachfree.timetable.databinding.LayoutStartEndTimeBinding
-import com.reachfree.timetable.extension.longToast
-import com.reachfree.timetable.extension.runDelayed
-import com.reachfree.timetable.extension.setOnSingleClickListener
-import com.reachfree.timetable.extension.toMillis
+import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
-import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.ui.setup.DatePickerFragment
 import com.reachfree.timetable.ui.setup.SetupActivity
+import com.reachfree.timetable.util.ColorTag
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.DateUtils.updateHourAndMinute
 import com.reachfree.timetable.viewmodel.TimetableViewModel
@@ -42,10 +39,16 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
     private var selectedStartDate = Calendar.getInstance()
     private var selectedEndDate = Calendar.getInstance()
 
+    private var passedPartTimeJobId: Long? = null
+
+    private val colorTagDialog: ColorTagDialog by lazy { ColorTagDialog() }
+    private var color: ColorTag = ColorTag.COLOR_1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
 
+        passedPartTimeJobId = requireArguments().getLong(PART_TIME_JOB_ID, DEFAULT_ID)
     }
 
     override fun getDialogFragmentBinding(
@@ -58,11 +61,103 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupData()
         setupToolbar()
-        setupView()
-        setupDefaultChip()
         setupViewHandler()
         subscribeToObserver()
+    }
+
+    private fun setupData() {
+        if (passedPartTimeJobId != null && passedPartTimeJobId != DEFAULT_ID) {
+            timetableViewModel.getPartTimeJobById(passedPartTimeJobId!!)
+            timetableViewModel.partTimeJobById.observe(viewLifecycleOwner) { partTimeJob ->
+                if (partTimeJob != null) {
+                    setupPassedPartTimeJobInformation(partTimeJob)
+                    setupPassedPartTimeJobChip(partTimeJob)
+
+                    binding.deleteSaveBtnLayout.btnDelete.beVisible()
+                }
+            }
+        } else {
+            setupDefaultView()
+            setupDefaultColor()
+            setupDefaultChip()
+
+            binding.deleteSaveBtnLayout.btnDelete.beGone()
+        }
+    }
+
+    private fun setupPassedPartTimeJobInformation(partTimeJob: PartTimeJob) {
+        binding.edtPartTimeJobTitle.setText(partTimeJob.title)
+        binding.btnPartTimeJobStartDate.text = DateUtils.defaultDateFormat.format(partTimeJob.startDate)
+        binding.btnPartTimeJobEndDate.text = DateUtils.defaultDateFormat.format(partTimeJob.endDate)
+
+        selectedStartDate.time = Date(partTimeJob.startDate)
+        selectedEndDate.time = Date(partTimeJob.endDate)
+
+        for (i in ColorTag.values().indices) {
+            if (ColorTag.values()[i].resId == partTimeJob.backgroundColor) {
+                color = ColorTag.values()[i]
+                binding.backgroundColor.setBackgroundResource(ColorTag.values()[i].resBg)
+                break
+            }
+        }
+    }
+
+    private fun setupPassedPartTimeJobChip(partTimeJob: PartTimeJob) {
+        val list = mutableListOf<String>()
+        for (i in partTimeJob.days.indices) {
+            when (partTimeJob.days[i].day) {
+                1 -> {
+                    binding.chipGroup.check(binding.chipSun.id)
+                    createLayout(binding.chipSun.text.toString(), partTimeJob.days[i])
+                    list.add(binding.chipSun.text.toString())
+                }
+                2 -> {
+                    binding.chipGroup.check(binding.chipMon.id)
+                    createLayout(binding.chipMon.text.toString(), partTimeJob.days[i])
+                    list.add(binding.chipMon.text.toString())
+                }
+                3 -> {
+                    binding.chipGroup.check(binding.chipTue.id)
+                    createLayout(binding.chipTue.text.toString(), partTimeJob.days[i])
+                    list.add(binding.chipTue.text.toString())
+                }
+                4 -> {
+                    binding.chipGroup.check(binding.chipWed.id)
+                    createLayout(binding.chipWed.text.toString(), partTimeJob.days[i])
+                    list.add(binding.chipWed.text.toString())
+                }
+                5 -> {
+                    binding.chipGroup.check(binding.chipThu.id)
+                    createLayout(binding.chipThu.text.toString(), partTimeJob.days[i])
+                    list.add(binding.chipThu.text.toString())
+                }
+                6 -> {
+                    binding.chipGroup.check(binding.chipFri.id)
+                    createLayout(binding.chipFri.text.toString(), partTimeJob.days[i])
+                    list.add(binding.chipFri.text.toString())
+                }
+                else -> {
+                    binding.chipGroup.check(binding.chipSat.id)
+                    createLayout(binding.chipSat.text.toString(), partTimeJob.days[i])
+                    list.add(binding.chipSat.text.toString())
+                }
+            }
+        }
+
+        for (index in 0 until binding.chipGroup.childCount) {
+            val chip = binding.chipGroup.getChildAt(index) as Chip
+            chip.setOnCheckedChangeListener { view, isChecked ->
+                if (isChecked) {
+                    createLayout(chip.text.toString())
+                    list.add(view.text.toString())
+                } else {
+                    binding.layoutTime.removeViewAt(list.indexOf(view.text.toString()))
+                    list.remove(view.text.toString())
+                }
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -86,68 +181,15 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
         binding.appBar.btnBack.setOnSingleClickListener { dismiss() }
     }
 
-    private fun setupView() {
+    private fun setupDefaultView() {
         binding.btnPartTimeJobStartDate.text = DateUtils.defaultDateFormat.format(selectedStartDate.time.time)
         selectedEndDate.add(Calendar.MONTH, 3)
         binding.btnPartTimeJobEndDate.text = DateUtils.defaultDateFormat.format(selectedEndDate.time.time)
     }
 
-    private fun setupPassedSubjectChip(subject: Subject) {
-        val list = mutableListOf<String>()
-        for (i in subject.days.indices) {
-            when (subject.days[i].day) {
-                1 -> {
-                    binding.chipGroup.check(binding.chipSun.id)
-                    createLayout(binding.chipSun.text.toString(), subject.days[i])
-                    list.add(binding.chipSun.text.toString())
-                }
-                2 -> {
-                    binding.chipGroup.check(binding.chipMon.id)
-                    createLayout(binding.chipMon.text.toString(), subject.days[i])
-                    list.add(binding.chipMon.text.toString())
-                }
-                3 -> {
-                    binding.chipGroup.check(binding.chipTue.id)
-                    createLayout(binding.chipTue.text.toString(), subject.days[i])
-                    list.add(binding.chipTue.text.toString())
-                }
-                4 -> {
-                    binding.chipGroup.check(binding.chipWed.id)
-                    createLayout(binding.chipWed.text.toString(), subject.days[i])
-                    list.add(binding.chipWed.text.toString())
-                }
-                5 -> {
-                    binding.chipGroup.check(binding.chipThu.id)
-                    createLayout(binding.chipThu.text.toString(), subject.days[i])
-                    list.add(binding.chipThu.text.toString())
-                }
-                6 -> {
-                    binding.chipGroup.check(binding.chipFri.id)
-                    createLayout(binding.chipFri.text.toString(), subject.days[i])
-                    list.add(binding.chipFri.text.toString())
-                }
-                else -> {
-                    binding.chipGroup.check(binding.chipSat.id)
-                    createLayout(binding.chipSat.text.toString(), subject.days[i])
-                    list.add(binding.chipSat.text.toString())
-                }
-            }
-        }
-
-        for (index in 0 until binding.chipGroup.childCount) {
-            val chip = binding.chipGroup.getChildAt(index) as Chip
-            chip.setOnCheckedChangeListener { view, isChecked ->
-                if (isChecked) {
-                    createLayout(chip.text.toString())
-                    list.add(view.text.toString())
-                } else {
-                    binding.layoutTime.removeViewAt(list.indexOf(view.text.toString()))
-                    list.remove(view.text.toString())
-                }
-            }
-        }
+    private fun setupDefaultColor() {
+        binding.backgroundColor.setBackgroundResource(color.resBg)
     }
-
 
     @SuppressLint("ResourceType")
     private fun setupDefaultChip() {
@@ -189,6 +231,17 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
         binding.deleteSaveBtnLayout.btnDelete.setOnSingleClickListener {
 
         }
+
+        binding.backgroundColor.setOnSingleClickListener {
+            colorTagDialog.show(requireActivity().supportFragmentManager, ColorTagDialog.TAG)
+        }
+
+        colorTagDialog.setColorTagSelected(object : ColorTagDialog.OnColorTagSelected {
+            override fun onSelectedItem(colorTag: ColorTag) {
+                color = colorTag
+                binding.backgroundColor.setBackgroundResource(color.resBg)
+            }
+        })
     }
 
     private fun showDatePicker(date: Long, typeName: String) {
@@ -271,18 +324,36 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
             selectedDays.add(days)
         }
 
-        val partTimeJob = PartTimeJob(
-            id = null,
-            title = partTimeJobTitle,
-            startDate = startDate,
-            endDate = endDate,
-            days = selectedDays
-        )
+        var toastMessage = ""
+        if (passedPartTimeJobId != null && passedPartTimeJobId != -DEFAULT_ID) {
+            val partTimeJob = PartTimeJob(
+                id = passedPartTimeJobId,
+                title = partTimeJobTitle,
+                startDate = startDate,
+                endDate = endDate,
+                days = selectedDays,
+                backgroundColor = color.resId
+            )
 
-        timetableViewModel.insertPartTimeJob(partTimeJob)
+            timetableViewModel.updatePartTimeJob(partTimeJob)
+            toastMessage = requireActivity().getString(R.string.toast_edit_complete_message)
+        } else {
+            val partTimeJob = PartTimeJob(
+                id = null,
+                title = partTimeJobTitle,
+                startDate = startDate,
+                endDate = endDate,
+                days = selectedDays,
+                backgroundColor = color.resId
+            )
+
+            timetableViewModel.insertPartTimeJob(partTimeJob)
+            toastMessage = requireActivity().getString(R.string.toast_save_complete_message)
+        }
+
 
         runDelayed(TIME_DELAY) {
-            requireActivity().longToast(getString(R.string.toast_save_complete_message))
+            requireActivity().longToast(toastMessage)
             dismiss()
         }
     }
@@ -344,11 +415,14 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
 
     companion object {
         const val TAG = "AddPartTimeJobFragment"
+        private const val DEFAULT_ID = -1L
         private const val TIME_PICKER_TAG = "TIME_PICKER_TAG"
         private const val SUBJECT_ID = "subject_id"
         private const val TIME_DELAY = 500L
+        private const val PART_TIME_JOB_ID = "part_time_job_id"
 
-        fun newInstance() = AddPartTimeJobFragment().apply {
+        fun newInstance(partTimeJobId: Long? = null) = AddPartTimeJobFragment().apply {
+            arguments = bundleOf(PART_TIME_JOB_ID to partTimeJobId)
         }
     }
 

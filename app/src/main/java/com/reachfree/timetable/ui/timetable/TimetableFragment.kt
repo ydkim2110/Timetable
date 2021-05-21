@@ -40,6 +40,7 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
     private val timetableViewModel: TimetableViewModel by viewModels()
 
     private lateinit var timetableDetailDialog: TimetableDetailDialog
+    private lateinit var partTimeJobDetailDialog: PartTimeJobDetailDialog
 
     private var semesterId: Long? = null
 
@@ -104,7 +105,15 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
                     }
                 })
             } else {
-                Timber.d("DEBUG: PART_TIME_JOB Clicked!!")
+                partTimeJobDetailDialog = PartTimeJobDetailDialog(it)
+                partTimeJobDetailDialog.isCancelable = true
+                partTimeJobDetailDialog.show(childFragmentManager, PartTimeJobDetailDialog.TAG)
+
+                partTimeJobDetailDialog.setOnSelectTypeListener(object : PartTimeJobDetailDialog.PartTimeJobDetailDialogListener {
+                    override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
+                        timetableFragmentListener.onEditButtonClicked(timetableEventView)
+                    }
+                })
             }
         }
 
@@ -167,6 +176,8 @@ class TimetableFragment : BaseFragment<FragmentWeekBinding>(), SemesterChangedLi
                         shortTitle = value.title,
                         classroom = value.classroom,
                         building = value.buildingName,
+                        startDate = value.startDate,
+                        endDate = value.endDate,
                         startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
                         endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
                         backgroundColor = value.backgroundColor,

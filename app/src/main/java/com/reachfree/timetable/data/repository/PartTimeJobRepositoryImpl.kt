@@ -11,8 +11,14 @@ class PartTimeJobRepositoryImpl @Inject constructor(
     override suspend fun insertPartTimeJob(partTimeJob: PartTimeJob) =
         partTimeJobDao.insertPartTimeJob(partTimeJob)
 
+    override suspend fun updatePartTimeJob(partTimeJob: PartTimeJob) =
+        partTimeJobDao.updatePartTimeJob(partTimeJob)
+
     override suspend fun getAllPartTimeJobs(currentDate: Long) =
         partTimeJobDao.getAllPartTimeJobs(currentDate)
+
+    override suspend fun getPartTimeJobById(partTimeJobId: Long): PartTimeJob =
+        partTimeJobDao.getPartTimeJobById(partTimeJobId)
 
 
 }

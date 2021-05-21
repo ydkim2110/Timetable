@@ -1,14 +1,10 @@
-package com.reachfree.timetable.ui.profile
+package com.reachfree.timetable.ui.profile.grade
 
 import android.graphics.PorterDuff
-import android.graphics.Typeface
 import android.os.Bundle
-import android.util.TypedValue
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -24,7 +20,6 @@ import com.reachfree.timetable.ui.task.CalendarDayDialog
 import com.reachfree.timetable.util.SessionManager
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint

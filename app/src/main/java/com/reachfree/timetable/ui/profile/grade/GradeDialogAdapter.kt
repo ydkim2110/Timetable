@@ -1,13 +1,11 @@
-package com.reachfree.timetable.ui.profile
+package com.reachfree.timetable.ui.profile.grade
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.GradeType
-import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.databinding.ItemGradeTitleBinding
-import timber.log.Timber
 
 class GradeDialogAdapter(
     private val gradeList: List<GradeType>,
@@ -55,12 +53,12 @@ class GradeDialogAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): GradeDialogAdapter.MyViewHolder {
+    ): MyViewHolder {
         val binding = ItemGradeTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: GradeDialogAdapter.MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.bind(gradeList[position])
     }
 

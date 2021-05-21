@@ -24,6 +24,8 @@ sealed class TimetableEvent {
         val classroom: String? = null,
         val building: String? = null,
         val subTitle: String? = null,
+        val startDate: Long? = 0,
+        val endDate: Long? = 0,
         val startTime: LocalTime,
         val endTime: LocalTime,
         val upperText: String? = null,

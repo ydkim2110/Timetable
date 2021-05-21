@@ -65,7 +65,6 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
 
         setupData()
         setupToolbar()
-        setupView()
         setupViewHandler()
     }
 
@@ -78,6 +77,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
                 }
             }
         } else {
+            setupDefaultView()
             setupDefaultSubscribeToObserver()
         }
     }
@@ -103,7 +103,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
         binding.appBar.btnBack.setOnSingleClickListener { dismiss() }
     }
 
-    private fun setupView() {
+    private fun setupDefaultView() {
         binding.btnSemesterStartDate.text = DateUtils.defaultDateFormat.format(selectedStartDate.time.time)
         selectedEndDate.add(Calendar.MONTH, 3)
         binding.btnSemesterEndDate.text = DateUtils.defaultDateFormat.format(selectedEndDate.time.time)
@@ -180,6 +180,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             }
         }
 
+        var toastMessage = ""
         if (passedSemesterId != null && passedSemesterId != -1L) {
             val semester = Semester(
                 id = passedSemesterId,
@@ -189,6 +190,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
                 endDate = endDate,
             )
             timetableViewModel.updateSemester(semester)
+            toastMessage = requireActivity().getString(R.string.toast_edit_complete_message)
         } else {
             val semester = Semester(
                 id = null,
@@ -198,11 +200,12 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
                 endDate = endDate,
             )
             timetableViewModel.insertSemester(semester)
+            toastMessage = requireActivity().getString(R.string.toast_save_complete_message)
         }
 
         runDelayed(TIME_DELAY) {
             addSemesterFragmentListener.onSemesterChanged()
-            requireActivity().longToast(getString(R.string.toast_save_complete_message))
+            requireActivity().longToast(toastMessage)
             dismiss()
         }
     }

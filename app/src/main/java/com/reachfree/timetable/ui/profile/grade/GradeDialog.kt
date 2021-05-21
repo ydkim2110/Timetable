@@ -1,4 +1,4 @@
-package com.reachfree.timetable.ui.profile
+package com.reachfree.timetable.ui.profile.grade
 
 import android.content.Context
 import android.graphics.Color

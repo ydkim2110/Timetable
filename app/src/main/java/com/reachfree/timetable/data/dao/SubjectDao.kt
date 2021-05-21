@@ -80,6 +80,8 @@ interface SubjectDao {
             title,
             description,
             days,
+            0 AS start_date,
+            0 AS end_date,
             classroom,
             building_name,
             background_color
@@ -92,6 +94,8 @@ interface SubjectDao {
             title,
             '' AS description,
             days,
+            start_date,
+            end_date,
             '' AS classroom,
             '' AS building_name,
             background_color

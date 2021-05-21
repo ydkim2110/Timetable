@@ -22,8 +22,8 @@ import com.reachfree.timetable.ui.add.AddTaskFragment
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.bottomsheet.SelectTypeBottomSheet
-import com.reachfree.timetable.ui.profile.GradeFragment
-import com.reachfree.timetable.ui.profile.GradeListFragment
+import com.reachfree.timetable.ui.profile.grade.GradeFragment
+import com.reachfree.timetable.ui.profile.grade.GradeListFragment
 import com.reachfree.timetable.ui.profile.ProfileFragment
 import com.reachfree.timetable.ui.profile.SemesterDetailFragment
 import com.reachfree.timetable.ui.settings.SettingsActivity
@@ -275,8 +275,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         }
     }
 
-    private fun setupAddPartTimeJobFragment() {
-        AddPartTimeJobFragment.newInstance().apply {
+    private fun setupAddPartTimeJobFragment(partTimeJobId: Long? = null) {
+        AddPartTimeJobFragment.newInstance(partTimeJobId).apply {
             show(supportFragmentManager, AddPartTimeJobFragment.TAG)
         }
     }
@@ -300,7 +300,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
-        setupAddSubjectFragment(timetableEventView.event.id)
+        if (timetableEventView.event.category == SUBJECT) {
+            setupAddSubjectFragment(timetableEventView.event.id)
+        } else {
+            setupAddPartTimeJobFragment(timetableEventView.event.id)
+        }
     }
 
     override fun onSemesterTitle(title: String) {
@@ -321,6 +325,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     }
 
     companion object {
+        private const val SUBJECT = 0
+        private const val PART_TIME_JOB = 1
         private const val TAG_TIMETABLE = "1"
         private const val TAG_TASK = "2"
         private const val TAG_PROFILE = "3"

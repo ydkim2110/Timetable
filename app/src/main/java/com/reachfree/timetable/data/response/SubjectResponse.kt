@@ -17,6 +17,8 @@ data class TimetableResponse(
     var title: String = "",
     var description: String = "",
     var days: List<Subject.Days>,
+    @ColumnInfo(name = "start_date") var startDate: Long? = 0,
+    @ColumnInfo(name = "end_date") var endDate: Long? = 0,
     var classroom: String = "",
     @ColumnInfo(name = "building_name") var buildingName: String = "",
     @ColumnInfo(name = "background_color") var backgroundColor: Int = android.R.color.darker_gray,

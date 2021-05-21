@@ -1,4 +1,4 @@
-package com.reachfree.timetable.ui.profile
+package com.reachfree.timetable.ui.profile.grade
 
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -14,7 +14,6 @@ import com.reachfree.timetable.data.response.GradeListResponse
 import com.reachfree.timetable.databinding.FragmentGradeListBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseDialogFragment
-import com.reachfree.timetable.ui.profile.grade.GradeListHeaderAdapter
 import com.reachfree.timetable.util.SessionManager
 import com.reachfree.timetable.util.SpacingItemDecoration
 import com.reachfree.timetable.viewmodel.TimetableViewModel
