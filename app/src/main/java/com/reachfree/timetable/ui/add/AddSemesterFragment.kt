@@ -180,7 +180,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
             }
         }
 
-        var toastMessage = ""
+        val toastMessage: String
         if (passedSemesterId != null && passedSemesterId != -1L) {
             val semester = Semester(
                 id = passedSemesterId,

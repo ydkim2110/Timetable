@@ -19,6 +19,7 @@ import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.util.SpacingItemDecoration
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.util.AppUtils
+import com.reachfree.timetable.util.AppUtils.convertGradientTextView
 import com.reachfree.timetable.util.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalDateTime
@@ -66,6 +67,7 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
 
         setupDefaultView()
         setupToolbar()
+        setupTextView()
         setupRecyclerView()
         setupViewHandler()
         subscribeToObserver()
@@ -128,11 +130,16 @@ class SemesterDetailFragment : BaseDialogFragment<FragmentSemesterDetailBinding>
         binding.appBar.btnDelete.setOnSingleClickListener { showConfirmDeleteAlert() }
     }
 
+    private fun setupTextView() {
+        convertGradientTextView(binding.txtSemesterInformationTitle)
+        convertGradientTextView(binding.txtSemesterSubjectTitle)
+    }
+
     private fun setupRecyclerView() {
         binding.recyclerSubject.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
-            addItemDecoration(SpacingItemDecoration(1, 32))
+            addItemDecoration(SpacingItemDecoration(1, 36))
         }
     }
 

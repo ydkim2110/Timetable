@@ -11,6 +11,9 @@
 
     <color name="color_background">#F9F9F9</color>
 
+    <color name="start">#C33764</color>
+    <color name="end">#1D2671</color>
+
     <color name="color_main">#FF8F48</color>
     <color name="color_toggle">#FFC74C</color>
 

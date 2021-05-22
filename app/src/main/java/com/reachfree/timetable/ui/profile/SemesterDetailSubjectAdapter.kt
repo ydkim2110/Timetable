@@ -38,7 +38,7 @@ class SemesterDetailSubjectAdapter(
                 txtBuildingClassroom.text = root.context.resources.getString(R.string.text_input_subject_building_classroom,
                     subject.buildingName, subject.classroom)
 
-                root.setOnSingleClickListener {
+                layoutSubject.setOnSingleClickListener {
                     onItemClickListener?.let { it(subject) }
                 }
             }

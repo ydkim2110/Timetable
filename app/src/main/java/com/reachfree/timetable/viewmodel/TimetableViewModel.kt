@@ -240,6 +240,9 @@ class TimetableViewModel @Inject constructor(
         }
     }
 
+    fun getAllPartTimeJobs() =
+        partTimeJobRepository.getAllPartTimeJobs()
+
     private val _partTimeJobList = MutableLiveData<List<PartTimeJob>>()
     val partTimeJobList get() = _partTimeJobList
     fun getAllPartTimeJobs(currentDate: Long) =
@@ -254,6 +257,12 @@ class TimetableViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io) {
             val result = partTimeJobRepository.getPartTimeJobById(partTimeJobId)
             _partTimeJobById.postValue(result)
+        }
+    }
+
+    fun deletePartTimeJob(partTimeJob: PartTimeJob) {
+        viewModelScope.launch(dispatchers.io) {
+            partTimeJobRepository.deletePartTimeJob(partTimeJob)
         }
     }
 

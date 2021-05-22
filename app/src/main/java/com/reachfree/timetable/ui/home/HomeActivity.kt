@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.PartTimeJob
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.CalendarTaskResponse
@@ -225,6 +226,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
                 semesterChangedListener.onSemesterDeleted()
             }
         })
+    }
+
+    override fun onPartTimeJobItemClicked(partTimeJob: PartTimeJob) {
+        setupAddPartTimeJobFragment(partTimeJob.id)
     }
 
     private fun setupGradeFragment(semesterId: Long) {

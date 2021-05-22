@@ -97,7 +97,7 @@
     <string name="text_subtitle_enrolled_subject">수강과목</string>
     <string name="text_image_edit">수정</string>
     <string name="text_subtitle_graduation_requirements">졸업요건</string>
-    <string name="text_subtitle_added_semesters">등록학기</string>
+    <string name="text_subtitle_total_semesters">전체 학기</string>
     <string name="text_semester_empty_message">등록된 학기가 없습니다.</string>
     <string name="toast_start_date_duplicated">시작 날짜가 다른학기와 중복입니다.</string>
     <string name="toast_end_date_duplicated">종료 날짜가 다른학기와 중복입니다.</string>
@@ -132,6 +132,8 @@
     <string name="text_default_start_time">09:00</string>
     <string name="text_end_time">종료시간</string>
     <string name="text_default_end_time">10:00</string>
+    <string name="text_subtitle_total_part_time_jobs">전체 알바</string>
+    <string name="txt_type">유형</string>
 
     <string-array name="filter_credit_options">
         <item>4.3점</item>

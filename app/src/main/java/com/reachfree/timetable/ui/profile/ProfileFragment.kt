@@ -6,15 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.text.set
+import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.R
-import com.reachfree.timetable.data.model.GradeCreditType
-import com.reachfree.timetable.data.model.GradeType
-import com.reachfree.timetable.data.model.Subject
-import com.reachfree.timetable.data.model.SubjectType
+import com.reachfree.timetable.data.model.*
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.FragmentProfileBinding
 import com.reachfree.timetable.extension.animateProgressBar
@@ -24,6 +24,7 @@ import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseFragment
 import com.reachfree.timetable.ui.home.HomeActivity
 import com.reachfree.timetable.util.*
+import com.reachfree.timetable.util.AppUtils.convertGradientTextView
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -38,6 +39,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
     interface ProfileFragmentListener {
         fun onSemesterItemClicked(semesterResponse: SemesterResponse)
+        fun onPartTimeJobItemClicked(partTimeJob: PartTimeJob)
         fun onAddSemesterButtonClicked()
         fun onGoToGradeListFragmentClicked()
     }
@@ -45,6 +47,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     private lateinit var profileFragmentListener: ProfileFragmentListener
 
     private lateinit var semesterAdapter: SemesterAdapter
+    private lateinit var partTimeJobAdapter: PartTimeJobAdapter
 
     private var graduationTotalCredit: Int = 0
     private var mandatoryTotalCredit: Int = 0
@@ -75,6 +78,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupTextView()
         setupRecyclerView()
         setupViewHandler()
         subscribeToObserver()
@@ -82,8 +86,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         sessionManager.getPrefs().registerOnSharedPreferenceChangeListener(sharedPrefListener)
     }
 
+    private fun setupTextView() {
+        convertGradientTextView(binding.txtGradeTitle)
+        convertGradientTextView(binding.txtGraduationTitle)
+        convertGradientTextView(binding.txtTotalSemesterTitle)
+        convertGradientTextView(binding.txtTotalPartTimeJobTitle)
+    }
+
     private fun setupRecyclerView() {
         binding.recyclerSemester.apply {
+            setHasFixedSize(true)
+            layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(SpacingItemDecoration(SPAN_COUNT, SPAN_SPACING))
+        }
+
+        binding.recyclerPartTimeJob.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(SpacingItemDecoration(SPAN_COUNT, SPAN_SPACING))
@@ -120,6 +137,24 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
             semesterAdapter.setOnItemClickListener { semesterResponse ->
                 profileFragmentListener.onSemesterItemClicked(semesterResponse)
+            }
+        }
+
+        timetableViewModel.getAllPartTimeJobs().observe(viewLifecycleOwner) { partTimeJobs ->
+            if (!partTimeJobs.isNullOrEmpty()) {
+                binding.recyclerPartTimeJob.beVisible()
+                binding.txtTotalPartTimeJobTitle.beVisible()
+            } else {
+                binding.recyclerPartTimeJob.beGone()
+                binding.txtTotalPartTimeJobTitle.beGone()
+            }
+
+            partTimeJobAdapter = PartTimeJobAdapter(partTimeJobs)
+            binding.recyclerPartTimeJob.adapter = partTimeJobAdapter
+
+            partTimeJobAdapter.setOnItemClickListener { partTimeJob ->
+                profileFragmentListener.onPartTimeJobItemClicked(partTimeJob)
+
             }
         }
     }

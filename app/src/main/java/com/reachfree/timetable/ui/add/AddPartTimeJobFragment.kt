@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -17,6 +18,7 @@ import com.google.android.material.timepicker.TimeFormat
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.PartTimeJob
 import com.reachfree.timetable.data.model.Subject
+import com.reachfree.timetable.data.model.Task
 import com.reachfree.timetable.databinding.FragmentAddPartTimeJobBinding
 import com.reachfree.timetable.databinding.LayoutStartEndTimeBinding
 import com.reachfree.timetable.extension.*
@@ -27,8 +29,10 @@ import com.reachfree.timetable.util.ColorTag
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.util.DateUtils.updateHourAndMinute
 import com.reachfree.timetable.viewmodel.TimetableViewModel
+import com.reachfree.timetable.widget.TaskListWidget
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
+import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
@@ -40,6 +44,7 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
     private var selectedEndDate = Calendar.getInstance()
 
     private var passedPartTimeJobId: Long? = null
+    private var passedPartTimeJob: PartTimeJob? = null
 
     private val colorTagDialog: ColorTagDialog by lazy { ColorTagDialog() }
     private var color: ColorTag = ColorTag.COLOR_1
@@ -72,6 +77,7 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
             timetableViewModel.getPartTimeJobById(passedPartTimeJobId!!)
             timetableViewModel.partTimeJobById.observe(viewLifecycleOwner) { partTimeJob ->
                 if (partTimeJob != null) {
+                    passedPartTimeJob = partTimeJob
                     setupPassedPartTimeJobInformation(partTimeJob)
                     setupPassedPartTimeJobChip(partTimeJob)
 
@@ -229,7 +235,15 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
             savePartTimeJob()
         }
         binding.deleteSaveBtnLayout.btnDelete.setOnSingleClickListener {
+            passedPartTimeJob?.let {
+                timetableViewModel.deletePartTimeJob(it)
 
+                runDelayed(500L) {
+                    Toast.makeText(requireActivity(), "삭제 완료!",
+                        Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+            }
         }
 
         binding.backgroundColor.setOnSingleClickListener {
@@ -324,8 +338,10 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
             selectedDays.add(days)
         }
 
-        var toastMessage = ""
-        if (passedPartTimeJobId != null && passedPartTimeJobId != -DEFAULT_ID) {
+        Timber.d("DEBUG: passedPartTimeJobId $passedPartTimeJobId")
+
+        val toastMessage: String
+        if (passedPartTimeJobId != null && passedPartTimeJobId != DEFAULT_ID) {
             val partTimeJob = PartTimeJob(
                 id = passedPartTimeJobId,
                 title = partTimeJobTitle,

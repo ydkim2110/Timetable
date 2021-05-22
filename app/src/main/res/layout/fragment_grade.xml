@@ -196,12 +196,20 @@
                 android:layout_marginHorizontal="16dp"
                 android:text="과목별 성적" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_grade"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:overScrollMode="never" />
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="16dp"
+                app:cardCornerRadius="12dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_grade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never" />
+
+            </androidx.cardview.widget.CardView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_empty"

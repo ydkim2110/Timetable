@@ -24,7 +24,7 @@ class SemesterAdapter(
                 txtDate.text = "($startDate ~ $endDate)"
                 txtTotalCredit.text = root.context.getString(R.string.text_input_subject_credit, semester.totalCredit)
 
-                root.setOnSingleClickListener {
+                layoutSemester.setOnSingleClickListener {
                     onItemClickListener?.let { it(semester) }
                 }
             }

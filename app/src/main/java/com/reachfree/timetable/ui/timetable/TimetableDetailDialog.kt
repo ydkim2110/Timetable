@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import com.reachfree.timetable.R
 import com.reachfree.timetable.databinding.TimetableDetailDialogBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.util.ColorTag
@@ -63,7 +64,7 @@ class TimetableDetailDialog(
         binding.txtSubjectTitle.text = timetableEventView.event.title
         binding.txtClassroom.text = timetableEventView.event.classroom
         binding.txtBuilding.text = timetableEventView.event.building
-        binding.txtCredit.text = timetableEventView.event.credit.toString()
+        binding.txtCredit.text = getString(R.string.text_input_subject_credit, timetableEventView.event.credit)
         binding.txtStartTime.text = timetableEventView.event.startTime.toString()
         binding.txtEndTime.text = timetableEventView.event.endTime.toString()
 

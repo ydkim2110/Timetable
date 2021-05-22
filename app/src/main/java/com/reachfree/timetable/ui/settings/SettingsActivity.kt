@@ -17,6 +17,7 @@ import com.reachfree.timetable.databinding.DialogSettingStartTimeBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.util.*
+import com.reachfree.timetable.util.AppUtils.convertGradientTextView
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
 import java.util.*
@@ -38,6 +39,7 @@ class SettingsActivity :
         super.onCreate(savedInstanceState)
 
         setupToolbar()
+        setupTextView()
         setupGraduation()
         setupMandatory()
         setupElective()
@@ -61,6 +63,12 @@ class SettingsActivity :
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
+    }
+
+    private fun setupTextView() {
+        convertGradientTextView(binding.txtGraduationCategoryTitle)
+        convertGradientTextView(binding.txtTimetableCategoryTitle)
+        convertGradientTextView(binding.txtGradeCategoryTitle)
     }
 
     private fun setupGraduation() {
