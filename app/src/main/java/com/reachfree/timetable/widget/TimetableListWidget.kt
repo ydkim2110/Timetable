@@ -30,6 +30,7 @@ class TimetableListWidget : AppWidgetProvider() {
         when (intent.action) {
             AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
                 updateWidgetListView(context)
+
             }
             TIMETABLE_LIST_CLICK_BROADCAST -> {
                 val homeIntent = Intent(context, HomeActivity::class.java)
@@ -72,7 +73,7 @@ class TimetableListWidget : AppWidgetProvider() {
         cal.set(Calendar.SECOND, 1)
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setInexactRepeating(AlarmManager.RTC, cal.timeInMillis, 5000, pendingIntent)
+        alarmManager.setInexactRepeating(AlarmManager.RTC, cal.timeInMillis, INTERVAL_DAY, pendingIntent)
     }
 
     override fun onDisabled(context: Context) {
@@ -118,9 +119,13 @@ class TimetableListWidget : AppWidgetProvider() {
 
 
         fun updateWidgetListView(context: Context) {
+            Timber.d("DEBUG: updateWidgetListView called!!")
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val ids = appWidgetManager.getAppWidgetIds(ComponentName(context, TimetableListWidget::class.java))
-            appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.list_view_timetable_widget)
+            for (appWidgetId in ids) {
+                appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.list_view_timetable_widget)
+                updateAppWidget(context, appWidgetManager, appWidgetId)
+            }
         }
 
         private fun getPendingIntent(context: Context): PendingIntent {

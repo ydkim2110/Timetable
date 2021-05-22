@@ -288,7 +288,15 @@ class SettingsActivity :
                         sessionManager.setGradeCreditOption(GradeCreditType.CREDIT_4_3.ordinal)
                     }
                     R.id.radio_4_5 -> {
-                        sessionManager.setGradeCreditOption(GradeCreditType.CREDIT_4_5.ordinal)
+                        AlertDialog.Builder(this)
+                            .setTitle("주의 사항")
+                            .setMessage("4.5 만점으로 변환시 마이너스 학점들은 제로학점으로 변환됩니다. 계속 진행하시겠습니까?")
+                            .setCancelable(false)
+                            .setPositiveButton(getString(R.string.text_alert_button_ok)) { _, _ ->
+
+                            }
+                            .create()
+                            .show()
                     }
                 }
             }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="2dp"
-    android:paddingHorizontal="20dp">
+    android:paddingHorizontal="12dp">
 
     <TextView
         android:id="@+id/txt_subject_title"

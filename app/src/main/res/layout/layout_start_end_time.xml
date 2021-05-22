@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/txt_selected_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="월요일"
+        tools:text="월요일"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_divider"
@@ -40,24 +40,18 @@
                 android:id="@+id/txt_start_time_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="시작시간"
+                android:text="@string/text_start_time"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_start_time"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/OutlinedButtonStyle"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="16dp"
-                android:text="09:00"
-                android:textSize="14sp"
-                android:textAlignment="textEnd"
-                android:textColor="@color/color_text_primary"
-                android:textAllCaps="false"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:drawableTint="@color/color_text_primary"
+                android:text="@string/text_default_start_time"
                 app:layout_constraintStart_toEndOf="@+id/txt_start_time_title"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -74,24 +68,18 @@
                 android:id="@+id/txt_end_time_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="종료시간"
+                android:text="@string/text_end_time"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_end_time"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/OutlinedButtonStyle"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="16dp"
-                android:text="10:30"
-                android:textSize="14sp"
-                android:textAlignment="textEnd"
-                android:textColor="@color/color_text_primary"
-                android:textAllCaps="false"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:drawableTint="@color/color_text_primary"
+                android:text="@string/text_default_end_time"
                 app:layout_constraintStart_toEndOf="@+id/txt_end_time_title"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

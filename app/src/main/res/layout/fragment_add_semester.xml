@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.add.AddSemesterFragment">
 
@@ -57,8 +58,6 @@
                 <EditText
                     android:id="@+id/edt_semester_title"
                     style="@style/CustomEditTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:hint="@string/text_hint_add_semester_title"
                     android:importantForAutofill="no"
                     android:inputType="text"
@@ -75,8 +74,6 @@
                 <EditText
                     android:id="@+id/edt_semester_description"
                     style="@style/CustomEditTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:hint="@string/text_hint_add_semester_description"
                     android:importantForAutofill="no"
                     />
@@ -99,7 +96,7 @@
                         android:id="@+id/btn_semester_start_date"
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="55dp"
                         tools:text="2021-03-01"
                         app:layout_constraintStart_toEndOf="@id/guideline_start_date"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -132,7 +129,7 @@
                         android:id="@+id/btn_semester_end_date"
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="55dp"
                         tools:text="2021-06-30"
                         app:layout_constraintStart_toEndOf="@id/guideline_end_date"
                         app:layout_constraintBottom_toBottomOf="parent"

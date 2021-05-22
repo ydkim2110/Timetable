@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.observe
 import com.google.android.material.chip.Chip
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -24,7 +25,7 @@ import com.reachfree.timetable.databinding.FragmentAddSubjectBinding
 import com.reachfree.timetable.databinding.LayoutStartEndTimeBinding
 import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
-import com.reachfree.timetable.ui.bottomsheet.SelectSemesterBottomSheet
+import com.reachfree.timetable.ui.bottomsheet.PickerViewBottomSheet
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.util.ColorTag
 import com.reachfree.timetable.util.DateUtils
@@ -39,7 +40,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
     private val timetableViewModel: TimetableViewModel by viewModels()
 
-    private lateinit var selectSemesterBottomSheet: SelectSemesterBottomSheet
+    private lateinit var selectSemesterBottomSheet: PickerViewBottomSheet
 
     private val colorTagDialog: ColorTagDialog by lazy { ColorTagDialog() }
     private var color: ColorTag = ColorTag.COLOR_1
@@ -279,15 +280,15 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
 
         binding.btnSemester.setOnSingleClickListener {
             selectSemesterBottomSheet = if (passedSubject != null) {
-                SelectSemesterBottomSheet(SelectType.SEMESTER, selectedSemesterId)
+                PickerViewBottomSheet(SelectType.SEMESTER, selectedSemesterId)
             } else {
-                SelectSemesterBottomSheet(SelectType.SEMESTER)
+                PickerViewBottomSheet(SelectType.SEMESTER)
             }
             selectSemesterBottomSheet.isCancelable = true
-            selectSemesterBottomSheet.show(childFragmentManager, SelectSemesterBottomSheet.TAG)
+            selectSemesterBottomSheet.show(childFragmentManager, PickerViewBottomSheet.TAG)
 
             selectSemesterBottomSheet.setOnSelectSemesterListener(object :
-                SelectSemesterBottomSheet.SelectSemesterListener {
+                PickerViewBottomSheet.SelectSemesterListener {
                 override fun onSemesterSelected(semester: Semester) {
                     selectedSemester = semester
                     selectedSemesterId = selectedSemester.id
@@ -462,6 +463,16 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             val minute = layoutBinding.btnStartTime.text.split(":")[1].toInt()
             openTimePicker(hour, minute) { h, min ->
                 layoutBinding.btnStartTime.text = updateHourAndMinute(h, min)
+
+                val endHour = layoutBinding.btnEndTime.text.split(":")[0].toInt()
+                val endMinute = layoutBinding.btnEndTime.text.split(":")[1].toInt()
+                val start = LocalTime.of(h, min)
+                val end = LocalTime.of(endHour, endMinute)
+
+                if (start.isAfter(end)) {
+                    layoutBinding.btnEndTime.text = updateHourAndMinute(h+1, min)
+                }
+
             }
         }
         layoutBinding.btnEndTime.setOnSingleClickListener {
@@ -469,6 +480,15 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
             val minute = layoutBinding.btnEndTime.text.split(":")[1].toInt()
             openTimePicker(hour, minute) { h, min ->
                 layoutBinding.btnEndTime.text = updateHourAndMinute(h, min)
+
+                val startHour = layoutBinding.btnStartTime.text.split(":")[0].toInt()
+                val startMinute = layoutBinding.btnStartTime.text.split(":")[1].toInt()
+                val start = LocalTime.of(startHour, startMinute)
+                val end = LocalTime.of(h, min)
+
+                if (end.isBefore(start)) {
+                    layoutBinding.btnStartTime.text = updateHourAndMinute(h-1, min)
+                }
             }
         }
         binding.layoutTime.addView(layoutBinding.root)

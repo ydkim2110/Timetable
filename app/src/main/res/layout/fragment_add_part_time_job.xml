@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.add.AddSubjectFragment">
 
@@ -36,8 +37,6 @@
             <EditText
                 android:id="@+id/edt_part_time_job_title"
                 style="@style/CustomEditTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="예) 과외"
                 android:importantForAutofill="no" />
 
@@ -86,7 +85,6 @@
                     android:id="@+id/btn_part_time_job_start_date"
                     style="@style/OutlinedButtonStyle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     tools:text="2021-03-01"
                     app:layout_constraintStart_toEndOf="@id/guideline_start_date"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -119,7 +117,6 @@
                     android:id="@+id/btn_part_time_job_end_date"
                     style="@style/OutlinedButtonStyle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     tools:text="2021-06-30"
                     app:layout_constraintStart_toEndOf="@id/guideline_end_date"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.R
@@ -145,6 +146,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             }
         } else {
             binding.txtTotalAverageCredit.text = String.format("%.2f", 0f)
+            binding.txtMandatoryCredit.text = String.format("%.2f", 0f)
         }
     }
 

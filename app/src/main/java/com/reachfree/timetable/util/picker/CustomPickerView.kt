@@ -226,7 +226,7 @@ class CustomPickerView : ScrollView {
                 itemView.alpha = 1f
             } else {
                 itemView.setTextColor(unselectedItemColor) //Unselected Item Text Color
-                itemView.alpha = 0.6f
+                itemView.alpha = 0.3f
             }
         }
     }

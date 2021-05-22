@@ -119,12 +119,19 @@
     <string name="text_date">날짜</string>
     <string name="text_time">시간</string>
     <string name="text_grade">성적</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="text_grade_warning">* 간단한 계산을 할 수 있는 학점계산기입니다. 정확한 변환 결과는 해당학교의 학적과를 통해 확인해주세요.</string>
     <string name="credit_4_3">4.3 만점</string>
     <string name="credit_4_5">4.5 만점</string>
     <string name="text_not_registered">미입력</string>
+    <string name="toolbar_title_gradle_list">전체 성적</string>
+    <string name="text_grade_list_empty_message">아직 등록된 성적이 없습니다.\n학기 상세정보 화면에서 성적을 등록해주세요.</string>
+    <string name="text_grade_list_warning_message">*학기 상세정보 화면에서 성적을 등록해주세요.</string>
+    <string name="text_select_complete">선택완료</string>
+    <string name="text_semester_information">학기정보</string>
+    <string name="text_start_time">시작시간</string>
+    <string name="text_default_start_time">09:00</string>
+    <string name="text_end_time">종료시간</string>
+    <string name="text_default_end_time">10:00</string>
 
     <string-array name="filter_credit_options">
         <item>4.3점</item>

@@ -7,11 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.GradeListGroup
 import com.reachfree.timetable.data.response.GradeListResponse
 import com.reachfree.timetable.databinding.FragmentGradeListBinding
+import com.reachfree.timetable.extension.beGone
+import com.reachfree.timetable.extension.beInvisible
+import com.reachfree.timetable.extension.beVisible
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.util.SessionManager
@@ -49,7 +53,7 @@ class GradeListFragment : BaseDialogFragment<FragmentGradeListBinding>() {
     }
 
     private fun setupToolbar() {
-        binding.appBar.txtToolbarTitle.text = "전체 성적"
+        binding.appBar.txtToolbarTitle.text = getString(R.string.toolbar_title_gradle_list)
         binding.appBar.appBar.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
         binding.appBar.txtToolbarTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         binding.appBar.btnBack.setColorFilter(
@@ -88,9 +92,17 @@ class GradeListFragment : BaseDialogFragment<FragmentGradeListBinding>() {
 
             newList.sortByDescending { it.key }
 
-            gradeListHeaderAdapter = GradeListHeaderAdapter(sessionManager)
-            binding.recyclerGradeList.adapter = gradeListHeaderAdapter
-            gradeListHeaderAdapter.submitList(newList)
+            if (!newList.isNullOrEmpty()) {
+                gradeListHeaderAdapter = GradeListHeaderAdapter(sessionManager)
+                binding.recyclerGradeList.adapter = gradeListHeaderAdapter
+                gradeListHeaderAdapter.submitList(newList)
+
+                binding.layoutEmpty.beGone()
+                binding.layoutRecycler.beVisible()
+            } else {
+                binding.layoutEmpty.beVisible()
+                binding.layoutRecycler.beGone()
+            }
         }
     }
 

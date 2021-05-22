@@ -1,8 +1,5 @@
 package com.reachfree.timetable.ui.add
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -24,16 +21,14 @@ import com.reachfree.timetable.data.model.TaskType
 import com.reachfree.timetable.databinding.FragmentAddTaskBinding
 import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
-import com.reachfree.timetable.ui.bottomsheet.SelectSemesterBottomSheet
+import com.reachfree.timetable.ui.bottomsheet.PickerViewBottomSheet
 import com.reachfree.timetable.ui.bottomsheet.SelectType
 import com.reachfree.timetable.ui.setup.DatePickerFragment
 import com.reachfree.timetable.ui.setup.SetupActivity
-import com.reachfree.timetable.util.ACTION_TASK_WIDGET_UPDATE
 import com.reachfree.timetable.util.DateUtils
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import com.reachfree.timetable.widget.TaskListWidget
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.util.*
 
 @AndroidEntryPoint
@@ -43,7 +38,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
     private lateinit var selectedSemester: Semester
     private lateinit var selectedSubject: Subject
-    private lateinit var selectSemesterBottomSheet: SelectSemesterBottomSheet
+    private lateinit var selectSemesterBottomSheet: PickerViewBottomSheet
 
     private var selectedSemesterId: Long? = null
     private var selectedSubjectId: Long? = null
@@ -176,17 +171,17 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
     private fun setupViewHandler() {
         binding.btnSemester.setOnSingleClickListener {
-            selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SEMESTER, selectedSemesterId)
+            selectSemesterBottomSheet = PickerViewBottomSheet(SelectType.SEMESTER, selectedSemesterId)
             selectSemesterBottomSheet.isCancelable = true
-            selectSemesterBottomSheet.show(childFragmentManager, SelectSemesterBottomSheet.TAG)
+            selectSemesterBottomSheet.show(childFragmentManager, PickerViewBottomSheet.TAG)
 
             setupBottomSheetListener()
         }
         binding.btnSubject.setOnSingleClickListener {
             selectedSemesterId?.let {
-                selectSemesterBottomSheet = SelectSemesterBottomSheet(SelectType.SUBJECT, it, selectedSubjectId)
+                selectSemesterBottomSheet = PickerViewBottomSheet(SelectType.SUBJECT, it, selectedSubjectId)
                 selectSemesterBottomSheet.isCancelable = true
-                selectSemesterBottomSheet.show(childFragmentManager, SelectSemesterBottomSheet.TAG)
+                selectSemesterBottomSheet.show(childFragmentManager, PickerViewBottomSheet.TAG)
 
                 setupBottomSheetListener()
             }
@@ -314,7 +309,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
     }
 
     private fun setupBottomSheetListener() {
-        selectSemesterBottomSheet.setOnSelectSemesterListener(object : SelectSemesterBottomSheet.SelectSemesterListener {
+        selectSemesterBottomSheet.setOnSelectSemesterListener(object : PickerViewBottomSheet.SelectSemesterListener {
             override fun onSemesterSelected(semester: Semester) {
                 selectedSemester = semester
                 selectedSemesterId = selectedSemester.id

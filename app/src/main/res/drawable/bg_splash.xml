@@ -4,7 +4,9 @@
     <item android:drawable="@android:color/white" />
 
     <item
-        android:drawable="@android:drawable/ic_dialog_email"
+        android:width="80dp"
+        android:height="110dp"
+        android:drawable="@drawable/app_logo"
         android:gravity="center" />
 
 </layer-list>

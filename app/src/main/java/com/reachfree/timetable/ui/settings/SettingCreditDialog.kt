@@ -69,6 +69,8 @@ class SettingCreditDialog(
     }
 
     private fun setupViewHandler() {
+        binding.btnCancel.setOnSingleClickListener { dismiss() }
+
         binding.btnOk.setOnSingleClickListener {
             val creditValue = binding.edtCredit.text.toString().toIntOrNull()
             creditValue?.let {

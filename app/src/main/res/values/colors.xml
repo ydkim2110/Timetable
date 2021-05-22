@@ -9,9 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white_alpha">#10FFFFFF</color>
 
-    <color name="colorExpense">#EE1111</color>
-    <color name="colorIncome">#00A300</color>
-    <color name="colorDashBoard">#603BE6</color>
+    <color name="color_background">#F9F9F9</color>
+
+    <color name="color_main">#FF8F48</color>
+    <color name="color_toggle">#FFC74C</color>
 
     <color name="color_gray">#E6E6E6</color>
     <color name="color_orange">#FDA14F</color>
@@ -41,7 +42,7 @@
 
     <color name="divider_color">#1F000000</color>
 
-    <color name="color_background_edit_text">#F5F5F5</color>
+    <color name="color_background_edit_text">#FFFFFF</color> <!-- F5F5F5 -->
     <color name="color_feed_divider">#CCe0e0e0</color>
 
     <color name="color_chip_gray">#DEDEDE</color>

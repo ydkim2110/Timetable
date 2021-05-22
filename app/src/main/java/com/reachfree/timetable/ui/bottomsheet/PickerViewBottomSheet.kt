@@ -6,18 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.reachfree.timetable.R
 import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.model.Subject
-import com.reachfree.timetable.databinding.SelectSemesterBottomSheetBinding
+import com.reachfree.timetable.databinding.PickerViewBottomSheetBinding
 import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.util.picker.CustomPickerView
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SelectSemesterBottomSheet(
+class PickerViewBottomSheet(
     private val type: SelectType,
     private val semesterId: Long? = null,
     private val subjectId: Long? = null
@@ -25,7 +26,7 @@ class SelectSemesterBottomSheet(
 
     private val timetableViewModel: TimetableViewModel by viewModels()
 
-    private var _binding: SelectSemesterBottomSheetBinding? = null
+    private var _binding: PickerViewBottomSheetBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var selectedSemesterItem: Semester
@@ -53,7 +54,7 @@ class SelectSemesterBottomSheet(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = SelectSemesterBottomSheetBinding.inflate(inflater, container, false)
+        _binding = PickerViewBottomSheetBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -189,6 +190,6 @@ class SelectSemesterBottomSheet(
     }
 
     companion object {
-        const val TAG = "SelectSemesterBottomSheetBinding"
+        const val TAG = "PickerViewBottomSheet"
     }
 }

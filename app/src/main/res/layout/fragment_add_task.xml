@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.add.AddSubjectFragment">
 
@@ -49,7 +50,6 @@
                         android:id="@+id/btn_semester"
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/btn_height"
                         tools:text="학기"
                         app:layout_constraintStart_toEndOf="@+id/txt_semester_title"
                         app:layout_constraintTop_toTopOf="parent"
@@ -78,7 +78,6 @@
                         android:id="@+id/btn_subject"
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/btn_height"
                         android:textSize="14sp"
                         tools:text="과목명"
                         app:layout_constraintStart_toEndOf="@+id/txt_semester_title"
@@ -161,8 +160,6 @@
             <EditText
                 android:id="@+id/edt_task_title"
                 style="@style/CustomEditTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="@string/text_hint_task_title"
                 android:importantForAutofill="no"
                 />
@@ -178,8 +175,6 @@
             <EditText
                 android:id="@+id/edt_task_description"
                 style="@style/CustomEditTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:hint="@string/text_hint_task_memo"
                 android:importantForAutofill="no"
                 />
@@ -209,7 +204,6 @@
                         android:id="@+id/btn_date"
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/btn_height"
                         tools:text="2021-05-01"
                         android:textSize="14sp"
                         />
@@ -235,7 +229,6 @@
                         android:id="@+id/btn_time"
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/btn_height"
                         android:text="09:00"
                         android:textSize="14sp"
                         />
