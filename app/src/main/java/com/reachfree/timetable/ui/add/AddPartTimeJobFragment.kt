@@ -373,6 +373,15 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
             val minute = layoutBinding.btnStartTime.text.split(":")[1].toInt()
             openTimePicker(hour, minute) { h, min ->
                 layoutBinding.btnStartTime.text = updateHourAndMinute(h, min)
+
+                val endHour = layoutBinding.btnEndTime.text.split(":")[0].toInt()
+                val endMinute = layoutBinding.btnEndTime.text.split(":")[1].toInt()
+                val start = LocalTime.of(h, min)
+                val end = LocalTime.of(endHour, endMinute)
+
+                if (start.isAfter(end)) {
+                    layoutBinding.btnEndTime.text = updateHourAndMinute(h+1, min)
+                }
             }
         }
         layoutBinding.btnEndTime.setOnSingleClickListener {
@@ -380,6 +389,15 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
             val minute = layoutBinding.btnEndTime.text.split(":")[1].toInt()
             openTimePicker(hour, minute) { h, min ->
                 layoutBinding.btnEndTime.text = updateHourAndMinute(h, min)
+
+                val startHour = layoutBinding.btnStartTime.text.split(":")[0].toInt()
+                val startMinute = layoutBinding.btnStartTime.text.split(":")[1].toInt()
+                val start = LocalTime.of(startHour, startMinute)
+                val end = LocalTime.of(h, min)
+
+                if (end.isBefore(start)) {
+                    layoutBinding.btnStartTime.text = updateHourAndMinute(h-1, min)
+                }
             }
         }
         binding.layoutTime.addView(layoutBinding.root)

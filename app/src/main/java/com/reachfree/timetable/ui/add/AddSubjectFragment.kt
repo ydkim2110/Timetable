@@ -472,7 +472,6 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 if (start.isAfter(end)) {
                     layoutBinding.btnEndTime.text = updateHourAndMinute(h+1, min)
                 }
-
             }
         }
         layoutBinding.btnEndTime.setOnSingleClickListener {

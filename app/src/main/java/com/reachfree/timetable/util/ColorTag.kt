@@ -22,6 +22,11 @@ enum class ColorTag(
     COLOR_12(R.color.color12, R.drawable.bg_color_tag_12),
     COLOR_13(R.color.color13, R.drawable.bg_color_tag_13),
     COLOR_14(R.color.color14, R.drawable.bg_color_tag_14),
-    COLOR_15(R.color.color15, R.drawable.bg_color_tag_15)
+    COLOR_15(R.color.color15, R.drawable.bg_color_tag_15),
+    COLOR_16(R.color.color16, R.drawable.bg_color_tag_16),
+    COLOR_17(R.color.color17, R.drawable.bg_color_tag_17),
+    COLOR_18(R.color.color18, R.drawable.bg_color_tag_18),
+    COLOR_19(R.color.color19, R.drawable.bg_color_tag_19),
+    COLOR_20(R.color.color20, R.drawable.bg_color_tag_20)
 }
 
