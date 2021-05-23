@@ -198,7 +198,7 @@
                         android:layout_height="40dp"
                         android:progress="3"
                         app:picker_max="3"
-                        app:picker_min="1"
+                        app:picker_min="0"
                         app:picker_orientation="vertical"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

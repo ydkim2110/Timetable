@@ -2,10 +2,14 @@ package com.reachfree.timetable.ui.home
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.reachfree.timetable.R
@@ -15,6 +19,7 @@ import com.reachfree.timetable.data.model.Subject
 import com.reachfree.timetable.data.response.CalendarTaskResponse
 import com.reachfree.timetable.data.response.SemesterResponse
 import com.reachfree.timetable.databinding.ActivityHomeBinding
+import com.reachfree.timetable.extension.longToast
 import com.reachfree.timetable.extension.runDelayed
 import com.reachfree.timetable.ui.add.AddPartTimeJobFragment
 import com.reachfree.timetable.ui.add.AddSemesterFragment
@@ -241,7 +246,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     private fun setupAddSemesterFragment(semesterId: Long? = null) {
         semesterId?.let {
             AddSemesterFragment.newInstance(semesterId).apply {
-                show(supportFragmentManager, null)
+                show(supportFragmentManager, AddSemesterFragment.TAG)
                 this.setOnAddSemesterFragmentListener(object : AddSemesterFragment.AddSemesterFragmentListener {
                     override fun onSemesterChanged() {
                         semesterChangedListener.onSemesterChanged()
@@ -250,7 +255,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
             }
         } ?: run {
             AddSemesterFragment.newInstance().apply {
-                show(supportFragmentManager, null)
+                show(supportFragmentManager, AddSemesterFragment.TAG)
                 this.setOnAddSemesterFragmentListener(object : AddSemesterFragment.AddSemesterFragmentListener {
                     override fun onSemesterChanged() {
 
@@ -263,20 +268,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     private fun setupAddSubjectFragment(subjectId: Long? = null) {
         subjectId?.let {
             AddSubjectFragment.newInstance(subjectId)
-                .apply { show(supportFragmentManager, null) }
+                .apply { show(supportFragmentManager, AddSubjectFragment.TAG) }
         } ?: run {
             AddSubjectFragment.newInstance()
-                .apply { show(supportFragmentManager, null) }
+                .apply { show(supportFragmentManager, AddSubjectFragment.TAG) }
         }
     }
 
     private fun setupAddTaskFragment(date: Long, taskId: Long? = null) {
         taskId?.let {
             AddTaskFragment.newInstance(date, it)
-                .apply { show(supportFragmentManager, null) }
+                .apply { show(supportFragmentManager, AddTaskFragment.TAG) }
         } ?: run {
             AddTaskFragment.newInstance(date)
-                .apply { show(supportFragmentManager, null) }
+                .apply { show(supportFragmentManager, AddTaskFragment.TAG) }
         }
     }
 
@@ -307,7 +312,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
     override fun onEditButtonClicked(timetableEventView: TimetableEventView) {
         if (timetableEventView.event.category == SUBJECT) {
             setupAddSubjectFragment(timetableEventView.event.id)
-        } else {
+        } else if (timetableEventView.event.category == PART_TIME_JOB){
             setupAddPartTimeJobFragment(timetableEventView.event.id)
         }
     }
@@ -320,8 +325,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>({ ActivityHomeBinding.inf
         if (doubleBackToExit) {
             finishAffinity()
         } else {
-            Toast.makeText(this, getString(R.string.toast_exit_message),
-                Toast.LENGTH_SHORT).show()
+            longToast(getString(R.string.toast_exit_message))
             doubleBackToExit = true
             runDelayed(TIME_DELAY_EXIT) {
                 doubleBackToExit = false

@@ -234,6 +234,7 @@ class AddSemesterFragment : BaseDialogFragment<FragmentAddSemesterBinding>() {
     }
 
     companion object {
+        const val TAG = "AddSemesterFragment"
         private const val SEMESTER_ID = "semester_id"
         private const val TIME_DELAY = 500L
 

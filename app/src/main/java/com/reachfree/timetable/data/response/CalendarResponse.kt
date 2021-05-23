@@ -12,6 +12,7 @@ data class CalendarResponse(
 
 data class CalendarTaskResponse(
     var id: Long? = null,
+    @ColumnInfo(name = "semester_title") var semesterTitle: String = "",
     var title: String = "",
     var description: String = "",
     var date: Long? = 0L,

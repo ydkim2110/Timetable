@@ -147,7 +147,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
     private fun setupToolbar() {
         binding.appBar.appBar.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
-        binding.appBar.txtToolbarTitle.text = "과제 등록"
+        binding.appBar.txtToolbarTitle.text = getString(R.string.toolbar_title_add_task)
         binding.appBar.txtToolbarTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         binding.appBar.btnBack.setColorFilter(
             ContextCompat.getColor(requireActivity(), R.color.icon_back_arrow),
@@ -222,9 +222,8 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
 
                 TaskListWidget.updateWidgetListView(requireContext())
 
-                runDelayed(500L) {
-                    Toast.makeText(requireActivity(), "삭제 완료!",
-                        Toast.LENGTH_SHORT).show()
+                runDelayed(TIME_DELAY) {
+                    requireActivity().longToast(getString(R.string.toast_delete_completed_message))
                     dismiss()
                 }
             }
@@ -256,11 +255,10 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
                     )
 
                     timetableViewModel.insertTask(task)
-                    toastMessage = "저장 완료!"
+                    toastMessage = getString(R.string.toast_save_complete_message)
                 }
             } ?: run {
-                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
-                    Toast.LENGTH_LONG).show()
+                requireActivity().longToast(getString(R.string.toast_error_message))
             }
         } else {
             selectedSemesterId?.let {
@@ -275,11 +273,10 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
                     )
 
                     timetableViewModel.updateTask(task)
-                    toastMessage = "수정 완료!"
+                    toastMessage = getString(R.string.toast_edit_complete_message)
                 }
             } ?: run {
-                Toast.makeText(requireActivity(), "에러가 발생했습니다. 다시 시도해주세요.",
-                    Toast.LENGTH_LONG).show()
+                requireActivity().longToast(getString(R.string.toast_error_message))
             }
         }
 
@@ -365,7 +362,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
             .setTitle(getString(R.string.text_alert_no_semester_warning_title))
             .setMessage(getString(R.string.text_alert_no_semester_warning_message_by_task))
             .setCancelable(false)
-            .setPositiveButton(getString(R.string.text_alert_button_ok)) { dialog, which ->
+            .setPositiveButton(getString(R.string.text_alert_button_ok)) { _, _ ->
                 dismiss()
             }
             .create()
@@ -377,7 +374,7 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
             .setTitle(getString(R.string.text_alert_no_semester_warning_title))
             .setMessage(getString(R.string.text_alert_no_subject_warning_message_by_task))
             .setCancelable(false)
-            .setPositiveButton(getString(R.string.text_alert_button_ok)) { dialog, which ->
+            .setPositiveButton(getString(R.string.text_alert_button_ok)) { _, _ ->
                 dismiss()
             }
             .create()
@@ -413,6 +410,8 @@ class AddTaskFragment : BaseDialogFragment<FragmentAddTaskBinding>() {
     }
 
     companion object {
+        const val TAG = "AddTaskFragment"
+        private const val TIME_DELAY = 500L
         private const val TIME_PICKER_TAG = "add_task_fragment_time_picker_tag"
         private const val DATE = "date"
         private const val TASK_ID = "task_id"

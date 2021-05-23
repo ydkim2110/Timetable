@@ -4,11 +4,10 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.util.DisplayMetrics
+import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.reachfree.timetable.R
 import com.reachfree.timetable.databinding.TimetableDetailDialogBinding
@@ -35,10 +34,19 @@ class TimetableDetailDialog(
 
     override fun onStart() {
         super.onStart()
-        val windowManager = requireActivity().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val display = windowManager.defaultDisplay
+        val outMetrics = DisplayMetrics()
+        val display: Display?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display = activity?.display
+            display?.getRealMetrics(outMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            display = activity?.windowManager?.defaultDisplay
+            @Suppress("DEPRECATION")
+            display?.getRealMetrics(outMetrics)
+        }
         val size = Point()
-        display.getSize(size)
+        display?.getRealSize(size)
 
         dialog?.window?.setLayout((size.x * 0.7).toInt(), (size.y * 0.5).toInt())
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

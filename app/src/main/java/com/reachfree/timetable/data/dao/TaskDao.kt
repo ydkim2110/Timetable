@@ -29,6 +29,7 @@ interface TaskDao {
     @Query("""
         SELECT
             t.id,
+            s.title AS semester_title,
             t.title,
             t.description,
             t.date,
@@ -44,6 +45,7 @@ interface TaskDao {
     @Query("""
         SELECT
             t.id,
+            s.title AS semester_title,
             t.title,
             t.description,
             t.date,
@@ -52,16 +54,16 @@ interface TaskDao {
             s.background_color
         FROM tasks t
         INNER JOIN subjects s ON t.subject_id = s.id
-        WHERE 
-            t.subject_id LIKE :subjectId
-            AND t.date >= :startDate 
-        ORDER BY t.date
+        WHERE t.subject_id LIKE :subjectId
+            AND t.date >= :startDate
+        ORDER BY t.date ASC
     """)
     fun getAllTaskBySubjectForWidgetService(subjectId: Long, startDate: Long): List<CalendarTaskResponse>
 
     @Query("""
         SELECT
             t.id,
+            s.title AS semester_title,
             t.title,
             t.description,
             t.date,
@@ -78,6 +80,7 @@ interface TaskDao {
     @Query("""
         SELECT
             t.id,
+            s.title AS semester_title,
             t.title,
             t.description,
             t.date,

@@ -52,24 +52,22 @@ class TaskListRemoteViewsService : RemoteViewsService() {
             val subjects = subjectRepository.getAllSubjectsForWidgetService(semester.id!!)
 
             for ((index, value) in subjects.withIndex()) {
-                for (i in value.days.indices) {
-                    if (value.days[i].day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                        val today = DateUtils.calculateStartOfDay(LocalDate.now()).toMillis()!!
-                        val task = taskRepository.getAllTaskBySubjectForWidgetService(value.id!!, today)
+                val today = DateUtils.calculateStartOfDay(LocalDate.now()).toMillis()!!
+                val tasks = taskRepository.getAllTaskBySubjectForWidgetService(value.id!!, today)
 
-                        for (j in task.indices) {
-                            val task = CalendarTaskResponse(
-                                id = task[j].id,
-                                title = task[j].title,
-                                description = task[j].description,
-                                date = task[j].date,
-                                type = task[j].type,
-                                subjectId = task[j].subjectId,
-                                backgroundColor = task[j].backgroundColor
-                            )
-                            todayEventList.add(task)
-                        }
-                    }
+                for (j in tasks.indices) {
+                    val task = CalendarTaskResponse(
+                        id = tasks[j].id,
+                        semesterTitle = tasks[j].semesterTitle,
+                        title = tasks[j].title,
+                        description = tasks[j].description,
+                        date = tasks[j].date,
+                        type = tasks[j].type,
+                        subjectId = tasks[j].subjectId,
+                        backgroundColor = tasks[j].backgroundColor
+                    )
+                    todayEventList.add(task)
+                    todayEventList.sortBy { it.date }
                 }
             }
         }
@@ -85,7 +83,7 @@ class TaskListRemoteViewsService : RemoteViewsService() {
         override fun getViewAt(position: Int): RemoteViews? {
             if (!todayEventList.isNullOrEmpty()) {
                 val task = todayEventList[position]
-                val title = task.title
+                val title = "${task.semesterTitle} - ${task.title}"
                 val date = DateUtils.dayDateFormat.format(task.date)
                 val time = DateUtils.taskDateFormat.format(task.date)
 

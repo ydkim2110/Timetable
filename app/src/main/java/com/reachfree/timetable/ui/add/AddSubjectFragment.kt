@@ -395,8 +395,11 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
                 endHour = endTime.text.split(":")[0].toInt(),
                 endMinute = endTime.text.split(":")[1].toInt()
             )
+
             selectedDays.add(days)
         }
+
+        selectedDays.sortBy { it.day }
 
         var toastMessage = ""
         if (passedSubject == null) {
@@ -521,6 +524,7 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
     }
 
     companion object {
+        const val TAG = "AddSubjectFragment"
         private const val TIME_PICKER_TAG = "TIME_PICKER_TAG"
         private const val SUBJECT_ID = "subject_id"
         private const val TIME_DELAY = 500L

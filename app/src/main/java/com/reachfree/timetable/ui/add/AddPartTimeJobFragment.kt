@@ -239,8 +239,7 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
                 timetableViewModel.deletePartTimeJob(it)
 
                 runDelayed(500L) {
-                    Toast.makeText(requireActivity(), "삭제 완료!",
-                        Toast.LENGTH_SHORT).show()
+                    requireActivity().longToast(getString(R.string.toast_delete_completed_message))
                     dismiss()
                 }
             }
@@ -288,7 +287,7 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
         val partTimeJobTitle = binding.edtPartTimeJobTitle.text.toString().trim()
 
         if (partTimeJobTitle.isEmpty()) {
-            requireActivity().longToast("알바명을 입력해주세요.")
+            requireActivity().longToast(getString(R.string.toast_part_time_job_title_warning_message))
             return
         }
 
@@ -338,7 +337,7 @@ class AddPartTimeJobFragment : BaseDialogFragment<FragmentAddPartTimeJobBinding>
             selectedDays.add(days)
         }
 
-        Timber.d("DEBUG: passedPartTimeJobId $passedPartTimeJobId")
+        selectedDays.sortBy { it.day }
 
         val toastMessage: String
         if (passedPartTimeJobId != null && passedPartTimeJobId != DEFAULT_ID) {
