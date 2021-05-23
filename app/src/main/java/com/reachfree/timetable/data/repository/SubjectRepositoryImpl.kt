@@ -37,6 +37,10 @@ class SubjectRepositoryImpl @Inject constructor(
         return subjectDao.getSubjectById(subjectId)
     }
 
+    override suspend fun updateGradeToConvert() {
+        subjectDao.updateGradeToConvert()
+    }
+
     override fun getSubjectByIdLiveData(subjectId: Long): LiveData<Subject> {
         return subjectDao.getSubjectByIdLiveData(subjectId)
     }

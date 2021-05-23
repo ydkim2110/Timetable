@@ -229,7 +229,7 @@
                         android:id="@+id/btn_time"
                         style="@style/OutlinedButtonStyle"
                         android:layout_width="match_parent"
-                        android:text="@string/text_start_time"
+                        android:text="@string/text_default_start_time"
                         android:textSize="14sp"
                         />
 

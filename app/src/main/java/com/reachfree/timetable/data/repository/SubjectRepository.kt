@@ -22,6 +22,8 @@ interface SubjectRepository {
 
     suspend fun getSubjectById(subjectId: Long): Subject
 
+    suspend fun updateGradeToConvert()
+
     fun getSubjectByIdLiveData(subjectId: Long): LiveData<Subject>
 
     fun getAllSubjects(): LiveData<List<Subject>>

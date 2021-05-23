@@ -30,7 +30,6 @@ class TimetableListWidget : AppWidgetProvider() {
         when (intent.action) {
             AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
                 updateWidgetListView(context)
-
             }
             TIMETABLE_LIST_CLICK_BROADCAST -> {
                 val homeIntent = Intent(context, HomeActivity::class.java)
@@ -53,7 +52,6 @@ class TimetableListWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        Timber.d("DEBUG: onUpdate called!!")
         for (appWidgetId in appWidgetIds) {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_timetable_widget)
             updateAppWidget(context, appWidgetManager, appWidgetId)
@@ -61,8 +59,6 @@ class TimetableListWidget : AppWidgetProvider() {
     }
 
     override fun onEnabled(context: Context) {
-        // Enter relevant functionality for when the first widget is created
-        Timber.d("DEBUG: onEnabled called!!")
         val intent = Intent(context, TimetableListWidget::class.java)
         intent.action = ACTION_AUTO_UPDATE_WIDGET
         val pendingIntent = getBroadcast(context, 0, intent, FLAG_UPDATE_CURRENT)
@@ -77,8 +73,6 @@ class TimetableListWidget : AppWidgetProvider() {
     }
 
     override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
-        Timber.d("DEBUG: onDisabled called!!")
         val intent = Intent(context, TimetableListWidget::class.java)
         intent.action = ACTION_AUTO_UPDATE_WIDGET
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -119,7 +113,6 @@ class TimetableListWidget : AppWidgetProvider() {
 
 
         fun updateWidgetListView(context: Context) {
-            Timber.d("DEBUG: updateWidgetListView called!!")
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val ids = appWidgetManager.getAppWidgetIds(ComponentName(context, TimetableListWidget::class.java))
             for (appWidgetId in ids) {

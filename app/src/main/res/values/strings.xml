@@ -114,12 +114,12 @@
     <string name="img_description_next_month">다음달</string>
     <string name="img_description_previous_month">전달</string>
     <string name="text_title">제목</string>
-    <string name="text_hint_task_title">예)레포트 제출/중간고사</string>
-    <string name="text_hint_task_memo">예)기한 엄수</string>
+    <string name="text_hint_task_title">예) 레포트 제출/중간고사</string>
+    <string name="text_hint_task_memo">예) 기한 엄수</string>
     <string name="text_date">날짜</string>
     <string name="text_time">시간</string>
     <string name="text_grade">성적</string>
-    <string name="text_grade_warning">* 간단한 계산을 할 수 있는 학점계산기입니다. 정확한 변환 결과는 해당학교의 학적과를 통해 확인해주세요.</string>
+    <string name="text_grade_warning">* 간단한 계산으로 산출된 학점입니다. 정확한 결과는 성적증명서를 통해 확인해주세요.</string>
     <string name="credit_4_3">4.3 만점</string>
     <string name="credit_4_5">4.5 만점</string>
     <string name="text_not_registered">미입력</string>

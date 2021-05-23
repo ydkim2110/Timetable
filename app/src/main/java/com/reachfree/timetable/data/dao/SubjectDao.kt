@@ -29,6 +29,21 @@ interface SubjectDao {
     @Query("SELECT * FROM subjects WHERE id LIKE :subjectId")
     suspend fun getSubjectById(subjectId: Long): Subject
 
+    @Query("""
+        UPDATE
+            subjects
+        SET 
+            grade = CASE 
+            WHEN grade = 'A-' THEN 'A'
+            WHEN grade = 'B-' THEN 'B'
+            WHEN grade = 'C-' THEN 'C'
+            WHEN grade = 'D-' THEN 'D'
+            ELSE grade
+            END
+        WHERE grade IN ('A-', 'B-', 'C-', 'D-')
+    """)
+    suspend fun updateGradeToConvert()
+
     @Query("SELECT * FROM subjects WHERE id LIKE :subjectId")
     fun getSubjectByIdLiveData(subjectId: Long): LiveData<Subject>
 

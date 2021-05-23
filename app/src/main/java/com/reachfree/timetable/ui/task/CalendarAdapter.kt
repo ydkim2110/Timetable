@@ -1,6 +1,7 @@
 package com.reachfree.timetable.ui.task
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -93,12 +94,14 @@ class CalendarAdapter(
                                 gravity = Gravity.LEFT
                                 maxLines = 1
                                 ellipsize = TextUtils.TruncateAt.END
+                                setTextColor(Color.WHITE)
                                 setBackgroundResource(calendarResponse.taskList!![i].backgroundColor)
                                 val params = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
                                 ).apply {
                                     setMargins(0, 0, 0, 8)
+                                    setPadding(8, 0, 8, 0)
                                 }
 
                                 layoutParams = params

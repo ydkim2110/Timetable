@@ -17,6 +17,8 @@ import com.reachfree.timetable.databinding.FragmentGradeBinding
 import com.reachfree.timetable.extension.*
 import com.reachfree.timetable.ui.base.BaseDialogFragment
 import com.reachfree.timetable.ui.task.CalendarDayDialog
+import com.reachfree.timetable.util.AppUtils
+import com.reachfree.timetable.util.AppUtils.convertGradientTextView
 import com.reachfree.timetable.util.SessionManager
 import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +54,7 @@ class GradeFragment : BaseDialogFragment<FragmentGradeBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
+        setupTextView()
         setupRecyclerView()
         setupOptions()
         subscribeToObserver()
@@ -66,6 +69,11 @@ class GradeFragment : BaseDialogFragment<FragmentGradeBinding>() {
             PorterDuff.Mode.SRC_ATOP
         )
         binding.appBar.btnBack.setOnSingleClickListener { dismiss() }
+    }
+
+    private fun setupTextView() {
+        convertGradientTextView(binding.txtGradeSummaryTitle)
+        convertGradientTextView(binding.txtGradeBySubjectTitle)
     }
 
     private fun setupRecyclerView() {

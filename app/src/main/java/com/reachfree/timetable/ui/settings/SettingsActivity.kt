@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.reachfree.timetable.R
@@ -18,6 +19,8 @@ import com.reachfree.timetable.extension.setOnSingleClickListener
 import com.reachfree.timetable.ui.base.BaseActivity
 import com.reachfree.timetable.util.*
 import com.reachfree.timetable.util.AppUtils.convertGradientTextView
+import com.reachfree.timetable.util.timetable.TimetableView
+import com.reachfree.timetable.viewmodel.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
 import java.util.*
@@ -30,6 +33,7 @@ class SettingsActivity :
 
     @Inject
     lateinit var sessionManager: SessionManager
+    private val timetableViewModel: TimetableViewModel by viewModels()
 
     private lateinit var settingCreditDialog: SettingCreditDialog
 
@@ -300,8 +304,9 @@ class SettingsActivity :
                             .setTitle("주의 사항")
                             .setMessage("4.5 만점으로 변환시 마이너스 학점들은 제로학점으로 변환됩니다. 계속 진행하시겠습니까?")
                             .setCancelable(false)
+                            .setNegativeButton(getString(R.string.text_alert_button_cancel), null)
                             .setPositiveButton(getString(R.string.text_alert_button_ok)) { _, _ ->
-
+                                timetableViewModel.updateGradeToConvert()
                             }
                             .create()
                             .show()

@@ -1,6 +1,9 @@
 package com.reachfree.timetable.widget
 
+import android.app.AlarmManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
+import android.app.PendingIntent.getBroadcast
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
@@ -21,8 +24,8 @@ class TaskListWidget : AppWidgetProvider() {
         super.onReceive(context, intent)
         Timber.d("DEBUG : onReceive ${intent.action}")
         when (intent.action) {
-            ACTION_TASK_WIDGET_UPDATE -> {
-                Timber.d("DEBUG : ACTION_TASK_WIDGET_UPDATE")
+            AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
+                updateWidgetListView(context)
             }
             TASK_LIST_CLICK_BROADCAST -> {
                 val homeIntent = Intent(context, HomeActivity::class.java).apply {
@@ -30,6 +33,12 @@ class TaskListWidget : AppWidgetProvider() {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 context.startActivity(homeIntent)
+            }
+            ACTION_TASK_WIDGET_UPDATE -> {
+                updateWidgetListView(context)
+            }
+            Intent.ACTION_DATE_CHANGED -> {
+                updateWidgetListView(context)
             }
         }
     }
@@ -39,8 +48,6 @@ class TaskListWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        Timber.d("DEBUG: onUpdate called!!")
-        // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_task_widget)
             updateAppWidget(context, appWidgetManager, appWidgetId)
@@ -48,11 +55,25 @@ class TaskListWidget : AppWidgetProvider() {
     }
 
     override fun onEnabled(context: Context) {
-        // Enter relevant functionality for when the first widget is created
+        val intent = Intent(context, TaskListWidget::class.java)
+        intent.action = ACTION_TASK_WIDGET_UPDATE
+        val pendingIntent = getBroadcast(context, 0, intent, FLAG_UPDATE_CURRENT)
+
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 1)
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setInexactRepeating(AlarmManager.RTC, cal.timeInMillis,
+            AlarmManager.INTERVAL_DAY, pendingIntent)
     }
 
     override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
+        val intent = Intent(context, TaskListWidget::class.java)
+        intent.action = ACTION_TASK_WIDGET_UPDATE
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(getBroadcast(context, 0, intent, 0))
     }
 
     companion object {
@@ -61,7 +82,6 @@ class TaskListWidget : AppWidgetProvider() {
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int
         ) {
-            Timber.d("DEBUG: updateAppWidget called!! $appWidgetId")
             val intent = Intent(context, TaskListRemoteViewsService::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
 
@@ -71,16 +91,20 @@ class TaskListWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.txt_task_widget_today_title, today)
             views.setOnClickPendingIntent(R.id.layout_header, getPendingIntent(context))
 
+            views.setImageViewResource(R.id.img_refresh, R.drawable.ic_refresh)
+
+            val refreshIntent = Intent(context, TaskListWidget::class.java).apply {
+                action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            }
+            views.setOnClickPendingIntent(R.id.img_refresh,
+                getBroadcast(context, 0, refreshIntent, FLAG_UPDATE_CURRENT)
+            )
+
             views.setRemoteAdapter(R.id.list_view_task_widget, intent)
             views.setEmptyView(R.id.list_view_task_widget, R.id.txt_task_widget_empty)
 
-            val onTaskClickPendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                Intent(context, TaskListWidget::class.java),
-                0
-            )
-            views.setPendingIntentTemplate(R.id.list_view_task_widget, onTaskClickPendingIntent)
+            val pendingIntent = getBroadcast(context, 0, Intent(context, TaskListWidget::class.java), 0)
+            views.setPendingIntentTemplate(R.id.list_view_task_widget, pendingIntent)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
@@ -88,14 +112,17 @@ class TaskListWidget : AppWidgetProvider() {
         fun updateWidgetListView(context: Context) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val ids = appWidgetManager.getAppWidgetIds(ComponentName(context, TaskListWidget::class.java))
-            appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.list_view_task_widget)
+            for (appWidgetId in ids) {
+                appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.list_view_task_widget)
+                updateAppWidget(context, appWidgetManager, appWidgetId)
+            }
         }
 
         private fun getPendingIntent(context: Context): PendingIntent {
             val intent = Intent(context, TaskListWidget::class.java).apply {
                 action = TASK_LIST_CLICK_BROADCAST
             }
-            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            return getBroadcast(context, 0, intent, FLAG_UPDATE_CURRENT)
         }
     }
 }

@@ -54,7 +54,7 @@
         android:layout_height="@dimen/btn_height"
         android:layout_marginStart="8dp"
         tools:text="A+"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:textAlignment="textStart"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

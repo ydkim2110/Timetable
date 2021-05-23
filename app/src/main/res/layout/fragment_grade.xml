@@ -25,6 +25,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/txt_grade_summary_title"
                 style="@style/ProfileTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_marginHorizontal="12dp"
                 app:cardCornerRadius="12dp">
 
                 <LinearLayout
@@ -80,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginEnd="24dp"
+                            android:layout_marginEnd="12dp"
                             android:textColor="@android:color/holo_red_dark"
                             android:textSize="16sp"
                             android:textStyle="bold"
@@ -123,7 +124,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginEnd="24dp"
+                            android:layout_marginEnd="12dp"
                             android:textColor="@color/color_text_primary"
                             android:textSize="16sp"
                             android:textStyle="bold"
@@ -166,7 +167,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginEnd="24dp"
+                            android:layout_marginEnd="12dp"
                             android:textColor="@color/color_text_primary"
                             android:textSize="16sp"
                             android:textStyle="bold"
@@ -189,10 +190,11 @@
                 android:text="@string/text_grade_warning" />
 
             <TextView
+                android:id="@+id/txt_grade_by_subject_title"
                 style="@style/ProfileTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginHorizontal="16dp"
                 android:text="과목별 성적" />
 
@@ -200,7 +202,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_marginHorizontal="12dp"
                 app:cardCornerRadius="12dp">
 
                 <androidx.recyclerview.widget.RecyclerView

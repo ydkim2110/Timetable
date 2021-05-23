@@ -127,9 +127,13 @@ class TimetableViewModel @Inject constructor(
     val subject get() = _subject
     fun getSubjectById(subjectId: Long) =
         viewModelScope.launch(dispatchers.io) {
-            Timber.d("DEBUG: getSubjectById $subjectId")
             val result = subjectRepository.getSubjectById(subjectId)
             _subject.postValue(result)
+        }
+
+    fun updateGradeToConvert() =
+        viewModelScope.launch(dispatchers.io) {
+            subjectRepository.updateGradeToConvert()
         }
 
     fun getSubjectByIdLiveData(subjectId: Long) =
