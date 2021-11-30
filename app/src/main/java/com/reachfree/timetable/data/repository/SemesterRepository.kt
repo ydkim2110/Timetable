@@ -32,7 +32,7 @@ interface SemesterRepository {
 
     fun getSemesterLiveData(date: Long): LiveData<Semester>
 
-    fun getSemesterForWidgetService(date: Long): Semester
+    fun getSemesterForWidgetService(date: Long): Semester?
 
     fun getSemesterByFlow(date: Long): Flow<Semester>
 

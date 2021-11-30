@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.repository.SemesterRepository
 import com.reachfree.timetable.data.repository.SubjectRepository
 import com.reachfree.timetable.util.DateUtils
@@ -14,6 +15,7 @@ import com.reachfree.timetable.util.TIMETABLE_LIST_CLICK_BROADCAST
 import com.reachfree.timetable.util.timetable.TimetableEvent
 import dagger.hilt.android.AndroidEntryPoint
 import org.threeten.bp.LocalTime
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -41,26 +43,39 @@ class TimetableListRemoteViewsService : RemoteViewsService() {
         override fun onDataSetChanged() {
             todayEventList.clear()
             val semester = semesterRepository.getSemesterForWidgetService(Calendar.getInstance().time.time)
-            val subjects = subjectRepository.getAllSubjectsForWidgetService(semester.id!!)
+                ?: Semester(
+                    id = -1L,
+                    title = "",
+                    description = "",
+                    startDate = Calendar.getInstance().time.time,
+                    endDate = Calendar.getInstance().time.time
+                )
 
-            for ((index, value) in subjects.withIndex()) {
-                for (i in value.days.indices) {
-                    if (value.days[i].day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                        val event = TimetableEvent.Single(
-                            id = 1,
-                            category = 0,
-                            date = DateUtils.calculateDay(value.days[i].day),
-                            title = value.title,
-                            shortTitle = value.title,
-                            classroom = value.classroom,
-                            building = value.buildingName,
-                            credit = value.credit,
-                            startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
-                            endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
-                            backgroundColor = value.backgroundColor,
-                            textColor = Color.WHITE
-                        )
-                        todayEventList.add(event)
+            if (semester.id == -1L) {
+                Timber.d("DEBUG Null")
+            } else {
+                Timber.d("DEBUG Not Null")
+                val subjects = subjectRepository.getAllSubjectsForWidgetService(semester.id!!)
+
+                for ((index, value) in subjects.withIndex()) {
+                    for (i in value.days.indices) {
+                        if (value.days[i].day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                            val event = TimetableEvent.Single(
+                                id = 1,
+                                category = 0,
+                                date = DateUtils.calculateDay(value.days[i].day),
+                                title = value.title,
+                                shortTitle = value.title,
+                                classroom = value.classroom,
+                                building = value.buildingName,
+                                credit = value.credit,
+                                startTime = LocalTime.of(value.days[i].startHour, value.days[i].startMinute),
+                                endTime = LocalTime.of(value.days[i].endHour, value.days[i].endMinute),
+                                backgroundColor = value.backgroundColor,
+                                textColor = Color.WHITE
+                            )
+                            todayEventList.add(event)
+                        }
                     }
                 }
             }

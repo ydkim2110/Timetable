@@ -59,7 +59,7 @@ class SemesterRepositoryImpl @Inject constructor(
         return semesterDao.getSemesterLiveData(date)
     }
 
-    override fun getSemesterForWidgetService(date: Long): Semester {
+    override fun getSemesterForWidgetService(date: Long): Semester? {
         return semesterDao.getSemesterForWidgetService(date)
     }
 

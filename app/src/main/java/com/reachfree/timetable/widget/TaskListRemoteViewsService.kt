@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.reachfree.timetable.R
+import com.reachfree.timetable.data.model.Semester
 import com.reachfree.timetable.data.repository.SemesterRepository
 import com.reachfree.timetable.data.repository.SubjectRepository
 import com.reachfree.timetable.data.repository.TaskRepository
@@ -49,27 +50,44 @@ class TaskListRemoteViewsService : RemoteViewsService() {
         override fun onDataSetChanged() {
             todayEventList.clear()
             val semester = semesterRepository.getSemesterForWidgetService(Calendar.getInstance().time.time)
-            val subjects = subjectRepository.getAllSubjectsForWidgetService(semester.id!!)
+                ?: Semester(
+                    id = -1L,
+                    title = "",
+                    description = "",
+                    startDate = Calendar.getInstance().time.time,
+                    endDate = Calendar.getInstance().time.time
+                )
 
-            for ((index, value) in subjects.withIndex()) {
-                val today = DateUtils.calculateStartOfDay(LocalDate.now()).toMillis()!!
-                val tasks = taskRepository.getAllTaskBySubjectForWidgetService(value.id!!, today)
+            if (semester.id == -1L) {
+                Timber.d("DEBUG Null")
+            } else {
+                Timber.d("DEBUG Not Null")
+                val subjects = subjectRepository.getAllSubjectsForWidgetService(semester.id!!)
 
-                for (j in tasks.indices) {
-                    val task = CalendarTaskResponse(
-                        id = tasks[j].id,
-                        semesterTitle = tasks[j].semesterTitle,
-                        title = tasks[j].title,
-                        description = tasks[j].description,
-                        date = tasks[j].date,
-                        type = tasks[j].type,
-                        subjectId = tasks[j].subjectId,
-                        backgroundColor = tasks[j].backgroundColor
-                    )
-                    todayEventList.add(task)
-                    todayEventList.sortBy { it.date }
+                Timber.d("DEBUG subjects $subjects")
+
+                for ((index, value) in subjects.withIndex()) {
+                    Timber.d("DEBUG subjects withIndex")
+                    val today = DateUtils.calculateStartOfDay(LocalDate.now()).toMillis()!!
+                    val tasks = taskRepository.getAllTaskBySubjectForWidgetService(value.id!!, today)
+
+                    for (j in tasks.indices) {
+                        val task = CalendarTaskResponse(
+                            id = tasks[j].id,
+                            semesterTitle = tasks[j].semesterTitle,
+                            title = tasks[j].title,
+                            description = tasks[j].description,
+                            date = tasks[j].date,
+                            type = tasks[j].type,
+                            subjectId = tasks[j].subjectId,
+                            backgroundColor = tasks[j].backgroundColor
+                        )
+                        todayEventList.add(task)
+                        todayEventList.sortBy { it.date }
+                    }
                 }
             }
+
         }
 
         override fun onDestroy() {

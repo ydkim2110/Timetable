@@ -63,7 +63,7 @@ interface SemesterDao {
     fun getSemesterLiveData(date: Long): LiveData<Semester>
 
     @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
-    fun getSemesterForWidgetService(date: Long): Semester
+    fun getSemesterForWidgetService(date: Long): Semester?
 
     @Query("SELECT * FROM semesters WHERE start_date <= :date AND end_date >= :date LIMIT 1")
     fun getSemesterByFlow(date: Long): Flow<Semester>
