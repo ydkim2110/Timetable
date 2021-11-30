@@ -75,7 +75,7 @@ internal object DayOfWeekUtil {
                 }
             }
 
-            else -> throw IllegalStateException("$firstDayOfTheWeek das is not supported as start day")
+            else -> throw IllegalStateException("$firstDayOfTheWeek day is not supported as start day")
         }
     }
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -461,20 +462,25 @@ class AddSubjectFragment : BaseDialogFragment<FragmentAddSubjectBinding>() {
         }
 
         layoutBinding.btnStartTime.setOnSingleClickListener {
-            val hour = layoutBinding.btnStartTime.text.split(":")[0].toInt()
-            val minute = layoutBinding.btnStartTime.text.split(":")[1].toInt()
-            openTimePicker(hour, minute) { h, min ->
-                layoutBinding.btnStartTime.text = updateHourAndMinute(h, min)
+            try {
+                val hour = layoutBinding.btnStartTime.text.split(":")[0].toInt()
+                val minute = layoutBinding.btnStartTime.text.split(":")[1].toInt()
+                openTimePicker(hour, minute) { h, min ->
+                    layoutBinding.btnStartTime.text = updateHourAndMinute(h, min)
 
-                val endHour = layoutBinding.btnEndTime.text.split(":")[0].toInt()
-                val endMinute = layoutBinding.btnEndTime.text.split(":")[1].toInt()
-                val start = LocalTime.of(h, min)
-                val end = LocalTime.of(endHour, endMinute)
+                    val endHour = layoutBinding.btnEndTime.text.split(":")[0].toInt()
+                    val endMinute = layoutBinding.btnEndTime.text.split(":")[1].toInt()
+                    val start = LocalTime.of(h, min)
+                    val end = LocalTime.of(endHour, endMinute)
 
-                if (start.isAfter(end)) {
-                    layoutBinding.btnEndTime.text = updateHourAndMinute(h+1, min)
+                    if (start.isAfter(end)) {
+                        layoutBinding.btnEndTime.text = updateHourAndMinute(h+1, min)
+                    }
                 }
+            } catch (e: NumberFormatException) {
+                requireActivity().longToast("다시 시도해주세요.")
             }
+
         }
         layoutBinding.btnEndTime.setOnSingleClickListener {
             val hour = layoutBinding.btnEndTime.text.split(":")[0].toInt()
